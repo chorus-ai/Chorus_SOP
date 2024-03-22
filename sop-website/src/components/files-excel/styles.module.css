@@ -1,0 +1,224 @@
+/* The name of the table */
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+
+:root{
+    --excel-table-padding: 0.2rem;
+    box-sizing: border-box;
+}
+.table {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    min-width: 45rem;
+
+}
+/* The title of the table */
+.table_title{
+    padding: 0 0.5rem;
+    font-size: large;
+    font-family: 'Oswald', sans-serif;
+    text-indent: 10px;
+    letter-spacing: 0.3px;
+
+}
+
+.row.table_title {
+    border-color:var(--ifm-color-emphasis-500);
+    border-bottom: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+
+.subTable {
+    margin-left: 2rem;
+    margin-right: 1rem;
+}
+
+/* The first row */
+.title_cell {
+    font-size: 15px;
+    font-weight: 580;
+    /* background-color: #e3e1e1c7; */
+}
+
+
+/* The part below the first row */
+.content{
+    /* background: #fafafa; */
+    font-size: 14px;
+}
+
+/* Each row format */
+.row{
+    display: flex;
+    border: solid 1.2px #b9b8b8b0;
+}
+
+.row.content{
+    /* border-bottom: 1px solid rgba(5, 5, 5, 0.06); */
+    /* background-color: #fafafa; */
+    border-top: 1px solid rgba(5, 5, 5, 0.06);
+}
+
+.cell{
+    display: inline-block;
+    position: relative;
+    color: rgba(0, 0, 0, 0.88);
+    line-height: 1rem;
+    text-align: start;
+    /* border-right: 2px solid red; */
+    /* transition: background 0.3s ease; */
+    min-height: 2rem;
+    /* border-collapse: separate; */
+    border-spacing: 0;
+    list-style: none;
+    overflow: hidden;
+    padding: 0.4rem 0.2rem;
+    /* max-height: 4rem; */
+}
+
+.cell:not(:last-child) {
+    border-right: 1px solid rgba(5, 5, 5, 0.06);
+}
+
+
+/* The Table name cell */
+.cellTable_name{
+    width: 20rem;
+    min-width: 15rem;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-left: 1rem;
+    /* background-color: #3a3434; */
+
+}
+
+.cell_showTable_Button {
+    font-size: 12px;
+    text-align: right;
+    margin-right: 1rem;
+    text-shadow: #389e0d 20px;
+    /* text-emphasis: filled double-circle rgba(0, 0, 255, 0.379) ;
+    text-emphasis-position: under right; */
+    text-shadow: rgb(95, 93, 84) 1px 0 10px;
+    text-decoration: underline;
+    font-style:  italic;
+}
+
+.pink {
+    color: #389e0d;
+}
+.cellDescription {
+width: 80rem;
+min-width: 15rem;
+font-size: 14px;
+line-height: 1rem;
+
+
+}
+
+.cellColumn_Type {
+    width: 7rem; 
+    min-width: 7rem;
+}
+
+.cellRequired {
+    width: 4.8rem; 
+    min-width: 4.8rem;
+
+}
+
+.cellIndicator {
+    width: 6rem; 
+    min-width: 6rem;
+
+}
+.cellAction {
+    width: 8rem;
+    /* background-color: red; */
+    min-width: 8rem;
+    /* max-width: 8rem; */
+
+}
+
+.cellActionTag {
+    display: inline-block;
+    margin: 0 0.2rem;
+    /* background-color: rgba(163, 160, 160, 0.469); */
+    padding: 0px 4px;
+    display: inline-block;
+
+}
+
+.cellTags {
+    width: 8rem;
+    min-width: 8rem;
+
+}
+
+/* each Tag */
+.cellTag {
+    display: inline-block;
+    /* width: 3rem; */
+    margin: 0.1rem 0.2rem;
+    padding: 0 0.4rem;
+    font-size: 12px;
+    line-height: 20px;
+    list-style: none;
+    border-top: 1px solid rgba(5, 5, 5, 0.06);
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgba(5, 5, 5, 0.06);
+    border: 1px solid #d9d9d9;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-radius: 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+}
+
+
+
+
+.cellTag_green {
+    color: #389e0d;
+    background: #f6ffed;
+    border-color: #b7eb8f;
+    border-top-color: rgb(183, 235, 143);
+    border-right-color: rgb(183, 235, 143);
+    border-bottom-color: rgb(183, 235, 143);
+    border-left-color: rgb(183, 235, 143);
+}
+
+.cellTag_blue {
+    color: #1d39c4;
+    background: #f0f5ff;
+    border-color: #adc6ff;
+    border-top-color: rgb(173, 198, 255);
+    border-right-color: rgb(173, 198, 255);
+    border-bottom-color: rgb(173, 198, 255);
+    border-left-color: rgb(173, 198, 255);
+}
+
+
+.cellTag_red {
+    color: #d4380d;
+    background: #fff2e8;
+    border-color: #ffbb96;
+    border-top-color: rgb(255, 187, 150);
+    border-right-color: rgb(255, 187, 150);
+    border-bottom-color: rgb(255, 187, 150);
+    border-left-color: rgb(255, 187, 150);
+}

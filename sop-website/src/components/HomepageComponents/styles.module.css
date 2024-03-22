@@ -1,0 +1,31 @@
+.features {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.featureSvg {
+  height: 160px;
+  width: 320px;
+  /* color: #4ad1d1db; */
+}
+
+.featuresUp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.featuresTitle {
+  font-size: 1.25rem; 
+  font-weight: 700;
+}
+
+@media screen and (min-width: 996px) {
+  .featuresDescription {
+    height: 4.5rem;
+  }
+}
