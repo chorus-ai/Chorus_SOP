@@ -26,6 +26,7 @@ The following SOPs are under development:
 | Privacy | Xioqian | https://github.com/chorus-ai/Chorus_SOP/issues/12 |
 | Common data elements | Tezcan | https://github.com/chorus-ai/Chorus_SOP/issues/13 |
 | Safe Harboring Approach | Xioqian | https://github.com/chorus-ai/Chorus_SOP/issues/14 |
+| OMOP Mapping | Polina | https://github.com/chorus-ai/Chorus_SOP/issues/15 |
 
 ## How to contribute to the SOP documentation
 
@@ -34,10 +35,10 @@ The following SOPs are under development:
 ## How to edit the contents of online documentation site
 
 1. Navigate to the target page of online documentation site, and click `Edit this page` button at the bottom.
-2. A github editing page will pop up for you to edit the contents, make your own edition and commit your changes to a new branch.
+2. A GitHub editing page will pop up for you to edit the contents, make your own edition and commit your changes to a new branch.
 3. Submit the pull request
 
-if you would like to add more topics which are not existed, you can add your request to [`issues`](https://github.com/chorus-ai/data_acq_SOP/issues) as well.
+if you would like to add topics that are not yet represented, please add your request to [`issues`](https://github.com/chorus-ai/Chorus_SOP/issues).
 
 ## Resources
 - [MDX](https://mdxjs.com/)

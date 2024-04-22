@@ -1,0 +1,63 @@
+---
+title: Structured EHR Data
+id: Structured EHR Data
+description:  An SOP for handling relational EHR data
+---
+
+
+**Purpose**
+
+This document is for data contributing sites to better understand CHoRUS obligations with respect to Structured EHR Data
+
+## **Structured EHR data:**
+
+- Identify the source of the data
+
+Some sites have access to and existing repository, while other sites need to formulate a data extraction request to authorized entities (such as some data group within their CTSI).
+
+- Formulate the specs of the data extraction
+
+The specification includes:
+
+(i) a description of the population of patients
+
+(ii) the scope of the extraction, which specifies what data is needed over what period of time.
+
+In the pilot phase (April-June 2023), the request is for data from hospital admission to hospital discharge. The time when these patients were admitted does not matter, not does their admitting diagnoses. **We would prefer admission dates to be post-COVID.**
+
+For subsequent phases, the number of encounters to be contributed will be decided on a site-by-site basis. The specs also describe which data elements are needed. We require that sites provide all [**Tier 1**](https://partnershealthcare.sharepoint.com/:x:/r/sites/CHoRUSBridge2AI/Shared%20Documents/Module%205%20Data%20Acquisition/Data%20element%20Selection%20Delphi/Round%201/CHoRUS%20CDE%20Consensus_Round%202.xlsx?d=w353f26a658d146b4ba1f2b4cddd4ce2c&csf=1&web=1&e=RRnmko) data elements (“Flowsheet and Tier categories” sheet, column H), and encourage the contribution of Tier 2 or lower data elements whenever available.
+
+|EHR domain|Specific variables|OMOP clinical tables (CDM 5.4)|
+| :- | :- | :- |
+|Person|Age, Race, ethnicity, death (Y/N), death date, discharge destination, address|PERSON\_ID, DEATH|
+|Visit & location|Dates of all location changes, type of location |OBSERVATION\_PERIOD, VISIT\_OCCURENCE and VISIT\_DETAIL|
+|Measurements and assessments|Labs, vital signs, input/outputs, transfusions, other Tier 1 flow sheet elements|MEASUREMENT, OBSERVATIONS|
+|Diagnoses and problems|Admission diagnosis, Discharges diagnoses, |CONDITION\_OCCURENCE|
+|Procedures|X-rays, Dialysis, CRRT, EGD, EEG Bronchoscopies, Specific surgeries. Most of these will have a corresponding note/report)|PROCEDURE\_OCCURENCE|
+|Devices|Endotracheal tubes, central lines, pacemakers, EVD, etc.|DEVICE\_EXPOSURE|
+|Drugs|Instances of drug administration (as opposed to drug orders)|DRUG\_EXPOSURE|
+|Specimens|Cultures, pathology, cytology, etc|SPECIMEN|
+
+***Table 1 provide a summary this list and how data elements should be assigned across OMOP tables. It is understood that not all data are available for the duration of the hospital admission.***
+
+- Identify relevant metadata
+
+Please include here data that can fundamentally change the interpretation of the data above. For example, the make/model of bedside monitor/ventilator, infusion pump system used, how blood pressure and temperature are typically measured (instrument and anatomical location), POC glucose device most commonly used. These metadata may be difficult to collect and there is (not yet) a codified system for it.
+
+- Process the request
+
+Your data team will execute the data extraction, or these specs will be forwarded to the designated group within your institution. Please document when data are received.
+
+- Process the data - deidentification
+
+If this has not been taken care of in the process of extraction, please develop a process for the de-identification of all personality identifiable information. You IRB might have allowed preserving elements of dates. This step will require your data team to have honest broking privileges and to create various “cross-walk” or mapping files such that the data can be ultimately remapped for future purposes. The research team does not have access to those maps, but they may be used, for example, to link to long-term outcomes (SSDMF) or to tools extracting geographic determinants of health using full addresses or zip codes.
+
+- Process the data – Quality
+
+Please develop a process to verify that each piece of data requested is included in the data you receive, as well as the degree of missingness of variables requested. CHoRUS will recommend that you develop a process, following the recommendations of the Standards Module expert, to map your data extraction to standard OMOP tables using tools of your choice. The PERSEUS OHDSI toolkit is recommended, as it includes a fully-fledged Data Quality Dashboard, in addition to assist in the customization of the Extraction-Transformation-Loading (ETL) process to your own extract. It is an expectation that site run OHDSI’s DQD -ARES tools on their OMOP tables prior to upload.
+
+- Upload the extract to the CHoRUS cloud
+
+Please upload all data tables, and metadata files to your site-specific cloud enclave within the CHoRUS cloud environment. Full specifications of this process is included in the UPLOAD SOP. A link to this SOP is provided in the parent document.
+
+These steps are for guidance only. Yet they provide a map of the typical steps necessary to produce a quality data extraction. Your site process will have variations on those steps. A description of those variations should also accompany your extract, so CHoRUS fully understands the process at each site and is in the best possible position to help local teams.

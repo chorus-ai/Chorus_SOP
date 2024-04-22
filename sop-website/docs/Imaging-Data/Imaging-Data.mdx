@@ -1,0 +1,68 @@
+---
+title: Imaging Data
+id: Imaging Data
+description:  An SOP for processing medical images
+---
+
+
+**Purpose**
+
+This document is for data contributing sites to better understand CHoRUS obligations with respect to Imaging Data
+
+## **Imaging data**
+
+
+### Data Processing Steps
+
+1. Identify data extraction partners and methods (e.g., CTSI)
+2. Identify the sources of the data (e.g., PACS, site research repository)
+3. Determine which image modalities would need to be extracted, date range, and size
+4. Confirm the type of data format you will receive (e.g., DICOM)
+5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN)
+6. Map local relevant metadata with CHORUS metadata using OMOP format
+7. Identify metadata not covered by CHORUS that would be relevant
+8. Data deidentification and cross-walk to PHI
+9. Data quality review (e.g., data missingness)
+10. Upload imaging data to the CHoRUS cloud
+11. Upload all data tables and metadata files to your site-specific cloud enclave within the CHoRUS cloud environment.
+
+### Imaging Metadata OMOP CDM
+
+Files will be organized hierarchically by patient, modality, study\_UID, and, series\_UID.
+
+- Data Summary by Modality**
+
+We are asking for a summary of radiology occurrence count and radiology image count by imaging modality (e.g., CT, MR). Within those groups, we would like to have a breakdown of manufacturers and body part imaged (e.g., brain, chest).
+
+**Table X. Radiology Occurrence**
+
+|Field|Required|Data type|Description||
+| :- | :- | :- | :- | :- |
+|image\_occurrence\_id (PK)|Yes|integer |The unique key is given to an imaging study record (often referred to as the accession number or imaging order number)  ||
+|person\_id (FK)|Yes|integer|The person\_id of the Person for whom the procedure is recorded. This may be a system-generated code.||
+|procedure\_occurrence\_id (FK)|Yes|integer |The unique key is given to a procedure record for a person. Link to the Procedure\_occurrence table.||
+|visit\_occurrence\_id (FK)|No|integer|The unique key is given to the visit record for a person. Link to the Visit\_occurrence table.||
+|anatomic\_site\_concept\_id (FK)|No|integer|Anatomical location of the imaging procedure by the medical acquisition device (gross anatomy). It maps the ANATOMIC\_SITE\_SOURCE\_VALUE to a Standard Concept in the Spec Anatomic Site domain. This should be coded at the lowest level of granularity.||
+|wadors\_uri |No |varchar (max) |A Web Access to DICOM Objects via Restful Web Services Uniform Resource Identifier on study level.||
+|local\_path|Yes|varchar (max)|Universal Naming Convention (UNC) path to the folder containing the image object file access via a storage block access protocol. (e.g., \\Server\Directory)||
+|image\_occurrence\_date |Yes|date |The date the imaging procedure occurred. ||
+|image\_study\_UID |Yes|varchar (250) |DICOM Study UID ||
+|image\_series\_UID |Yes |varchar (250) |DICOM Series UID||
+|modality |Yes |varchar (250) |DICOM-defined value (e.g., US, CT, MR, PT, DR, CR, NM)||
+
+**Table X. Radiology Image**
+
+|Field|Required|Data type|Description|
+| :- | :- | :- | :- |
+|image\_feature\_id (PK)|Yes |integer |The unique key is given to an imaging feature. |
+|person\_id (FK)|Yes |integer|<p>The person\_id of the Person table for whom the </p><p>the procedure is recorded. This may be a system-generated code.</p>|
+|image\_occurrence\_id (FK)|Yes|integer|The unique key of the Image\_occurrence table.|
+|table\_concept\_id|Yes|integer|The concept\_id of the domain table that feature is stored in Measurement, Observation, etc. This concept should be used with the table\_row\_id.|
+|table\_row\_id|Yes|integer|The row\_id of the domain table that feature is stored.|
+|image\_feature\_concept\_id|Yes|integer|Concept\_id of standard vocabulary—often a LOINC or RadLex of image features|
+|image\_feature\_type\_concept\_id|Yes|integer |<p>This field can be used to determine the provenance of the imaging features (e.g., DICOM SR, algorithms used on </p><p>images)</p>|
+|image\_finding\_concept\_id|No|integer|<p>RadLex or other terms of the groupings of image </p><p>feature (e.g., nodule)</p>|
+|image\_finding\_num|No|integer |Integer for linking related image features. It should not be interpreted as an order of clinical relevance.|
+|anatomic\_site\_concept\_id|No|integer |This is the site on the body where the feature was found. It maps the ANATOMIC\_SITE\_SOURCE\_VALUE to a Standard Concept in the Spec Anatomic Site domain.|
+|alg\_system |No |<p>varchar </p><p>(max) </p>|<p>URI of the algorithm that extracted features, </p><p>including version information</p>|
+|alg\_datetime |No |datetime |The date and time of the algorithm processing.|

@@ -107,9 +107,9 @@ const config = {
         items: [
           {
             type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            sidebarId: 'sopSidebar',
             position: 'left',
-            label: 'Tutorial',
+            label: 'SOPs',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
@@ -117,7 +117,7 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://github.com/chorus-ai/data_acq_SOP',
+            href: 'https://github.com/chorus-ai/Chorus_SOP',
             label: 'GitHub',
             position: 'right',
           },
@@ -160,10 +160,10 @@ const config = {
         ],
         copyright: `Copyright © ${new Date().getFullYear()} Chorus-AI, Inc. Built with Docusaurus.`,
       },
-      announcementBar: {
-        id: 'supportus', // Any value that will identify this message.
-        content: "😏 The document is in development... 🤟"
-      },
+      // announcementBar: {
+      //   id: 'supportus', // Any value that will identify this message.
+      //   content: "😏 The document is in development... 🤟"
+      // },
       docs: {
         sidebar: {
           hideable: true,
