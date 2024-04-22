@@ -1,0 +1,8 @@
+{
+  "label": "Privacy",
+  "position": 10,
+  "link": {
+    "type": "generated-index",
+    "description": "Learn about best practices related to privacy"
+  }
+}

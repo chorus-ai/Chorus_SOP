@@ -2,15 +2,26 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# SOP Intro
 
-The online document is built up to provide an user-friendly SOP for CHoRUS Data Acquisiition module. 
-The SOP will provide detailed instructions in:
-* OMOP Mapping 
-* Data Collection
-* Data Quality Assessment 
-* Data Serving
+This online resource was constructed to provide a central SOP interface for members of the B2AI CHoRUS DGP. 
 
-All documents will be edited and reviewed by CHoRUS Data Acquisition team.
+The SOP documents provide detailed instructions with regard to:
 
-If you have any good ideas or would love to share your fantastic tools, please feel free to use [Blog](/blog) section to share your experience. 
+- Structured EHR data
+- Flowsheet data
+- Waveform data
+- Imaging data
+- Data Requests
+- Freetext data
+- Data update
+- Data quality
+- Central Processing
+- Privacy
+- Common data elements
+- Safe Harboring Approach
+- OMOP Mapping
+
+All documents will be edited, reviewed, and validated by CHoRUS.
+
+If you have any good ideas or would love to share your fantastic tools, please feel free to use [Blog](/blog) section to contribute.

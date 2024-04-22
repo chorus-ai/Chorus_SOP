@@ -1,0 +1,52 @@
+---
+title: Waveform Data
+id: Waveform Data
+description:  An SOP for handling various waveform signals
+---
+
+
+**Purpose**
+
+This document is for data contributing sites to better understand CHoRUS obligations with respect to Waveform Data
+
+
+## **Waveform data**
+
+
+**Overview**
+
+![](BROAD_sop.png)
+
+***Figure 1. Generalized Device Data Acquisition Process***
+
+Device data acquisition, standardization, and ingestion into a Bridge2AI OMOP Data Warehouse can consist of two types of data: a) High frequency signals like multi-lead electrocardiogram, EEG, arterial blood pressure, respiratory, and other vitals commonly produced by patient monitors, ventilators, and other physiological signal sensing devices at the patient bedside (reported at greater than 1 sample per second); and b) Low frequency data include trending physiological measurements, EHR captured/documented measurements (hourly blood pressure readings, alarms, alarm settings, etc).  High frequencies are often captured through dedicated device gateway integration solutions through direct serial or networked data capture. Low frequency device data are more often captured through HL7 transactions and manual EHR documentation by clinicians and nursing staff.
+
+- Device Meta Data
+
+Two sets of device meta data will be needed from participating B2AI data acquisition sites representing high frequency data and low frequency data. For high frequency data, meta data may include the following:
+
+**Table 1. High Frequency Device Meta Data (per signal to be contributed)**
+
+|Meta Data|Description|Examples|Notes|
+| :- | :- | :- | :- |
+|Label|Physiological signal label available for capture through serial or network connections. |“II ECG”, “respiratory rate”, “heart rate”, etc|Labels are not assumed to comply with any particular standard|
+|Source|Device identifier – manufacturer, model, department, floor, bed. UDI if available|Phillips, Drager MediBus, AviaA, Respironics Esprit V60|Source data can facilitate linking of device to EHR records|
+|Sampling Rate|Sampling frequency of the physiological signal|62 sps, 125 sps, 250 sps, 500 sps, 4000 sps|Respiratory, blood pressure, and other low-frequency signals are typically sampled under 250 sps. EEG, ECG, ABP, and other signals in which morphology analysis is common are sampled at 125 sps or greater.|
+|Amplitude Resolution|Amplitude resolution|In terms of analog to digital converter (A/D) units, uV, mV, mmHg, beats per minute, breaths per minute|If A/D units, additional A/D meta data will be required to convert A/D units to standard clinical units|
+|Baseline|Signal baseline value (virtual zero)|In terms of analog to digital converter (A/D) units|Normalized signals are adjusted to absolute zero in standard units|
+|Amplitude Offset|Signal offset value|In terms of analog to digital converter (A/D) units|Normalized signals are adjusted to absolute zero in standard units|
+|Gain|A/D Scale factor|Integer or double value|Additional A/D gain applied to the raw signal – used to convert A/D to standard units of measure|
+|Length|Monitoring length|Ms, seconds, minutes, hours|Total monitoring length. Data may include periods of leads off, artifacts, etc.|
+|Quality|Overall signal quality|Low, Moderate, High|Site algorithm or methods used to assess and label signal quality. Quality may be associated with time periods.|
+|Annotations|Indicate whether signal annotations are provided|Beat location, artifact location, quality annotations|May be generated at the data staging (Fig 1)|
+
+For low frequency data, meta data may be derived from the manufacturer documentation. Manufacturers of physiological medical devices provide a data dictionary or specification document listing the signals and features reported by the device transmitted within HL7 transactions. Data dictionary labels are often used to label OBX segments within a HL7 transaction. Data capture and mapping to OMOP can use these device data dictionaries to form the Feature to OMOP ETL mapping document (see example MIMIC-IV – Appendix A; Phillips iX – Appendix B).
+
+**Table 2. Low Frequency Device Meta Data (per signal to be contributed)**
+
+|Meta Data|Description|Examples|Notes|
+| :- | :- | :- | :- |
+|Label|Physiological signal label available for capture through serial or network connections. |“II ECG”, “respiratory rate”, “heart rate”, “Alarm x”|Labels are not assumed to comply with any particular standard|
+|Source|Device identifier – manufacturer, model, department, floor, bed. UDI if available|Phillips, Drager MediBus, AviaA, Respironics Esprit V60|Source data can facilitate linking of device to EHR records|
+|Sampling Rate|Sampling frequency of the feature|Per min, per hour, per day, date/time|If not continuous, sampling rate will not apply and measurements/observations will use the HL7 date/time reported in the OBX segment.|
+|Amplitude Resolution|Amplitude resolution|uV, mV, mmHg, beats per minute, breaths per minute|Assumes standard clinical units|

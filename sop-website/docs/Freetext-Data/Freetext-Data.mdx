@@ -1,0 +1,48 @@
+---
+title: Freetext Data
+id: Freetext Data
+description:  An SOP for processing freetext information in clinical notes
+---
+
+
+**Purpose**
+
+This document is for data contributing sites to better understand CHoRUS obligations with respect to Unstructured EHR Data
+
+
+## **Unstructured EHR data**
+
+As specified in the exploratory calls with sites, CHoRUS is requesting a tokenized version of the notes, not the notes or reports themselves. Here “tokens” refer to clinical entities (e.g., Diagnoses, Procedures, Medications, etc.) mentioned in text along with associated metadata (e.g., the Document ID, OMOP Athena Concept Code associated with the clinical entity, negation, certainty)
+
+- Final deliverable
+
+The expected final product is the table NOTE\_NLP of the OMOP5.4 Common Data Model.
+The specific output should follow the [following standard](http://ohdsi.github.io/CommonDataModel/cdm54.html#NOTE_NLP).
+
+Please note, that although CHoRUS is not requiring actual notes, only the NOTE table includes linkage information to the PERSON table. Thus, sites also have to produce a NOTE table including, at a minimum, the `person\_id` and `note\_id` fields so the NOTE\_NLP table can be appropriately linked to the PERSON table.
+
+- Initial extraction
+
+The initial extraction will be site dependent but will follow the general process. A list of patients will be generated from a structured EHR data. To each admission corresponds admission and discharge dates. The initial step is to request/perform an extraction of all reports and notes generated during the visit corresponding to these dates. The type of notes/reports to generate pertain
+
+|Tier 1 (suggested OMOP concept-ID; LOINC code)|Tier 2|
+| :- | :- |
+|**Notes:**<p>- History and Physical/admission (3030023; 34117-2)</p><p>- Progress notes (3000735; 11506-3)</p><p>- Medical Consults\* (3020785;11488-4)</p><p>- OR, procedure reports (3018897;28570-0)</p><p>- Discharge summaries (3020091; 18842-5)</p><p></p>**Reports:**<p>- Radiology\* (40771183; 68604-8 – 45879817; LA16679-5)</p><p>- Cardiac echo\*\* (3018897; 28570-0)</p><p>- EEG\*\* (3018897; 28570-0)</p><p>- Surgical pathology/Cytology (3031451; 34819-3)</p><p></p>|**Notes:**<p>- Nursing assessments</p><p>- Social work</p><p>- Behavioral health</p><p>- PT</p><p>- OT</p><p>- Nutrition</p><p>- Pharmacy</p><p>- Wound care</p><p></p>**Reports:**<p>- PFTs</p><p>- EMGs</p><p>- Other</p><p></p><p></p>|
+
+> Finer concept\_id are defined in LOINC OMOP regarding consults from specific services. Feel free to use these finer concept\_id
+
+ ***No specific OMOP concept\_id’s exist for these types of reports. Your site might have adopted a different concept\_id. Please share through discussions***
+
+- De-identification (Optional)
+
+The second step in the process is to produce a de-identified version of the UEHR data. The necessity of this step is dictated by local data governance rules and is therefore site-dependent. The process of de-identification may be transparent to investigators, as institutional data scientist may already provide a de-identified version of all UEHR. More likely though, it will be the investigators task to produce this de-identified version. De-identification is the process of producing a version of the note devoid of PHI. If elements of dates are preserved, the result is a “limited” dataset. If elements of dates are not preserved, but dates are time shifted, the resulting dataset is “safe harbor”. This is a general definition of those terms and relevant to all data, not only UEHR.
+
+Investigators are encouraged to find out whether there is an institution-favored method of de-identifying text, or an institutional policy pertaining to verify the result of text de-identification. We note that CHoRUS is not requesting de-identified text. Free software to de-identify text is available. Examples include [NLM Scrubber](https://lhncbc.nlm.nih.gov/scrubber/), [UCSF’s Philter ](https://github.com/BCHSI/philter-ucsf), and [Microsoft’s Presidio](https://microsoft.github.io/presidio/). As these approaches are computational/algorithmic, additional evaluation is required. Such an evaluation would need gold standard annotation of a subset of notes (the i2b2 de-identification task would be a good reference for such an annotation task) and comparison of results. In the absence of a specific institutional policy, it is generally recommended that at least 25 notes of each type be manually reviewed to verify the results of the de-identification method.
+
+At this stage, it is important to become familiar with the OMOP NOTE  and NOTE\_NLP table structures. Every note de-identified will require a unique “note\_id” , to be linked with a date, person and an occurrence, as well as a note type and possibly subtypes, at the very least. Thus, in the process of de-identification, enough information must be preserved to link each note with the other data domains.
+
+Importantly, the basic contract data generation sites executed with CHoRUS specified that a limited dataset, with elements of dates preserved, should be delivered to CHoRUS. However, many institutions will not allow this to happen. Please, communicate with CHoRUS whether your contract specifies, and you will be delivering a limited or safe harbor dataset. See additional information on this topic under the structured EHR rubric.
+
+- Producing standard concepts (tokens) from notes – the OHNLP pipeline
+
+The ultimate UEHR data deliverable to CHoRUS is an OMOP NOTE\_NLP table, which, for each note\_id, will produce possible a large number of concepts. There is an excellent series of office hours put forth by Andrew Wen on the installation or the [OHNLP software](https://github.com/chorus-ai/OHNLP4CHoRUS), and verification of its performance. It is strongly encouraged that you carefully review these lectures, as well as provided examples.
