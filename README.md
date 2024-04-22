@@ -26,7 +26,7 @@ The following SOPs are under development:
 | Privacy | Xioqian | https://github.com/chorus-ai/Chorus_SOP/issues/12 |
 | Common data elements | Tezcan | https://github.com/chorus-ai/Chorus_SOP/issues/13 |
 | Safe Harboring Approach | Xioqian | https://github.com/chorus-ai/Chorus_SOP/issues/14 |
-| OMOP Mapping | Polina | https://github.com/chorus-ai/Chorus_SOP/issues/15 |
+| OMOP Mapping | Polina | https://github.com/chorus-ai/Chorus_SOP/issues/17 |
 
 ## How to contribute to the SOP documentation
 
