@@ -10,7 +10,7 @@ The purpose of this Standard Operating Procedure (SOP) is to specify the expecte
 
 ## Upload schedule
 
-Upload of a pilot dataset of a minimum of 25 patients is required from each site July 15, 2023. This specific request is detailed is previous comuunication and also {here}. The first upload of 25% of patients contributed to the CHoRUS dataset is due December 30th, 2023. The second, third and last uploads will be due on September 30th of 2024, 2025, and 2026.
+Upload of a pilot dataset of a minimum of 25 patients is required from each site July 15, 2023. This specific request is detailed is previous comuunication. The first upload of 25% of patients contributed to the CHoRUS dataset is due December 30th, 2023. The second, third and last uploads will be due on September 30th of 2024, 2025, and 2026.
 
 ## Rationale
 
@@ -43,7 +43,7 @@ This folder should include structured and unstructured 13 OMOP clinical data fil
 
 ### The Waveforms folder
 
-According to usage described in the DA SOPs {links}, Waveform data refers to all data acquired from bedside monitors and devices, including alarms, numerics data obtain at regular of irregular intervals, and high-frequency (>1 Hz) waveform data such as digitized EKG tracings.
+According to usage described in the DA SOPs, Waveform data refers to all data acquired from bedside monitors and devices, including alarms, numerics data obtain at regular of irregular intervals, and high-frequency (>1 Hz) waveform data such as digitized EKG tracings.
 
 This folder will include a single source(h5, wfdb, adibin) file collating all waveform data, inclusive of its metadata, in removed PHI form.
 
