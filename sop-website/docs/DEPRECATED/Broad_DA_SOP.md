@@ -1,7 +1,7 @@
 ﻿---
-title: Broad SOP for data preparation
+title: Broad SOP for data preparation [DEPRECATED]
 id: Broad SOP
-description:  A broad SOP for data uploading
+description:  A now-deprecated broad SOP
 ---
 
 # **THIS DOCUMENT IS DEPRECATED AND IS FOR DRAFTING USE ONLY**
