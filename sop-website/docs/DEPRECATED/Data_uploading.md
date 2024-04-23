@@ -1,3 +1,10 @@
+---
+title: OLD Data Uploading SOP [DEPRECATED]
+id: OLD Data Uploading SOP
+description:  A now-deprecated SOP for uploading data to the Azure cloud
+---
+
+
 # **THIS DOCUMENT IS DEPRECATED AND IS FOR DRAFTING USE ONLY**
 
 ## Uploading to Central Data Warehouse
