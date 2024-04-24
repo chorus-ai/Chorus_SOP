@@ -37,7 +37,7 @@ Practically, this means you will need to:
   - If you're not familiar with GitHub, the easiest route is to install [GitHub Desktop](https://desktop.github.com/), login, and clone the repository via url with: https://github.com/chorus-ai/Chorus_SOP.git
   - If you are familiar with GitHub, you can clone the repo via the [GitHub CLI](https://cli.github.com/) through `git clone https://github.com/chorus-ai/Chorus_SOP.git`
 3. Create a new branch in the repository, prefixed with the word `review` (e.g. `review-omop-mapping`)
-4. On that branch, add your SOP into the relevant SOP category subdirectory in the docs directory (see the [OMOP Mapping PR](https://github.com/chorus-ai/Chorus_SOP/pull/19) as an example)
+4. On that branch, add your SOP - using the [**provided template**](https://github.com/chorus-ai/Chorus_SOP/blob/main/sop-website/docs/TEMPLATE/SOP-Template.mdx) - into the relevant SOP category subdirectory in the docs directory (see the [OMOP Mapping PR](https://github.com/chorus-ai/Chorus_SOP/pull/19) as an example)
 5. Push your new branch from your local directory to origin, and open a Pull Request where you describe any relevant details or context to be reviewed
 6. Once reviewed and approved by other CHoRUS members, you can merge your branch into the main branch, where it will then be automatically built into the webpage
 
