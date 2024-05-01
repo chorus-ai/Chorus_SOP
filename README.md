@@ -25,7 +25,7 @@ The following SOPs are under development:
 | Privacy | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/12 |
 | Common data elements | @ucabhkw | https://github.com/chorus-ai/Chorus_SOP/issues/13 |
 | Safe Harboring Approach | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/14 |
-| OMOP Mapping | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/17 |
+| Clinical Validation of Mappings | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/17 |
 
 ## How to contribute to the SOP documentation
 
