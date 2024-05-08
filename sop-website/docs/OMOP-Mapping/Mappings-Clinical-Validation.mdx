@@ -22,15 +22,24 @@ Grant permissions for the GitHub repository and the Google Drive directory to th
 ## STEP 3: COMPARE SOURCE AND TARGET
 The Clinical Expert compares the semantic content of two fields: "source_description" and "target_concept_name". Their evaluation will determine the extent to which these fields convey the same clinical concept, despite potential differences in terminology, syntax, or abbreviation.
 ### Scenarios for Decision Making
-1) **Equivalent Concepts and Correct Mapping**: If the expert concludes that both fields articulate the same clinical idea, despite variations in wording such as synonyms, acronyms, or word order, they should enter "1" in the "decision" field.
+1) **Equivalent Concepts and Correct Mapping**: If the expert concludes that both fields articulate the same clinical idea to the same clinical meaning, despite variations in wording such as synonyms, acronyms, or word order, they should enter "1" in the "decision" field.
 2) **Divergent Concepts and Incorrect Mapping**: If the expert finds that the fields convey different meanings, suggesting an erroneous mapping, they should enter "2" in the "decision" field.
 3) **Introduction of New Mapping**: If the expert proposes a new mapping, they should add it by inserting a new row(s) accordingly.
 
 ## STEP 4: VALIDATE MAPPING
-The Clinical Expert documents their decision in designated fields: 'review_date' captures the date of the review, 'reviewer_name' records the expert’s name, 'reviewer_comment' includes any additional notes, and 'orcid_id' provides the expert's unique identifier.
+The Clinical Expert documents his/her/their decision in designated fields: 
+| Field Name | Description | Example |
+|------------------|------------------|------------------|
+| `review_date` | Captures the date of the review | 03-25-2024 |
+| `reviewer_name` | Records the expert’s name | Edward Hong |
+| `reviewer_comment` | Includes any additional notes | While cardiac sound is a rarely used term, the two concepts can be interchangeable semantically |
+| `orcid_id` | Provides the expert's unique identifier, if applicable | N/A |
+
 
 ## **STEP 5: DISTRIBUTE REVIEW RESULTS**
 The expert consolidates and sends back the scrutinized review results using the preferred digital method: email, [GitHub](https://github.com/chorus-ai/chorus-mapping-stage), or [Google Drive](https://drive.google.com/drive/u/4/folders/1R-8PQ8PUV1aSQyDGQ0O4ltP11Ycco6lM).
 
 ## **STEP 6: PARTICIPATE IN DISCUSSION AND TRACK CHANGES**
 The expert actively engages in discussions regarding their findings and keeps track of any changes made in response to their review.
+
+To assess baseline agreement among experts regarding questionable mappings, the second phase of clinical validation will address terms that initially did not receive a clear verdict. This will be done through double-blind validation.
