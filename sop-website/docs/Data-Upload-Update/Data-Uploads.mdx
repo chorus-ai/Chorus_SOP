@@ -1,0 +1,90 @@
+---
+title: Uploading to Central Data Warehouse
+id: Uploading to Central Data Warehouse
+description:  Uploading to Central Data Warehouse
+---
+
+# Purpose
+
+The motivation of this SOP is to ultimately support versioning of the site submitted data as well as the central data, for auditing, provenance, and reproducibility.   To provide such versioning capability, it is necessary to track the addition, deletion, and modification of the data at individual subject and individual file granularity.
+The purpose of this Standard Operating Procedure (SOP) is to specify the expected processes for managing site data, uploading to the central CHoRUS cloud environment, the change-tracking process, and the submission process. This SOP describes
+1.	The site-local data structure
+2.	The site-local data submission package preparation process
+3.	The central data structure
+The SOP aims to simplify the process for submission package preparation and the actual submission.  A set of tools will be provided as reference implementation of this process, and the SOP will describe the processes in terms of application of these tools.
+
+## Related SOPs:
+- This SOP is related to procedures for site data preparation (ETL, transformation, deidentification, etc).  This SOP assumes data preparation has been completed and new data is ready to be submitted.
+- This SOP is related to the SOPs for Central Staging data validation and Central Data Merging.  This SOP does not include procedures from the central data integration SOP.
+
+
+# Rationale
+Sites will continually accrue and update site-local data.  Each scheduled submission will contain
+1.	New subjects
+2.	Existing subjects with additional observations, as OMOP observations, NLP extracts of clinical notes, and additional images and waveforms.
+3.	Corrections/replacements of existing data including OMOP observations, NLP extracts of clinical notes, images, and waveforms for individual subjects
+4.	Corrections/replacements of existing data including OMOP observations, NLP extracts of clinical notes, images, and waveforms for previous submission due to coding changes, deidentification process changes, new NLP algorithms, etc.
+
+The objective is to be able to track the changes when submitting.  The SOP is guided by the following objectives:
+- Streamline the data submission process through automation
+- Reduce the data submission package size
+To reduce the amount of data to be transmitted, this SOP  focuses on identification of changed data subset and submit only those that have been added, modified, or deleted.  This applies to NLP extracts of clinical nodes, images, and waveforms.   As OMOP clinical tables are relatively small in size, and to simplify the data validation and merging process, the OMOP clinical tables will be submitted in their entirety in each submission.
+The submitted data will be stored in the Central Staging area, which will maintain all previously submitted files, grouped by submission time stamp.
+
+# Tooling and Automation
+
+The quality check, submission package preparation, and submission tools are being implemented in the [chorus-extract-upload](https://github.com/chorus-ai/chorus-extract-upload) repository.   The initial data submission can occur before the tooling is formally released, in which case it should follow the “Interim Data Upload Procedure” instruction outlined below.
+
+## Expected File Organization
+
+### Site-Local Folder Structure
+
+The site-local Folder Structure remains the same as the original data upload request, with the modification that instead of 13 OMOP files for each patient, the OMOP files are aggregated for all patients.  The OMOP files should be a snapshot of current OMOP tables with data on all active CHoRUS subjects.
+
+The tooling for data extract creation and upload will reference the organizational structure below for identifying the changed file sets:
+
+<img src={"PLACEHOLDER"} alt="Local Data Organization" />
+
+This structure should be maintained for all subsequent submissions.  All additions, deletions, and modifications should be made in this structure.   The OMOP table files should be the most up-to-date version.  Sites may separately maintain prior versions of OMOP files separately at their own discretion (we strongly recommend doing so).
+> Note:
+> 1. Storage may be on a local-filesystem, or cloud based.
+> 2. We are considering alternative file structure organizations with an eye toward minimizing storage requirements for each site, or to help preserve local versions.
+
+### Central Staging Folder Structure
+The submitted data will be stored in the central staging area in the following structure.  This structure will be enforced by the tooling, and is shown here for context.
+
+<img src={"PLACEHOLDER"} alt="Central Data Organization" />
+
+## Interim Data Upload Procedure
+
+As the tooling and scripts are being developed, the Data Update SOP Working Group is recommending the following interim procedure for the initial data upload and update.
+1.	The data should be organized into the folder structure as show in the “Site-Local Folder Structure” section.
+2.	On the Azure Central Staging area, create a folder named by the submission date under the folder for the DGS.
+3a.	If your site **IS NOT** hosting data on Azure, please use the [Azure command line interface](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) (azurecli) to upload the data to the Azure Central Staging blob storage in the dated submission folder
+3b. If your site **IS** hosting data on Azure, you can share it by setting up an [Azure Data Share](https://learn.microsoft.com/en-us/azure/data-share/overview)
+
+## Long-Term Data Upload Procedure
+
+> [!WARNING]
+> The content below is still a work in progress
+
+The following procedure will perform data quality and privacy check, index and identify file change set, and initiate submission to the central staging area.
+
+This procedure depends on work being done in the [chorus-extract-upload](https://github.com/chorus-ai/chorus-extract-upload) repository.
+
+1. Environment Set Up:
+  -	Establish python environment for CHoRUS (could also be Docker container)
+  -	Install the packages for checking quality, evaluating PHI, and uploading data  ([chorus-extract-upload](https://github.com/chorus-ai/chorus-extract-upload))
+  -	Verify installation.  (what to run…)
+2. Site-local data quality check and privacy check
+  -	Run _______ for data quality check
+  -	Run _______ for data privacy check
+3.	Site-local Data Submission
+  -	Run _______ to update the file index.  If this is the initial run, it will generate a index in SQLite format
+  -	If data is on local file system, go to the DGS directory, and run _____.
+  -	If data is on cloud, run ______ with the cloud storage URL.
+  -	Do not remove or directly modify the SQLite file generated by the script.
+  -	Run _______ to generate a difference table.  This will be an SQLite file.
+  -	Run _______ with the difference table file as parameter.  This will use azcli to submit data to staging based on the “Central Staging Folder Structure”.  This script will also verify the submission.
+
+
