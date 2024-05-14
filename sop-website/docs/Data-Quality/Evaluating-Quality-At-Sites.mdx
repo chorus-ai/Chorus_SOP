@@ -1,0 +1,148 @@
+---
+title: Local Data Quality
+id: Local Data Quality
+description:  SOP for implementing iterative updates to ETL logic at sites based on quality checks
+---
+
+# Awaiting Approval
+# Standard Operating Protocol for Investigating Data Quality at Sites
+
+# Purpose
+
+This SOP outlines a step-by-step approach for evaluating local data quality at sites, submitting quality overviews to the central location, and reviewing and updating an ETL implementation accordingly.
+
+Note that the workflow below can be followed without submitting full data extracts to the central location. The only interaction with the central cloud that is necessary is the submission of the Ares Index files, which contain aggregate counts of concepts and data quality overviews.
+
+We expect that this iterative workflow will be executed more frequently than the full data extracts will be submitted.
+
+<img src={"PLACEHOLDER PRIOR TO UPLOAD"} alt="Local Site QC Workflow" />
+
+---
+## STEP 1: EXECUTE QC TOOLS LOCALLY
+
+The first step in evaluating the quality and characteristics of your site's data locally is launching the QC tools against those data. There are three main tools we're focused on within CHoRUS, and that we plan to update in order to tailor to CHoRUS-specific needs as those needs become better defined.
+
+These tools are:
+
+- [Achilles](https://github.com/OHDSI/Achilles)
+  - Achilles executes a variety of characterization-oriented queries against an OMOP dataset to extract patient counts per concept, prevalence over time, etc.
+- [Data Quality Dashboard - DQD](https://github.com/OHDSI/DataQualityDashboard)
+  - DQD runs a variety of quality-oriented queries against an OMOP dataset to evaluate those data with regard to their completeness, conformance, and plausibility
+- [AresIndexer](https://github.com/OHDSI/AresIndexer)
+  - The AresIndexer augments output from the above tools to prepare it for visualization in the [Ares](https://github.com/OHDSI/AresIndexer) web application
+
+In order to execute these processes locally, you can either:
+
+**(A)** configure a local R environment and run the relevant packages against your database
+
+- Head to the [OHDSI Hades](https://ohdsi.github.io/Hades/rSetup.html) documentation page and follow the R-setup instructions for your operating system
+- Install the three packages and their associated dependencies above using the `remotes` package
+  - e.g. `remotes::install_github("/OHDSI/DataQualityDashboard")`
+- Connect to your database and execute the packages in the following order
+  - `Achilles::achilles(...)`
+  - `DataQualityDashboard::executeDqChecks(...)`
+  - `Achilles::exportToAres(...)`
+  - `Achilles::performTemporalCharacterization(...)`
+    - Note that this function is not essential and may fail if you don't have concepts that meet its time constraints (36 months)
+  - `AresIndexer::augmentConceptFiles(...)`
+- Note that an example of the above process flow can be found in the [chorus-container-apps repo](https://github.com/chorus-ai/chorus-container-apps/blob/main/etl/src/etl/ares.R)
+- Once you've executed these checks, you should have a data index directory with the [following structure](https://github.com/chorus-ai/StandardsModule/discussions/86#discussioncomment-8411235)
+
+**(B)** use the existing `chorus-etl` Docker image that has all components and dependencies installed and available
+
+- pull the public `chorus-etl` Docker image
+  - `docker pull ghcr.io/chorus-ai/chorus-etl:main`
+- launch it either locally or in the cloud
+  - if on local machine:
+    - run the command `docker run -it --entrypoint /bin/bash --name chorus-etl -v /<some_local_dir>:/ares_output ghcr.io/chorus-ai/chorus-etl:main`
+      - This command launches a container based on the `chorus-etl` image and places you at a command line console for that container
+    - install a command-line editor like nano `> apt update && apt install nano`
+    - update the `ares.R` file in the container using the editor above to reference your database connection parameters
+      - you will need to set the `aresDataRoot` parameter to `/ares_output`, which you mounted in the command above
+    - launch the file above `Rscript /opt/etl/src/etl/ares.R <args if desired>`
+  - if in data site's cloud:
+    - send an email to [Jared](mailto:jared.houghtaling@tuftsmedicine.org) to discuss details
+- Once the checks have executed successfully, you should be able to see a dated data index in `<some_local_dir>` that you configured in the Docker command above
+
+
+### Relevant Resources
+
+*OFFICE HOURS*
+
+- [Achilles Output](https://drive.google.com/drive/folders/1b2EhWZ08OvEjFj5A0uCAbR0SsbQan7e6?usp=drive_link)
+- [DQD Output](https://drive.google.com/drive/folders/134ZQEQEOQCbjjFRHqHoxI-gDdsZJ9Utl?usp=drive_link)
+- [DQD Overview](https://drive.google.com/drive/folders/16Z8ssUC0kolGJzjWqe2jd5ONFVef2neL?usp=drive_link)
+- [Ares Overview](https://drive.google.com/drive/folders/19gv_n-WFqoFAM-1MHNpRa5heEUbrjoOg?usp=drive_link)
+- [Contributing Ares Results Pt 1](https://drive.google.com/drive/folders/1LAmtp7kygnqr1vuGvKS3wmTvbn5gmNZ_?usp=drive_link)
+- [Constructing Ares Index for Upload](https://drive.google.com/file/d/1VTgdQYw5IyLvV2wmT9Zv4u-0O7pH5bGB/view?usp=drive_link)
+
+*OTHERS*
+
+- [DQD Discussion](https://github.com/chorus-ai/StandardsModule/discussions/86)
+
+## STEP 2: ACCESS UPLOAD PORTAL AND SUBMIT RELEASE INDEX
+
+One member from each Data Generating Site (DGS) will receive an external user access credential to the MGH Azure cloud environment. With this credential, you will be able to access the external cloud portal to upload results and view ares.
+
+The DGS portal (scripted [here](https://github.com/chorus-ai/chorus-container-apps/tree/main/www-dgs) and built into [`chorus-www-dgs`](https://github.com/chorus-ai/chorus-container-apps/pkgs/container/chorus-www-dgs)) will have links to two locations:
+
+- An Ares web application instance with the following sources:
+  - Ingested Data Releases for Each DGS + MERGE
+  - Approved Data Releases for Each DGS + MERGE
+  - Remote Data Releases for Each DGS
+
+- An AresIndex upload portal, where you can upload a compressed (.zip) copy of your release index
+  - e.g. `20240203.zip`
+
+**IF** you would like to deploy the Ares web application locally for tracking data quality and characterization at your site, we have built a [Docker image](https://github.com/chorus-ai/chorus-container-apps/pkgs/container/chorus-ares) and provided [documentation](https://github.com/chorus-ai/chorus-container-apps/blob/main/ares/README.md) to get you started.
+
+### Relevant Resources
+
+*OFFICE HOURS*
+
+- [Deploy Ares Web App Locally](https://drive.google.com/file/d/13K-AiFgHVMRbLO5pvONdvsPg7a382WNo/view?usp=drive_link)
+- *A Standards office hour session walking through this upload workflow is planned*
+
+
+## STEP 3: REVIEW RECENTLY SUBMITTED RELEASE(S) IN ARES
+
+As mentioned in STEP 2, a user from each DGS will have access to the external Ares portal. Here, that user will be able to review Ares results from their site and compare those results to other sites within the network.
+
+Note that each DGS will appear three separate times in this Ares view:
+1. Releases that have been ingested in the cloud but not approved
+2. Releases that have been approved for integration into the CHoRUS analytics enclave
+3. Releases that describe the state of your CHoRUS data locally (created by you in STEP 1)
+
+In your review, it's important to investigate and understand any issues in the data quality tab for your particular source release, and then link those issues with potential logic and/or mapping updates in a future ETL version.
+
+### Relevant Resources
+
+*OFFICE HOURS*
+
+- [Review Ares Results to Evaluate for Data Challenge](https://drive.google.com/file/d/1MTzRHX0whhjGNhlB0YqpO7_VBqNEfW1G/view?usp=drive_link)
+- [Use Ares to Update ETL Logic](https://drive.google.com/file/d/1bSiJLrYkvWRILe4HDBP50htg3YiQhF54/view?usp=drive_link)
+
+
+## STEP 4: MEET WITH STANDARDS TEAM TO EVALUATE RESULTS AND DEFINE NEXT STEPS
+
+[Marty Alvarez](mailto:Marta.Alvarez@tuftsmedicine.org) is the point of contact for scheduling one-on-one meetings with the Standards Team. Most DGS have already scheduled and participated in these meetings; we anticipate they will become very useful and targeted once DGS have uploaded data that can be discussed in detail.
+
+These discussions will likely evaluate severity of quality checks, ability of DGS data to support downstream CHoRUS analytics, and priorities for updating the ETL and mappings appropriately.
+
+It could be that a meeting is not necessary and the source release submission represents a data update with no logic changes rather than data stemming from new logic. If so, the DGS can skip STEP 4 and proceed to STEP 5.
+
+## **STEP 5: IMPLEMENT PRIORITIZED UPDATES AND RE-RUN ETL**
+
+Following a meeting and review together with the Standards Team (should that be necessary), each DGS will need to work to implement any necessary changes to the ETL logic, and to update/validate any associated mappings.
+
+This iterative update process will likely be multidisciplinary, requiring input from data engineers, clinicians, informaticists, or ontologists.
+
+The process itself is essential in curating high-quality data extracts and, ultimately, supporting meaningful analytics downstream.
+
+Following updates, the DGS can return to Step 1, re-executing the quality checks and proceeding
+
+### Relevant Resources
+
+*OFFICE HOURS*
+
+- [Use Ares to Update ETL Logic](https://drive.google.com/file/d/1bSiJLrYkvWRILe4HDBP50htg3YiQhF54/view?usp=drive_link)
