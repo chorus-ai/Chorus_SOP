@@ -70,6 +70,7 @@ These registries should contain the following columns:
   - *DATATYPE*: string
 - **trg_file**
   - Name and path of the renamed file to be delivered with your extract, following the [naming convention] defined by the Data Acquisition team
+  - *DATATYPE*: string
 
 The registries that you produce should be delivered as CSV files, along with your extract, inside the **RELEASE** directory.
 
@@ -83,8 +84,8 @@ The registries that you produce should be delivered as CSV files, along with you
 
 > [!WARNING]
 > The **procedure_occurrence_id** field serves a different purpose than the **procedure_concept_id** field.
-> **procedure_occurrence_id** is a unique identifier for a given row in the [PROCEDURE_OCCURRENCE table](https://ohdsi.github.io/CommonDataModel/cdm54.html#procedure_occurrence)
-> **procedure_concept_id** is a [standard concept in the OMOP vocabulary](https://athena.ohdsi.org/search-terms/terms?standardConcept=Standard&page=1&pageSize=15&query=) that denotes a particular medical procedure
+> **procedure_occurrence_id** is a unique identifier for a given row in the [PROCEDURE_OCCURRENCE table](https://ohdsi.github.io/CommonDataModel/cdm54.html#procedure_occurrence), while
+> **procedure_concept_id** is a [standard concept in the OMOP vocabulary](https://athena.ohdsi.org/search-terms/terms?standardConcept=Standard&page=1&pageSize=15&query=) that denotes a particular medical procedure.
 > This distinction is critical in understanding how OMOP entities are created from the two file registries.
 
 After creating the two registries, you should be able to use them directly to create rows in your OMOP PROCEDURE_OCCURRENCE table, [as was done for the MIMIC dataset](https://github.com/chorus-ai/MIMIC/blob/fcb9b22ef13424f04a65e612eaf2ffe1d72485ea/etl/src/etl/mimic.py#L416)
