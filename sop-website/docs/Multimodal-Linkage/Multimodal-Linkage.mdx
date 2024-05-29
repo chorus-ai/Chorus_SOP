@@ -5,9 +5,11 @@ description:  An SOP for general conventions related to linking data between mod
 ---
 
 # Awaiting Approval
-# [PROVISIONAL] Standard Operating Protocol for Investigating Data Quality at Sites
+# [PROVISIONAL] Standard Operating Protocol for Linking Multiple Modes of Data
 
 # Purpose
+
+Each image and waveform file in a CHoRUS data extract should be linked to a record in the EHR data for an associated patient and encounter using OMOP-specific identifiers.
 
 This SOP outlines a step-by-step approach for linking various modes of data together to ensure relational consistency and enable powerful cohort selection and analytical processes downstream.
 
@@ -15,7 +17,7 @@ The sections below describe work that has already been done on the MIMIC synthet
 
 # Scope
 
-This SOP is narrowly focused on linking different modalities of data acquired on the same patient to ensure data integrity. This SOP does not cover any procedures related to management of bundles of related waveform files or imaing files that are all acquired in a single procedure. It does not cover procedures for deidentification by data-shifiting. It does not cover the procedures for submitting data to the cloud. It does not cover any similar data linking activities that occur in the cloud environment after sites submit data.
+This SOP is narrowly focused on linking imaging and waveform data acquired on the same patient to ensure data integrity. This SOP **does not** cover any procedures related to management of bundles of related waveform or imaging files that are all acquired in a single procedure. It **does not** cover procedures for deidentification by data-shifiting or otherwise. It **does not** cover the procedures for submitting data to the cloud. It **does not** cover any similar data linking activities that occur in the cloud environment after sites submit data.
 
 # Audience
 
@@ -32,7 +34,7 @@ This organizational structure has been modified from the original Upload SOP, su
 
 The structure shown in Section A in the diagram above represents the most up-to-date version of the organization in which sites are expected to deliver data.
 
-* Note that the directory labeled 'root' in the 'Release' section can either be a dated release directory (if your site chooses to retain all files in each release in individual dirs) or it could be a naming convention of your choice.
+\* Note that the directory labeled 'root' in the 'Release' section can either be a dated release directory (if your site chooses to retain all files in each release in individual dirs) or it could be a naming convention of your choice.
 
 The [data upload/update SOP] will provide additional details on this directory structure and the creation of an associated upload manifest.
 
@@ -102,7 +104,9 @@ As was mentioned above in **B**, there are several important constraints to main
 3. *procedure_occurrence_id* values should be distinct **PER FILE** and should not overlap with other procedure events in the PROCEDURE_OCCURRENCE table
 4. *procedure_concept_id* values should either be set to **4180938** (Imaging Procedure) for images, or **4141651** (Monitoring Procedure) for waveform files
 5. *procedure_source_value* values should include a concatenated representation of (1) the target file path/name and (2) the group identifier associated with the particular file, should there be one.
-  - You are free to concatenate these values how you prefer, but we ask you document your method and aim for consistency
+    - You are free to concatenate these values how you prefer, but we ask you document your method and aim for consistency
+
+\* Note that the **procedure_type_concept_id** field refers to the provenance of the data. The current vocabulary does not fully support this use case; in the interim, you can use [standard algorithm](https://athena.ohdsi.org/search-terms/terms/32880), but we are investigating the minting of a new term in the **Type Concept** domain that accurately captures these linkage events.
 
 ## D: ANALYTICS INTEGRATION
 
