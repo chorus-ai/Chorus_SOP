@@ -4,3 +4,59 @@ id: Imaging Data
 description:  An SOP for processing medical images
 ---
 
+# Awaiting Approval 
+> Prior to merging an approved SOP, the contributor should change this header from `Awaiting Approval` to `Approved`
+
+# Imaging SOP
+[Version History](https://github.com/chorus-ai/Chorus_SOP/commits/review-imaging/sop-website/docs/Imaging-Data/review-imaging.mdx)
+
+# Purpose
+
+Guidance for Data Acquisition Sites regarding imaging data processing, harmonization, and upload
+
+# Procedures
+
+> Data Preparation
+1. Identify data extraction partners and methods (e.g., CTSI) 
+
+2. Identify the sources of the data (e.g., PACS, site research repository) 
+
+3. Determine which image modalities would need to be extracted, date range, and size 
+
+4. Confirm the type of data format you will receive (e.g., DICOM) 
+
+5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN) => refer to Standards SOP about data linkage
+
+6. Map local relevant metadata with CHORUS metadata using OMOP format 
+
+7. Identify metadata not covered by CHORUS that would be relevant 
+
+8. Data quality review (e.g., data missingness) 
+
+> DICOM Metadata de-identification
+
+9. Identifiable cross walk table creation: maps all original DICOM metadatafields to the deidentification procedure (e.g., replacement, erase, etc) and the new field in the deidentified DICOM, so this can be used as a crosswalk (crosswalk table stays local at site and is not shared)
+
+10. Deidentified DICOM metadata table (for sharing): to enable imaging data querying without loading DICOM data
+
+11. Use CHORUS deidentification tool: 
+
+- CTP set up instructions
+
+12. DICOM deidentification (for sharing): deidentified DICOM files
+
+13. Test deidentified DICOM readability: load file in Horos/Osirix to ensure that DICOM can open
+
+> DICOM Pixel de-identification
+
+- under development
+
+> DICOM defacing
+
+- under development
+
+> Data Upload to Azure
+
+- refer to Azure data upload SOP
+
+# Reference Materials
