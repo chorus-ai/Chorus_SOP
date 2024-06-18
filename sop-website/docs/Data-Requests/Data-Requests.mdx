@@ -3,3 +3,75 @@ title: Data Requests
 id: Data Requests
 description:  An SOP for elements related to data requests
 ---
+
+# Awaiting Approval
+
+# Data Requests
+
+# Purpose
+The purpose of this correspondence is to specify the content, format, and timeline of the data CHoRUS sites should be contributing to this first upload to the CHoRUS data repository.
+
+# Procedures
+**Number of patients**: The count is based on hospital admissions, not on patients. A given patient may therefore contribute to several encounters.  We are requesting the preparation and upload of data from 25% of your total expected contribution to the CHoRUS database.
+
+**Encounter selection**: For this first upload, we are requesting that encounters be sampled randomly from all ICU admissions since January 2019.
+
+**Data to be uploaded**: The data to be uploaded will include structured and unstructured (notes and reports) EHR elements, images and waveforms for the entire duration of an inpatient encounter (hospitalization). The hospitalization, inpatient encounter, or visit occurrence must include one or more admissions to an intensive care unit. OHDSI recommends that the admission correspond to the initial contact with a healthcare system, even if this contact was initiated in a different hospital.
+
+The data elements to be included will be the Tier 1 data elements identified by CHoRUS investigators as of primary significance across all four domains of data [Broad DA SOP](https://chorus-ai.github.io/data_acq_SOP/docs/Data-Uploading/Broad%20SOP/).
+
+1. Structured EHR Data
+    >Structured EHR data should populate all OMOP Clinical Data Tables, except the NOTE, NOTE_NLP, and FACT_RELATIONSHIP  tables. All uploads are expected to be in text format, preferably .csv. Since some text 
+    fields contain commas, we suggest enclosing all text fields within quotes “”, in accordance with .csv standards. The use of a different delimiter, such as bar “|”, is also acceptable. We require sites to run 
+    OHDSI’s Data Quality Dashboard (DQD) and ARES tools locally prior to uploading , to offer a first layer of quality control of site data. Reports from those runs should be uploaded in the main upload folder 
+    (see “Uploading the data” below).
+
+2. Unstructured EHR Data
+    >The ideal upload would be in the form of an OMOP NOTE and NOTE_NLP tables, understanding that we are not requesting actual notes but rather the standard concepts extracted from those notes using the OHNLP 
+    pipeline. Thus, the uploaded version of the NOTE table should have the note_text field left empty or NULL.  We do urge sites to produce and keep a local version of the NLP NOTE table that includes a filled 
+    note_text field.
+
+   >Below are 2 links to assistance with this process:
+    [Google Drive](https://drive.google.com/drive/folders/1bDBSF2pkx50kTyTXmWJYt1Ta6pgwh4HH) is where the recorded lectures and task 1 materials are located.
+    [Backbone Config](https://www.github.com/OHNLP/BackboneConfigurator) -> Releases -> Latest is the download location. The configurator will handle downloading all the other toolkit components for you (so long as you have an 
+    internet connection).
+
+3. Imaging data
+    >The ideal upload would be DICOM-formatted images and the accompanying metadata, which may include useful clinical and technical information. RSNA LOINC codes specifying the type of study would be useful to 
+    include. Imaging studies should have a corresponding entry in the PROCEDURE_OCCURENCE OMOP table. Thus imaging studies can be linked to the rest of the data using the procedure_occurence_id field. Specific 
+    instructions as to the naming of individual image files and the method to include a link between imaging studies PROCEDURE_OCCURENCE will be forthcoming.
+
+4.	Continuous Waveforms
+    >The ideal upload will consist of files in the raw formats we have discussed with you - BedMaster, Philips DWC, and so on. Data are requested in as close to source format as possible (this could mean .stp 
+    for sites using Bedmaster, .csv exports from MS SQL server for sites using DWC without additional processing, .h5 for sites that can produce hdf5 versions of the waveform files, WFDB for sites that cannot 
+    provide more proximal versions of the data. Waveform files should be devoid of personal identifiers, and associated with a person_id linkable to the OMOP EHR data. For sites providing .h5 files, please be in 
+    touch with the DA waveform group (Will Ashe), so h5 group structures are well communicated. 
+
+5.	Social Determinants of Health
+    >We request that the site make every effort to include the gender_source_value, race_source_value and ethnicity_source_value fields in the PERSON table, given the wide variety of source concepts available across sites and the limited range permissible in the OMOP corresponding concept_id’s. As noted in the OMOP documentation, the PERSON table should refer to biological sex. Alternative assignments, if available, should be documented in the OBSERVATION table. We also request that sites provide insight, whenever available, on how race, ethnicity and sex variables are collected. This should be included in the descriptive file accompanying each upload in the root folder. Other pre-computed SDoH variables (e.g. ADI) available in structured data should be included in the OBSERVATION table. We request that sites keep (or identify the means to get access to) local documentation of full patient addresses, zip codes, payor information, marital status and employment status, whenever available. The intent is that, in the future, tools will be provided to sites to compute SDoH indices locally, which then could be uploaded.
+
+To repeat, we request that you develop a system of unique patient study IDs and encounter IDs for use across all domains of data. These will link to the person_id and visit_occurence_id fields of the corresponding OMOP tables.
+Please include a succinct description of your system and of the data you are including with this initial data pull. This should be a simple text file in your root upload folder. New uploads or modifications should also be briefly described in that file, with dates clearly indicated. We suggest you name this fi This is in addition to the DA tracker described below.
+
+# Uploading the data
+
+Instructions relating to data upload, including the recommended folder structure are detailed in the Upload instructions on the chorus_ai github.
+
+# Timetable
+
+December 8: Request released
+
+December through February
+  - Data transformation into desired formats
+  -	Office hours tailored to handling data request questions
+  -	Individual site meetings
+  -	Test Azure ingest
+
+February 28: First submission due to Azure
+  -	Complete OMOP csv files in OMOP 5.4
+  -	Complete OMOP note_nlp csv files 
+  -	Complete OMOP note table to link note_nlp to person
+  -	Waveform files in raw source format, de-identified
+  -	Deidentified images, if possible (There are ways here you can avoid pixel burned in PHI images until we have tested solutions for PHI burned in images.)
+
+TBD: Submit images using CHoRUS image de-identification SOP (we are continuously developing the scripts in Github. Feel free to visit the link and get familiarized with the features.)
