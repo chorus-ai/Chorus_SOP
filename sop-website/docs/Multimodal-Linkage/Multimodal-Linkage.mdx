@@ -5,9 +5,11 @@ description:  An SOP for general conventions related to linking data between mod
 ---
 
 # Awaiting Approval
-# [PROVISIONAL] Standard Operating Protocol for Investigating Data Quality at Sites
+# [PROVISIONAL] Standard Operating Protocol for Linking Multiple Modes of Data
 
 # Purpose
+
+Each image and waveform file in a CHoRUS data extract should be linked to a record in the EHR data for an associated patient and encounter using OMOP-specific identifiers.
 
 This SOP outlines a step-by-step approach for linking various modes of data together to ensure relational consistency and enable powerful cohort selection and analytical processes downstream.
 
@@ -15,9 +17,13 @@ The sections below describe work that has already been done on the MIMIC synthet
 
 # Scope
 
-This SOP does not cover conversion of file format (e.g. HDF5 -> WFDB), nor does it include information about the upload manifest. Please see the adjacent SOP documents for that information:
-- [Data Upload SOP]
-- [File Format SOP]
+This SOP is narrowly focused on linking imaging and waveform data acquired on the same patient to ensure data integrity.
+
+**What this SOP does not do:**
+- Manage bundles of related waveform or imaging files acquired in a single procedure.
+- Include procedures for data deidentification, such as data shifting.
+- Cover the submission of data to the cloud.
+- Address data linking activities that occur in the cloud environment after sites have submitted the data.
 
 # Audience
 
@@ -105,6 +111,8 @@ As was mentioned above in **B**, there are several important constraints to main
 4. *procedure_concept_id* values should either be set to **4180938** (Imaging Procedure) for images, or **4141651** (Monitoring Procedure) for waveform files. **NOTE** that after this first implementation, we will suggest that sites map their imaging and waveforms with additional granularity. Any code needed to create the registries should be flexible to accommodate (sub)modality procedure mappings in the future.
 5. *procedure_source_value* values should include a concatenated representation of (1) the target file path/name and (2) the group identifier associated with the particular file, should there be one.
   - We suggest that you concatenate these items as key:value pairs (e.g. "path: /some/file/path, group: [somegroupid])
+
+\* Note that the **procedure_type_concept_id** field refers to the provenance of the data. The current vocabulary does not fully support this use case; in the interim, you can use [standard algorithm](https://athena.ohdsi.org/search-terms/terms/32880), but we are investigating the minting of a new term in the **Type Concept** domain that accurately captures these linkage events.
 
 ## D: ANALYTICS INTEGRATION
 
