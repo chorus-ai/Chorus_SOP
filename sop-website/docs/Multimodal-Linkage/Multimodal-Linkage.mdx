@@ -50,14 +50,14 @@ These registries should contain the following columns:
   - In the example shown in the diagram above, image files are assigned identifiers between 2000000000 and 2000999999, and waveform files are assigned identifiers greater than 2001000000
   - The most critical constraints of this column:
     - Each file must have a unique *file_id* value
-    - IF you are using the *file_id* value as *procedure_occurrence_id*, which we strongly recommend, that id must:
+    - IF you are using the *file_id* value as *procedure_occurrence_id*, that id must:
       - Not overlap with other *procedure_occurrence_id* values assigned to EHR-derived procedures
-      - Be an integer (or bigint if necessary/preferred)
+      - Not be developed in a way that exploits this value-equivalence across the two differently purposed variables/columns
     - IF you are NOT using the *file_id* value as *procedure_occurrence_id*, you should update your respective registry tables to have an additional column that captures the *procedure_occurrence_id* values associated with your files
-  - *DATATYPE*: integer (preferred) or bigint
+  - *DATATYPE*: integer or bigint
 - **person_id**
   - *person_id* value associated with the patient in your **OMOP** dataset. This id should also match the name of that files parent directory
-  - *DATATYPE*: integer (preferred) or bigint
+  - *DATATYPE*: integer or bigint
 - **group_id**
   - Identifier that pertains to some grouping of files (e.g. session, accession, recording, etc.)
   - This column is flexible to accommodate different formats and in-house grouping strategies, but it should enable relevant connections between rows in your registries
@@ -66,7 +66,7 @@ These registries should contain the following columns:
   - *visit_occurrence_id* value associated with the associated encounter recorded in your **OMOP** dataset.
   - IF you don't have an explicit link between your file and an encounter identifier, you should infer the visit based on datetime (i.e. select the visit for the given patient that overlaps with the timestamp of the file capture)
     - IF there is no visit for that patient that overlaps with the file's timestamp (e.g. file was captured during an outpatient visit outside of OMOP) **LEAVE THIS FIELD NULL**
-  - *DATATYPE*: integer (preferred) or bigint
+  - *DATATYPE*: integer or bigint
 - **datetime**
   - Timestamp of the point at which the file was captured, within the **LOCAL** timezone
   - IF your site is shifting dates for EHR data prior to delivery, this field should represent the **SHIFTED** timestamp rather than the original timestmap
@@ -102,9 +102,9 @@ As was mentioned above in **B**, there are several important constraints to main
 1. *person_id* values should reference the appropriate patient in the PERSON table, and those values should also correspond with the person-level directory name in your extract organization
 2. *visit_occurrence_id* values should reference the appropriate encounter in the VISIT_OCCURRENCE table
 3. *procedure_occurrence_id* values should be distinct **PER FILE** and should not overlap with other procedure events in the PROCEDURE_OCCURRENCE table
-4. *procedure_concept_id* values should either be set to **4180938** (Imaging Procedure) for images, or **4141651** (Monitoring Procedure) for waveform files
+4. *procedure_concept_id* values should either be set to **4180938** (Imaging Procedure) for images, or **4141651** (Monitoring Procedure) for waveform files. **NOTE** that after this first implementation, we will suggest that sites map their imaging and waveforms with additional granularity. Any code needed to create the registries should be flexible to accommodate (sub)modality procedure mappings in the future.
 5. *procedure_source_value* values should include a concatenated representation of (1) the target file path/name and (2) the group identifier associated with the particular file, should there be one.
-  - You are free to concatenate these values how you prefer, but we ask you document your method and aim for consistency
+  - We suggest that you concatenate these items as key:value pairs (e.g. "path: /some/file/path, group: [somegroupid])
 
 ## D: ANALYTICS INTEGRATION
 
