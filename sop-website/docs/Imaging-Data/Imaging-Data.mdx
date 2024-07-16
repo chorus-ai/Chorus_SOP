@@ -23,15 +23,17 @@ Guidance for Data Acquisition Sites regarding imaging data processing, harmoniza
 
 3. Determine which image modalities would need to be extracted, date range, and size 
 
-4. Confirm the type of data format you will receive (e.g., DICOM) 
+4. Confirm the type of data format you will receive (e.g., DICOM; DICOM is the target format for CHORUS) 
 
-5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN) => refer to Standards SOP about data linkage
+5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN) => refer to Standards SOP on data linkage
 
-6. Map local relevant metadata with CHORUS metadata using OMOP format 
+6. Identify accession numbers for specific image tests. Preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on patient identifier. This is to simplify image test mapping to the primary encounter of interest for the multimoda ldata pull.
 
-7. Identify metadata not covered by CHORUS that would be relevant 
+7. Map header metadata reevant ot your local site with header metadata selected by CHORUS using OMOP format (list of metadata fields and OMOP mapping in Table 1 below).
 
-8. Data quality review (e.g., data missingness) 
+8. Identify metadata not covered by CHORUS that would be relevant to your site locally.
+
+9. Pursue local data quality review (e.g., data missingness). 
 
 > DICOM Metadata de-identification
 
