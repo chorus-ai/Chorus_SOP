@@ -11,21 +11,22 @@ The website is built with [Docusaurus](https://docusaurus.io/) and all contents 
 This repository is also used to track the development of SOP documentation through an associated [GitHub Project](https://github.com/orgs/chorus-ai/projects/13).
 
 The following SOPs are under development:
-| SOP Title | Lead | Issue Link |
-| :--- | :--- | :--- |
-| Structured EHR data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/2 |
-| Flowsheet data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/3 |
-| Waveform data | @briangow | https://github.com/chorus-ai/Chorus_SOP/issues/4 |
-| Imaging data | @edilbertoamorim | https://github.com/chorus-ai/Chorus_SOP/issues/5 |
-| Data Requests | @clermontg | https://github.com/chorus-ai/Chorus_SOP/issues/6 |
-| Free-Text data | @hol7001 | https://github.com/chorus-ai/Chorus_SOP/issues/7 |
-| Data update | @tcpan | https://github.com/chorus-ai/Chorus_SOP/issues/9 |
-| Data quality | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/10 |
-| Central Processing | @rkamaleswaran | https://github.com/chorus-ai/Chorus_SOP/issues/11 |
-| Privacy | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/12 |
-| Common data elements | @ucabhkw | https://github.com/chorus-ai/Chorus_SOP/issues/13 |
-| Safe Harboring Approach | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/14 |
-| Clinical Validation of Mappings | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/17 |
+| SOP Title | Lead | Issue Link | Status |
+| :--- | :--- | :--- | :--- |
+| Structured EHR data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/2 | IN PROGRESS |
+| Flowsheet data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/3 | IN PROGRESS |
+| Waveform data | @briangow | https://github.com/chorus-ai/Chorus_SOP/issues/4 | IN PROGRESS |
+| Imaging data | @edilbertoamorim | https://github.com/chorus-ai/Chorus_SOP/issues/5 | IN PROGRESS |
+| Data Requests | @clermontg | https://github.com/chorus-ai/Chorus_SOP/issues/6 | IN REVIEW |
+| Free-Text data | @hol7001 | https://github.com/chorus-ai/Chorus_SOP/issues/7 | IN PROGRESS |
+| Data update | @tcpan | https://github.com/chorus-ai/Chorus_SOP/issues/9 | IN PROGRESS |
+| Data quality | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/10 | COMPLETE |
+| Central Processing | @rkamaleswaran | https://github.com/chorus-ai/Chorus_SOP/issues/11 | IN PROGRESS |
+| Privacy | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/12 | IN PROGRESS |
+| Common data elements | @ucabhkw | https://github.com/chorus-ai/Chorus_SOP/issues/13 | IN PROGRESS |
+| Safe Harboring Approach | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/14 | IN PROGRESS |
+| Clinical Validation of Mappings | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/17 | COMPLETE |
+| Multimodal Data Linkage | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/28 | COMPLETE |
 
 ## How to contribute to the SOP documentation
 
