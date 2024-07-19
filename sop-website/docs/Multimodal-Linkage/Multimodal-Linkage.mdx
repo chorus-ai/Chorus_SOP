@@ -4,7 +4,7 @@ id: Multimodal Data Linkage
 description:  An SOP for general conventions related to linking data between modalities
 ---
 
-# Awaiting Approval
+# Approved
 # [PROVISIONAL] Standard Operating Protocol for Linking Multiple Modes of Data
 
 # Purpose
@@ -53,13 +53,14 @@ During this processing, sites should construct two tabular *REGISTRIES* that con
 These registries should contain the following columns:
 - **file_id**
   - Unique identifier pertaining to the file.
-  - In the example shown in the diagram above, image files are assigned identifiers between 2000000000 and 2000999999, and waveform files are assigned identifiers greater than 2001000000
-  - The most critical constraints of this column:
-    - Each file must have a unique *file_id* value
-    - IF you are using the *file_id* value as *procedure_occurrence_id*, that id must:
-      - Not overlap with other *procedure_occurrence_id* values assigned to EHR-derived procedures
-      - Not be developed in a way that exploits this value-equivalence across the two differently purposed variables/columns
-    - IF you are NOT using the *file_id* value as *procedure_occurrence_id*, you should update your respective registry tables to have an additional column that captures the *procedure_occurrence_id* values associated with your files
+  - Could be a hash, or any other identifier you would like.
+  - Should be unique (e.g. primary key) within registry table.
+  - Collisions across registry tables are discouraged but do not break the model
+- **proc_id**
+  - In the example shown in the diagram above, image files are assigned procedure identifiers between 2000000000 and 2000999999, and waveform files are assigned procedure identifiers greater than 2001000000
+  - The cardinality may not match *file_id* (e.g. multiple distinct *file_id* values could be associated with a single *proc_id* value)
+    - Information regarding organizational structures for waveform and imaging files, sessions, and studies will follow in those SOPs, respectively
+  - Must not overlap with other *procedure_occurrence_id* values assigned to EHR-derived procedures
   - *DATATYPE*: integer or bigint
 - **person_id**
   - *person_id* value associated with the patient in your **OMOP** dataset. This id should also match the name of that files parent directory
@@ -107,7 +108,7 @@ Correspondence between the registry columns and PROCEDURE_OCCURRENCE columns are
 As was mentioned above in **B**, there are several important constraints to maintain during this integration:
 1. *person_id* values should reference the appropriate patient in the PERSON table, and those values should also correspond with the person-level directory name in your extract organization
 2. *visit_occurrence_id* values should reference the appropriate encounter in the VISIT_OCCURRENCE table
-3. *procedure_occurrence_id* values should be distinct **PER FILE** and should not overlap with other procedure events in the PROCEDURE_OCCURRENCE table
+3. *procedure_occurrence_id* values should be distinct **PER PROCEDURE** and should not overlap with other procedure events in the PROCEDURE_OCCURRENCE table. It could be the case that multiple files/rows in the registry are associated with a single *procedure_occurrence_id* value.
 4. *procedure_concept_id* values should either be set to **4180938** (Imaging Procedure) for images, or **4141651** (Monitoring Procedure) for waveform files. **NOTE** that after this first implementation, we will suggest that sites map their imaging and waveforms with additional granularity. Any code needed to create the registries should be flexible to accommodate (sub)modality procedure mappings in the future.
 5. *procedure_source_value* values should include a concatenated representation of (1) the target file path/name and (2) the group identifier associated with the particular file, should there be one.
   - We suggest that you concatenate these items as key:value pairs (e.g. "path: /some/file/path, group: [somegroupid])
