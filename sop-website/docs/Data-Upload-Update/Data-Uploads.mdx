@@ -1,25 +1,34 @@
 ---
-title: Uploading to Central Data Warehouse
-id: Uploading to Central Data Warehouse
-description:  Uploading to Central Data Warehouse
+title: Uploading to Central Staging Data Warehouse
+id: Uploading to Central Staging Data Warehouse
+description:  Uploading to Central Staging Data Warehouse
 ---
 
 # Purpose
 
-The motivation of this SOP is to ultimately support versioning of the site submitted data as well as the central data, for auditing, provenance, and reproducibility.   To provide such versioning capability, it is necessary to track the addition, deletion, and modification of the data at individual subject and individual file granularity.
-The purpose of this Standard Operating Procedure (SOP) is to specify the expected processes for managing site data, uploading to the central CHoRUS cloud environment, the change-tracking process, and the submission process. This SOP describes
-1.	The site-local data structure
-2.	The site-local data submission package preparation process
+The motivation of this Standard Operating Procedure (SOP) is to provide a tool to track a data generating site (DGS)'s file repositiory, identify changed files, and submit the changed files to the central CHoRUS cloud repository.  The primary motivation for this SOP is to ultimately support versioning of the DGS-submitted data and therefore the central dataset, for auditing, provenance, and reproducibility.   To support versioning, it is necessary to track the addition, deletion, and modification of the data at individual subject and individual file granularity. A secondary motivation is to reduce the amount of data to be transmitted to the central repository and total upload time as high density image and waveform data are large in size.  
+
+Alternative approach considered for versioning is Azure Blob Storage's own versioning, which does not support concurrent access of multiple data versions by multiple users.  Alternative approach for reducing data transmission is to use file syncing capabilities of tools such as azcopy, rsync, etc, which do not track past history or deleted files.
+
+This SOP specifies the expected processes for managing site data, uploading to the central CHoRUS cloud environment, the change-tracking process, and the submission process. This SOP describes
+1.	DGS's local data structure
+2.	DGS's local data submission package preparation process
 3.	The central data structure
-The SOP aims to simplify the process for submission package preparation and the actual submission.  A set of tools will be provided as reference implementation of this process, and the SOP will describe the processes in terms of application of these tools.
+
+The SOP aims to simplify the process for submission package preparation and the actual submission.  A python based tool has been created as a reference implementation of this process, and the SOP will describe the processes in terms of application of this tool.
+
+## Terms and abbreviations
+SOP: Standard Operating Procedure
+DGS: Data generating site
+Local: Refers to DGS's own storage or data.  Note that this could be on-premise or in DGS's own cloud.
+Staging: Refers to central CHoRUS storage or data in the DGS specific container in the Azure cloud
 
 ## Related SOPs:
-- This SOP is related to procedures for site data preparation (ETL, transformation, deidentification, etc).  This SOP assumes data preparation has been completed and new data is ready to be submitted.
+- This SOP is related to procedures for DGS data preparation (ETL, transformation, deidentification, etc).  This SOP assumes data preparation has been completed and new data is ready to be submitted.
 - This SOP is related to the SOPs for Central Staging data validation and Central Data Merging.  This SOP does not include procedures from the central data integration SOP.
 
-
 # Rationale
-Sites will continually accrue and update site-local data.  Each scheduled submission will contain
+DGSs will continually accrue and update DGS-local data.  Each scheduled submission will contain
 1.	New subjects
 2.	Existing subjects with additional observations, as OMOP observations, NLP extracts of clinical notes, and additional images and waveforms.
 3.	Corrections/replacements of existing data including OMOP observations, NLP extracts of clinical notes, images, and waveforms for individual subjects
@@ -28,63 +37,224 @@ Sites will continually accrue and update site-local data.  Each scheduled submis
 The objective is to be able to track the changes when submitting.  The SOP is guided by the following objectives:
 - Streamline the data submission process through automation
 - Reduce the data submission package size
-To reduce the amount of data to be transmitted, this SOP  focuses on identification of changed data subset and submit only those that have been added, modified, or deleted.  This applies to NLP extracts of clinical nodes, images, and waveforms.   As OMOP clinical tables are relatively small in size, and to simplify the data validation and merging process, the OMOP clinical tables will be submitted in their entirety in each submission.
+
+To reduce the amount of data to be transmitted, this SOP focuses on identification of changed file subset and submit only those that have been added, modified, or deleted.  This applies to images and waveforms.   As OMOP clinical tables are relatively small in size, and to simplify the data validation and merging process, the OMOP clinical tables will be submitted in their entirety in each submission.
+
 The submitted data will be stored in the Central Staging area, which will maintain all previously submitted files, grouped by submission time stamp.
 
 # Tooling and Automation
 
-The quality check, submission package preparation, and submission tools are being implemented in the [chorus-extract-upload](https://github.com/chorus-ai/chorus-extract-upload) repository.   The initial data submission can occur before the tooling is formally released, in which case it should follow the “Interim Data Upload Procedure” instruction outlined below.
+The change tracking and submission tool is maintained in the [chorus-extract-upload](https://github.com/chorus-ai/chorus-extract-upload) repository.  The initial data submission can occur before the tooling is formally released, in which case it should follow the “Interim Data Upload Procedure” instruction outlined below.
+
+## Prerequisites
+The chorus-extract-upload tool has the following assumptions
+1. The DGS has a local file system or cloud storage where the data is stored.  A DGS may use different services for each of the data modalities, e.g. images in AWS and waveform and OMOP files in local file system.
+2. The DGS will maintain all files ever submitted to CHoRUS in the local file system or cloud storage.  The tool uses the full file set to identify changed files since last upload.
+3. The DGS will organize the files using the folder structure as described in the “Site-Local Folder Structure” section below.
+
+Azure Data Share is not supported, as it does not ensure data persistence for staged data, and would complicate file versioning.
 
 ## Expected File Organization
 
-### Site-Local Folder Structure
+### DGS-Local Folder Structure
 
-The site-local Folder Structure remains the same as the original data upload request, with the modification that instead of 13 OMOP files for each patient, the OMOP files are aggregated for all patients.  The OMOP files should be a snapshot of current OMOP tables with data on all active CHoRUS subjects.
-
-The tooling for data extract creation and upload will reference the organizational structure below for identifying the changed file sets:
+The DGS-local Folder Structure should be organized into the structure as shown below.  The Update tool expects the organizational structure below for identifying the changed file sets:
 
 <img src={"https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Local_Structure.png?raw=true"} alt="Local Data Organization" />
 
-This structure should be maintained for all subsequent submissions.  All additions, deletions, and modifications should be made in this structure.   The OMOP table files should be the most up-to-date version.  Sites may separately maintain prior versions of OMOP files separately at their own discretion (we strongly recommend doing so).
-> Note:
-> 1. Storage may be on a local-filesystem, or cloud based.
-> 2. We are considering alternative file structure organizations with an eye toward minimizing storage requirements for each site, or to help preserve local versions.
+Each DGS should maintain all submitted data in the folder structure shown above. Files removed from the folder structure will be considered "deleted".  The root folder should contain an `OMOP` folder, and patient folders named by DGS's de-identified patient IDs.  Each patient directoryshould contain an `Images` folder and a `Waveforms` folder.  
+
+### OMOP EHR Folder
+This folder should include structured and unstructured 13 OMOP clinical data files(exluding specimen table) as found here (https://ohdsi.github.io/CommonDataModel/cdm54.html#Clinical_Data_Tables). We are not requiring actual notes to be included in the "note_text" field of the NOTE table, but since working with the NOTE_NLP table would greatly benefit from access to foreign keys only present in the NOTE table. Thus the note table should at least contain core identifiers (note_id), descriptors (note_type_concept_id and note_class_concept_id) as well as there foreign keys to PERSON, VISIT_OCURRENCE, VISIT_DETAILS. Each of these table will be in the form of comma delimited files with header rows.
+
+Each OMOP file should container records for ALL ACTIVE patients submitted to CHoRUS to date. The OMOP files is a snapshot of current DGS local CHoRUS OMOP tables.
+
+### Images Folder
+The `Images` folder should contain all images for the patient, with images organized in standard DICOM hierarchy as study/series folders.
+
+File names should follow the format below:
+
+Patient Identification: Typically includes a person ID.
+
+Study Date: The date when the study was conducted, usually in the format YYYYMMDD.
+
+Study Time: The time of the study, often in HHMMSS format.
+
+Modality: Refers to the type of equipment used for the scan, such as MR (Magnetic Resonance), CT (Computed Tomography), or US (Ultrasound).
+
+Series Number: Indicates the sequence of a particular series of images in a study.
+
+Instance Number: Represents the specific image number within a series.
+
+Example of a DICOM Image Name
+PersonID_20230101_101530_CT_01_001.dcm
+
+This example would represent a CT scan for a patient, conducted on January 1, 2023, at 10:15:30. This image is the first in its instances and the first in that series. Make sure instance and series match with dicom metadata.
+
+### Waveforms Folder
+
+The `Waveforms` folder should contain all waveforms for the patient organized into session folders, each session containing a set of files corresponding to a continuous recording session. 
+
+Waveform data refers to all data acquired from bedside monitors and devices, including alarms, numerics data obtain at regular of irregular intervals, and high-frequency (>1 Hz) waveform data such as digitized EKG tracings. The waveforms should be deidentified.
+
+Files should be named using the following format:
+
+Patient Identification: A unique person ID, typically a number or numeric digits from OMOP Person Table.
+Study Date: The date when the waveform data was recorded, in the format YYYYMMDD.
+Start Time: The start time of the recording, in HHMMSS format.
+Duration in Seconds: The duration of the recording in seconds.
+
+Example File Name
+```
+1000001_20230101_101530_3600.h5
+```
+
+This example represents a recording for patient 1000001 on January 1, 2023, starting at 10:15:30, with a duration of 3600 seconds.
+
+
+### Local Folder Maintenance
+
+Example folder and file structure for a single patient is shown below:
+```
+10001001
+  ├── Images
+      ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.1.1
+          ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.2.1
+              ├── 10001001_20220401_113120_CT_01_0.dcm
+              ├── 10001001_20220401_113120_CT_01_1.dcm
+              ├── 10001001_20220401_113120_CT_01_2.dcm
+              ...
+  ├── Waveforms
+      ├── 10001001_20220401_113120
+          ├── 10001001_20220401_113120_3600.hea
+          ├── 10001001_20220401_113120_3600_0001.dat
+          ├── 10001001_20220401_113120_3600_0002.dat
+          ...
+```
+
+This structure should be maintained for all subsequent submissions.  All additions, deletions, and modifications should be made in this structure.  Sites may separately maintain prior versions of OMOP files at their own discretion (we strongly recommend doing so).  A prescribed organization or naming convention is not provided.  Note also that all previously submitted OMOP files will remain in the Central Staging area.
+
+A relaxation of the folder structure is that OMOP, images, and waveforms files may be stored in separate file systems.  For example, images may be stored in the AWS cloud, while waveforms may be stored in an on-prem Linux file system.  Each file system should maintain the patient folder level.
+
+On AWS
+```
+/10001001
+  ├── Images
+      ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.1.1
+          ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.2.1
+              ├── 10001001_20220401_113120_CT_01_0.dcm
+              ├── 10001001_20220401_113120_CT_01_1.dcm
+              ├── 10001001_20220401_113120_CT_01_2.dcm
+              ...
+```
+
+On local file system
+```
+/10001001
+  ├── Waveforms
+      ├── 10001001_20220401_113120
+          ├── 10001001_20220401_113120_3600.hea
+          ├── 10001001_20220401_113120_3600_0001.dat
+          ├── 10001001_20220401_113120_3600_0002.dat
+          ...
+```
+
+
+### Central Cloud Environment
+This virtual environment is hosted in an Azure platform. The containers structure is setup such that each DGS has its own container (e.g. mgh).
+
+<img src={"https://github.com/chorus-ai/data_acq_SOP/assets/2847495/d7d1d67a-2695-4b2d-92aa-2285b608a09d"} alt="Central Data Organization" />
 
 ### Central Staging Folder Structure
-The submitted data will be stored in the central staging area in the following structure.  This structure will be enforced by the tooling, and is shown here for context.
+The submitted data will be organized using the same folder structure as the DGS local file store, except that data for each submission will placed in a top level folder named with a timestamp of the format `YYYYMMDDhhmmss`.  The folder structure is shown here for context.  The timestamped folder will be created automatically by the Upload Tool.  
 
 <img src={"https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Central_Structure.png?raw=true"} alt="Central Data Organization" />
 
-## Interim Data Upload Procedure
+## Existing Data Upload in Different Folder Structure
 
-As the tooling and scripts are being developed, the Data Update SOP Working Group is recommending the following interim procedure for the initial data upload and update.
-1.	The data should be organized into the folder structure as show in the “Site-Local Folder Structure” section.
-2.	On the Azure Central Staging area, create a folder named by the submission date under the folder for the DGS.
-3a.	If your site **IS NOT** hosting data on Azure, please use the [Azure command line interface](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) (azurecli) to upload the data to the Azure Central Staging blob storage in the dated submission folder
-3b. If your site **IS** hosting data on Azure, you can share it by setting up an [Azure Data Share](https://learn.microsoft.com/en-us/azure/data-share/overview)
+Each DGS is required to organize the data files in this folder structure.  For DGSs who have previously uploaded data with a different folder structure, it is recommended that the DGS first locally organize the data and then use the Upload Tool to resubmit all existing data.
 
-## Long-Term Data Upload Procedure
+# Upload Tool
 
-> [!WARNING]
-> The content below is still a work in progress
+The Python based Upload Tool has been created to simplify the submission process.  The code is available in [chorus-extract-upload](https://github.com/chorus-ai/chorus-extract-upload) repository.
 
-The following procedure will perform data quality and privacy check, index and identify file change set, and initiate submission to the central staging area.
+## Functions of the Upload Tool
 
-This procedure depends on work being done in the [chorus-extract-upload](https://github.com/chorus-ai/chorus-extract-upload) repository.
+The Upload Tool uses a local SQLite database to maintain manifests of files and past submissions
 
-1. Environment Set Up:
-  -	Establish python environment for CHoRUS (could also be Docker container)
-  -	Install the packages for checking quality, evaluating PHI, and uploading data  ([chorus-extract-upload](https://github.com/chorus-ai/chorus-extract-upload))
-  -	Verify installation.  (what to run…)
-2. Site-local data quality check and privacy check
-  -	Run _______ for data quality check
-  -	Run _______ for data privacy check
-3.	Site-local Data Submission
-  -	Run _______ to update the file index.  If this is the initial run, it will generate a index in SQLite format
-  -	If data is on local file system, go to the DGS directory, and run _____.
-  -	If data is on cloud, run ______ with the cloud storage URL.
-  -	Do not remove or directly modify the SQLite file generated by the script.
-  -	Run _______ to generate a difference table.  This will be an SQLite file.
-  -	Run _______ with the difference table file as parameter.  This will use azcli to submit data to staging based on the “Central Staging Folder Structure”.  This script will also verify the submission.
+The Upload Tool provides the following functionalities:
+1.  Create and update a file manifest by traversing the Local folders.  Additions, updates, deletions, are captured and dated 
+2.  Generate list of files to upload
+3.  Submit added and changed files to Central Staging area, and the manifest database.  Optionally amend a previous submission
+4.  Verify past submissions against files in Central Staging
+5.  Track submission history
+
+## Installation
+
+The Upload Tool is a Python package.  The package can be installed using pip.  The package requires Python 3.7 or later.  A virtual environment (venv or conda) is strongly recommended.
+
+1. create and configure a conda environment
+```
+conda create --name chorus
+conda activate chorus
+
+pip install flit
+```
+
+2. get the software
+```
+git clone https://github.com/chorus-ai/chorus-extract-upload
+cd chorus-extract-upload
+```
+
+3. install the software and dependencies
+```
+flit install --symlink
+```
+
+## Usage
+
+The Upload Tool is named `generate_manifest` in the subdirectory `upload_manifest` in `chorus-extract-upload`.  The Upload Tool can be run as
+
+```
+python generate_manifest [params] <subcommand> [subcommand params]
+```
+
+The `-h` parameter will display help information for the tool or each subcommand.  Suppported commands include `update`, `upload`, `usage`, `auth-help`, `list`, and `verify`
+
+### granularityetting Azure credential
+
+From the Azure Portal, navigate to `Storage Account` / `Containers`, and select your DGS container. In the left menu, `select Settings` / `Shared access tokens`.  Create a new SAS token.  Copy the SAS token and save it in a secure location.  The SAS token will be used in the Upload Tool.  Also make note of the storage account name (should be `choruspilotstorage`) 
+
+Please refer to you institution's documentation to retrieve credentials for other storage clouds.  For a list of supported authentication mechanisms, please use
+```
+python generate_manifest --manifest ./journal.db auth-help
+```
+
+### Create or Update Manifest
+To create or an update manifest, the required parameters are a manifest name, a `site-path`, and optionally the cloud credential if `site-path` is a cloud storage path.  Optionally, the type of data (`OMOP`, `Images`, `Waveforms`) to use to update manifest may be specified.   Multiple manifest updates may be performed before a data submission.
+
+```
+python generate_manifest --manifest ./journal.db update --site-path /mnt/x/project/chorus/data
+```
+
+Update manifest from an AWS cloud storage location
+```
+python generate_manifest --manifest ./journal.db update --site-path s3://chorus --site-aws-profile default
+```
+
+### Upload files
+
+File upload follows the same pattern as manifest update. 
+
+From local file system
+```
+python generate_manifest --manifest ./journal.db upload --site-path /mnt/x/project/chorus/data --central-path az://choruspilotstorage/mgh --central-azure-sas-token {sas_token}
+```
+
+From AWS 
+```
+python generate_manifest --manifest ./journal.db upload --site-path s3://chorus --site-aws-profile default  --central-path az://choruspilotstorage/mgh --central-azure-sas-token {sas_token}
+```
 
 
