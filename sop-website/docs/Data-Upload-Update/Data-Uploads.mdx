@@ -13,7 +13,16 @@ The motivation of this Standard Operating Procedure (SOP) is to provide a tool t
 
  Versioning of the DGS-submitted data and therefore the central dataset is critical for for auditing, provenance, and reproducibility.  
 
-### Alternatives Considered
+
+This SOP specifies the expected processes for managing site data, uploading to the central CHoRUS cloud environment, the change-tracking process, and the submission process. This SOP describes
+1.	DGS's local data structure
+2.	DGS's local data submission package preparation process
+3.	The central data structure
+
+The SOP aims to simplify the process for submission package preparation and the actual submission.  A python based tool has been created as a reference implementation of this process, and the SOP will describe the processes in terms of application of this tool.
+
+
+## Alternatives Considered
 Alternative approaches considered for versioning include
 
 1. Azure Blob Storage's own versioning: it does not support concurrent access of multiple data versions by multiple users.  
@@ -24,14 +33,6 @@ Alternative approaches considered for versioning include
 Alternative approaches to minimize data movement include
 1. azcopy, rsync:  these methods reduce data transmission to changed set, but do not track past history or deleted files.
 2. Azure Data Share:  current approach copies files to ensure CHoRUS maintains control over submitted data; moving changed set renders it similar to rsync and azcopy. 
-
-
-This SOP specifies the expected processes for managing site data, uploading to the central CHoRUS cloud environment, the change-tracking process, and the submission process. This SOP describes
-1.	DGS's local data structure
-2.	DGS's local data submission package preparation process
-3.	The central data structure
-
-The SOP aims to simplify the process for submission package preparation and the actual submission.  A python based tool has been created as a reference implementation of this process, and the SOP will describe the processes in terms of application of this tool.
 
 ## Terms and abbreviations
 SOP: Standard Operating Procedure
