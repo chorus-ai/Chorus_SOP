@@ -21,6 +21,21 @@ This SOP specifies the expected processes for managing site data, uploading to t
 
 The SOP aims to simplify the process for submission package preparation and the actual submission.  A python based tool has been created as a reference implementation of this process, and the SOP will describe the processes in terms of application of this tool.
 
+## Rationale
+DGSs will continually accrue and update DGS-local data.  Each scheduled submission will contain
+1.	New subjects
+2.	Existing subjects with additional observations, as OMOP observations, NLP extracts of clinical notes, and additional images and waveforms.
+3.	Corrections/replacements of existing data including OMOP observations, NLP extracts of clinical notes, images, and waveforms for individual subjects
+4.	Corrections/replacements of existing data including OMOP observations, NLP extracts of clinical notes, images, and waveforms for previous submission due to coding changes, deidentification process changes, new NLP algorithms, etc.
+
+The objective is to be able to track the changes when submitting.  The SOP is guided by the following objectives:
+- Streamline the data submission process through automation
+- Reduce the data submission package size
+
+To reduce the amount of data to be transmitted, this SOP focuses on identification of changed file subset and submit only those that have been added, modified, or deleted.  This applies to images and waveforms.   As OMOP clinical tables are relatively small in size, and to simplify the data validation and merging process, the OMOP clinical tables will be submitted in their entirety in each submission.
+
+The submitted data will be stored in the Central Staging area, which will maintain all previously submitted files, grouped by submission time stamp.
+
 
 ## Alternatives Considered
 Alternative approaches considered for versioning include
@@ -44,20 +59,6 @@ Staging: Refers to central CHoRUS storage or data in the DGS specific container 
 - This SOP is related to procedures for DGS data preparation (ETL, transformation, deidentification, etc).  This SOP assumes data preparation has been completed and new data is ready to be submitted.
 - This SOP is related to the SOPs for Central Staging data validation and Central Data Merging.  This SOP does not include procedures from the central data integration SOP.
 
-# Rationale
-DGSs will continually accrue and update DGS-local data.  Each scheduled submission will contain
-1.	New subjects
-2.	Existing subjects with additional observations, as OMOP observations, NLP extracts of clinical notes, and additional images and waveforms.
-3.	Corrections/replacements of existing data including OMOP observations, NLP extracts of clinical notes, images, and waveforms for individual subjects
-4.	Corrections/replacements of existing data including OMOP observations, NLP extracts of clinical notes, images, and waveforms for previous submission due to coding changes, deidentification process changes, new NLP algorithms, etc.
-
-The objective is to be able to track the changes when submitting.  The SOP is guided by the following objectives:
-- Streamline the data submission process through automation
-- Reduce the data submission package size
-
-To reduce the amount of data to be transmitted, this SOP focuses on identification of changed file subset and submit only those that have been added, modified, or deleted.  This applies to images and waveforms.   As OMOP clinical tables are relatively small in size, and to simplify the data validation and merging process, the OMOP clinical tables will be submitted in their entirety in each submission.
-
-The submitted data will be stored in the Central Staging area, which will maintain all previously submitted files, grouped by submission time stamp.
 
 # Tooling and Automation
 
