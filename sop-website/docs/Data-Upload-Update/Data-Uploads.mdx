@@ -71,8 +71,11 @@ Azure Data Share is not supported, as it does not ensure data persistence for st
 
 ## File Organization
 
-This SOP and the associated tool scans a DGS's data folder structure 
+This SOP and the associated tool scans a DGS's data folder structure to generate a journal (aka manifest) as an SQLite file.  Each scan updates the SQLite with additions, deletions, and modifications, and tracks the time of the change. 
 
+The journal is used to identify new and changed files to upload to central.  The journal file is copied to cental during each upload.
+
+Since a DGS may have separate repositories for each data type, to ensure consistency, the Central cloud container contains the most current journal database file, which is downloaded prior to any upload operations.
 
 ### DGS-Local Folder Structure
 
@@ -185,6 +188,8 @@ This virtual environment is hosted in an Azure platform. The containers structur
 The submitted data will be organized using the same folder structure as the DGS local file store, except that data for each submission will placed in a top level folder named with a timestamp of the format `YYYYMMDDhhmmss`.  The folder structure is shown here for context.  The timestamped folder will be created automatically by the Upload Tool.  
 
 ![Central Data Organization](https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Central_Structure.png?raw=true)
+
+In the diagram above, the gray directories were added, blue folder has modifications, and orange folder has been deleted.
 
 ## Existing Data Upload in Different Folder Structure
 
