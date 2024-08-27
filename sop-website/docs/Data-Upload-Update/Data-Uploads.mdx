@@ -6,9 +6,24 @@ description:  Uploading to Central Staging Data Warehouse
 
 # Purpose
 
-The motivation of this Standard Operating Procedure (SOP) is to provide a tool to track a data generating site (DGS)'s file repositiory, identify changed files, and submit the changed files to the central CHoRUS cloud repository.  The primary motivation for this SOP is to ultimately support versioning of the DGS-submitted data and therefore the central dataset, for auditing, provenance, and reproducibility.   To support versioning, it is necessary to track the addition, deletion, and modification of the data at individual subject and individual file granularity. A secondary motivation is to reduce the amount of data to be transmitted to the central repository and total upload time as high density image and waveform data are large in size.  
+The motivation of this Standard Operating Procedure (SOP) is to provide a tool to track a data generating site (DGS)'s file repository, identify changed files, and submit the changed files to the central CHoRUS cloud repository.  Two primary motivations for this SOP are
 
-Alternative approach considered for versioning is Azure Blob Storage's own versioning, which does not support concurrent access of multiple data versions by multiple users.  Alternative approach for reducing data transmission is to use file syncing capabilities of tools such as azcopy, rsync, etc, which do not track past history or deleted files.
+1. versioning of submitted data.  Any file from any prior submission should be accessible by CHoRUS users.  This implies all past versions of files are tracked, and a database allows query for past versions.
+2. Minimize the data upload to only added and modified files.  Note that deleted DGS files are never removed from central storage.
+
+ Versioning of the DGS-submitted data and therefore the central dataset is critical for for auditing, provenance, and reproducibility.  
+
+Alternative approaches considered for versioning include
+
+1. Azure Blob Storage's own versioning: it does not support concurrent access of multiple data versions by multiple users.  
+2. Azure Blob Storage's snapshots: snapshots are timestamped, but identifying files that belong to a time frame for public data release is difficult.
+3. Azure Blob Storage soft delete: soft delete allows deleted files to be accessed, but is time limited, and does not support versioning or timestamp.
+4. Git Large File Storage: git based file versioning but would require full checkout to access a past version.
+
+Alternative approaches to minimize data movement include
+1. azcopy, rsync:  these methods reduce data transmission to changed set, but do not track past history or deleted files.
+2. Azure Data Share:  current approach copies files to ensure CHoRUS maintains control over submitted data; moving changed set renders it similar to rsync and azcopy. 
+
 
 This SOP specifies the expected processes for managing site data, uploading to the central CHoRUS cloud environment, the change-tracking process, and the submission process. This SOP describes
 1.	DGS's local data structure
@@ -54,13 +69,17 @@ The chorus-extract-upload tool has the following assumptions
 
 Azure Data Share is not supported, as it does not ensure data persistence for staged data, and would complicate file versioning.
 
-## Expected File Organization
+## File Organization
+
+This SOP and the associated tool scans a DGS's data folder structure 
+
 
 ### DGS-Local Folder Structure
 
 The DGS-local Folder Structure should be organized into the structure as shown below.  The Update tool expects the organizational structure below for identifying the changed file sets:
 
-<img src={"https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Local_Structure.png?raw=true"} alt="Local Data Organization" />
+![Local Data Organization](https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Local_Structure.png?raw=true)
+
 
 Each DGS should maintain all submitted data in the folder structure shown above. Files removed from the folder structure will be considered "deleted".  The root folder should contain an `OMOP` folder, and patient folders named by DGS's de-identified patient IDs.  Each patient directoryshould contain an `Images` folder and a `Waveforms` folder.  
 
@@ -74,20 +93,17 @@ The `Images` folder should contain all images for the patient, with images organ
 
 File names should follow the format below:
 
-Patient Identification: Typically includes a person ID.
-
-Study Date: The date when the study was conducted, usually in the format YYYYMMDD.
-
-Study Time: The time of the study, often in HHMMSS format.
-
-Modality: Refers to the type of equipment used for the scan, such as MR (Magnetic Resonance), CT (Computed Tomography), or US (Ultrasound).
-
-Series Number: Indicates the sequence of a particular series of images in a study.
-
-Instance Number: Represents the specific image number within a series.
+* Patient Identification: Typically includes a person ID.
+* Study Date: The date when the study was conducted, usually in the format YYYYMMDD.
+* Study Time: The time of the study, often in HHMMSS format.
+* Modality: Refers to the type of equipment used for the scan, such as MR (Magnetic Resonance), CT (Computed Tomography), or US (Ultrasound).
+* Series Number: Indicates the sequence of a particular series of images in a study.
+* Instance Number: Represents the specific image number within a series.
 
 Example of a DICOM Image Name
+```
 PersonID_20230101_101530_CT_01_001.dcm
+```
 
 This example would represent a CT scan for a patient, conducted on January 1, 2023, at 10:15:30. This image is the first in its instances and the first in that series. Make sure instance and series match with dicom metadata.
 
@@ -99,10 +115,10 @@ Waveform data refers to all data acquired from bedside monitors and devices, inc
 
 Files should be named using the following format:
 
-Patient Identification: A unique person ID, typically a number or numeric digits from OMOP Person Table.
-Study Date: The date when the waveform data was recorded, in the format YYYYMMDD.
-Start Time: The start time of the recording, in HHMMSS format.
-Duration in Seconds: The duration of the recording in seconds.
+* Patient Identification: A unique person ID, typically a number or numeric digits from OMOP Person Table.
+* Start Date: The date when the waveform data was recorded, in the format YYYYMMDD.
+* Start Time: The start time of the recording, in HHMMSS format.
+* Duration in Seconds: The duration of the recording in seconds.
 
 Example File Name
 ```
@@ -112,7 +128,7 @@ Example File Name
 This example represents a recording for patient 1000001 on January 1, 2023, starting at 10:15:30, with a duration of 3600 seconds.
 
 
-### Local Folder Maintenance
+### Local Folder Structure
 
 Example folder and file structure for a single patient is shown below:
 ```
@@ -163,12 +179,12 @@ On local file system
 ### Central Cloud Environment
 This virtual environment is hosted in an Azure platform. The containers structure is setup such that each DGS has its own container (e.g. mgh).
 
-<img src={"https://github.com/chorus-ai/data_acq_SOP/assets/2847495/d7d1d67a-2695-4b2d-92aa-2285b608a09d"} alt="Central Data Organization" />
+![Central Data Organization](https://github.com/chorus-ai/data_acq_SOP/assets/2847495/d7d1d67a-2695-4b2d-92aa-2285b608a09d)
 
 ### Central Staging Folder Structure
 The submitted data will be organized using the same folder structure as the DGS local file store, except that data for each submission will placed in a top level folder named with a timestamp of the format `YYYYMMDDhhmmss`.  The folder structure is shown here for context.  The timestamped folder will be created automatically by the Upload Tool.  
 
-<img src={"https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Central_Structure.png?raw=true"} alt="Central Data Organization" />
+![Central Data Organization](https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Central_Structure.png?raw=true)
 
 ## Existing Data Upload in Different Folder Structure
 
@@ -195,8 +211,16 @@ The Upload Tool is a Python package.  The package can be installed using pip.  T
 
 1. create and configure a conda environment
 ```
-conda create --name chorus
+conda create --name chorus python=3.10.14
 conda activate chorus
+
+pip install flit
+```
+
+or alternatively with python virtual envionment
+```
+python -m venv {venv_directory}
+source {venv_directory}/bin/activate
 
 pip install flit
 ```
@@ -209,8 +233,18 @@ cd chorus-extract-upload
 
 3. install the software and dependencies
 ```
+flit install
+```
+
+NOTE: for developers, you can instead run 
+```
 flit install --symlink
 ```
+which allows changes in the code directory to be immediately reflected in the python environment.
+
+## Configuration File:
+A `config.toml` file needs to be customized for each size.
+
 
 ## Usage
 
@@ -224,9 +258,9 @@ The `-h` parameter will display help information for the tool or each subcommand
 
 ### granularityetting Azure credential
 
-From the Azure Portal, navigate to `Storage Account` / `Containers`, and select your DGS container. In the left menu, `select Settings` / `Shared access tokens`.  Create a new SAS token.  Copy the SAS token and save it in a secure location.  The SAS token will be used in the Upload Tool.  Also make note of the storage account name (should be `choruspilotstorage`) 
+From the Azure Portal, navigate to `Storage Account` / `Containers`, and select your DGS container.  Please make note of the account name (should be `choruspilotstorage`) and the container name (should be a short name for your institution).  In the left menu, select `Settings` / `Shared access tokens`.  Create a new SAS token with `Read`, `Add`, `Create`, `Write`, and `List` enabled, and optionally `Delete` if you intend to use the same sas token for deletion later.  We do not need `Immutable Storage`.  Copy the SAS token string and save it in a secure location.  The SAS token will be used by the Upload Tool. 
 
-Please refer to you institution's documentation to retrieve credentials for other storage clouds.  For a list of supported authentication mechanisms, please use
+If you are transferring files from a cloud account to CHoRUS, please refer to you institution's documentation to retrieve credentials for other storage clouds.  For a list of supported authentication mechanisms for each tested cloud providers, please use
 ```
 python generate_manifest --manifest ./journal.db auth-help
 ```
@@ -258,3 +292,9 @@ python generate_manifest --manifest ./journal.db upload --site-path s3://chorus 
 ```
 
 
+
+<!-- 
+TODO: file organization verification
+TODO: change "manifest" to "journal"
+illustration of the upload process and creation of the timestamp.
+ -->
