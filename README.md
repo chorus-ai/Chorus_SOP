@@ -27,6 +27,7 @@ The following SOPs are under development:
 | Safe Harboring Approach | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/14 | IN PROGRESS |
 | Clinical Validation of Mappings | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/17 | COMPLETE |
 | Multimodal Data Linkage | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/28 | COMPLETE |
+| Cataloging Unmapped Terms | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/33| IN PROGRESS |
 
 ## How to contribute to the SOP documentation
 
