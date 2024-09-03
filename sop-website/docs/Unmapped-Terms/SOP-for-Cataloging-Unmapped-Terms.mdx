@@ -1,0 +1,69 @@
+---
+title: SOP for Cataloging Unmapped Terms
+id: SOP-CUT
+description:  A template for preparing SOP for Cataloging Unmapped Terms
+---
+
+# Awaiting Approval
+
+# SOP for Cataloging Unmapped Terms
+[Version History](https://https://github.com/chorus-ai/Chorus_SOP/new/review-unmapped-terms/sop-website/docs)
+
+# Purpose
+This Standard Operating Protocol (SOP) outlines the process for centrally managing unmapped source terms within the CHoRUS B2AI project. This SOP applies to all project team members involved in data mapping and curation.
+
+# Procedures
+
+## Step 1: Gather Mapping Data
+- Utilize validated mappings from the Delphi process<sup>1</sup>.
+- Obtain `chorus-mapping-stage/ontology` CSV files containing mappings<sup>2</sup>.
+
+## Step 2: Integrate Mapping Data into OMOP CDM
+- Import `chorus-mapping-stage/ontology` files into the designated OMOP CDM Vocabulary tables.
+- Ensure that the OMOP CDM instance, particularly the OMOP Standardized Vocabularies schema<sup>3</sup>, is properly deployed and fully accessible.
+- Utilize CSV files within the ontology files for data ingestion.
+
+## Step 3: Develop Matching Algorithm
+- Create a `JOIN` query to compare source descriptions with B2AI Ontology descriptions.
+- Implement the following matching techniques:
+  - Case normalization (lower/upper case conversion)
+  - Prefix removal
+  - Term splitting
+  - Full name matching
+  - Concept synonym names from the `concept_synonym` table
+  - Removal of digits, spaces, and special characters
+  - Fuzzy matching (e.g., Levenshtein distance, Jaro-Winkler distance)
+  - Bag-of-words comparison
+- Consider combining multiple matching techniques to optimize accuracy.
+
+## Step 4: Perform Mapping and Validation
+- Execute the `JOIN` query to identify potential mappings between source and target terms.
+- Validate the generated mappings for accuracy and completeness.
+- Create a delta table containing source descriptions that remain unmapped.
+
+## Step 5: Document and Share Unmapped Terms
+- Record the delta table of unmapped source terms, ensuring all relevant metadata is captured and organized for clarity and ease of reference, as shown below:
+
+| **Field Name**        | **Description**                                                        | **Data Type** | **Example**           |
+|-----------------------|------------------------------------------------------------------------|---------------|-----------------------|
+| `source_table`        | The name of the table from which the source data is extracted.         | String        | `flowsheets`|
+| `source_code`         | The unique code associated with the source term or concept.            | String        | `2000034545`                 |
+| `source_description`  | A textual description or label corresponding to the source code.       | String        | `ETT Depth (Intubation)`        |
+| `max_source_value`    | The most frequently observed value for a specific source term across the dataset. | Numeric/String       | `21`                 |
+| `max_source_unit`     | The unit of measurement associated with the most frequently observed value.    | String        | `CM`                |
+
+- Distribute the delta table to the Standards Team using a preferred method:
+  - **Email:** Send directly to Marty Alvarez (Marta.Alvarez@tuftsmedicine.org).
+  - **GitHub:** Create a new branch in the repository [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage) and upload the delta table to the Umapped-Terms folder.
+  - **Google Drive:** Upload to the [collaborative workspace](https://docs.google.com/spreadsheets/d/1kFVIdVcEYx9Y-ewKixmiJPJoKyMhleJVBPgmoM0lbEY/edit?gid=0#gid=0) for team access and review.
+
+Please choose the method for sharing the delta table of unmapped source terms that adheres to your organization's data policy and addresses proprietary concerns. Ensure that the selected approach complies with your security protocols and data management standards before initiating the transfer.
+
+## Additional Considerations
+- Regularly review and update the mapping algorithm to improve matching accuracy.
+- Establish clear guidelines for handling ambiguous or multiple matches.
+
+# Reference Materials
+1. [SOP for Mapping Clinical Validation](https://github.com/chorus-ai/Chorus_SOP/blob/main/sop-website/docs/OMOP-Mapping/Mappings-Clinical-Validation.mdx)
+2. [B2AI Mapping Ontology](https://github.com/chorus-ai/chorus-mapping-stage/tree/main/Ontology)
+3. [OHDSI Standardized Vocabularies](https://ohdsi.github.io/TheBookOfOhdsi/StandardizedVocabularies.html)
