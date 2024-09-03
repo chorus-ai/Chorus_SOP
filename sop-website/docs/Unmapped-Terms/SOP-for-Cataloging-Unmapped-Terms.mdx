@@ -7,7 +7,7 @@ description:  A template for preparing SOP for Cataloging Unmapped Terms
 # Awaiting Approval
 
 # SOP for Cataloging Unmapped Terms
-[Version History](https://https://github.com/chorus-ai/Chorus_SOP/new/review-unmapped-terms/sop-website/docs)
+[Version History](https://github.com/chorus-ai/Chorus_SOP/commits/review-unmapped-terms/sop-website/docs/Unmapped-Terms/SOP-for-Cataloging-Unmapped-Terms.mdx)
 
 # Purpose
 This Standard Operating Protocol (SOP) outlines the process for centrally managing unmapped source terms within the CHoRUS B2AI project. This SOP applies to all project team members involved in data mapping and curation.
@@ -20,7 +20,7 @@ This Standard Operating Protocol (SOP) outlines the process for centrally managi
 
 ## Step 2: Integrate Mapping Data into OMOP CDM
 - Import `chorus-mapping-stage/ontology` files into the designated OMOP CDM Vocabulary tables.
-- Ensure that the OMOP CDM instance, particularly the OMOP Standardized Vocabularies schema<sup>3</sup>, is properly deployed and fully accessible.
+- Ensure that the OMOP CDM instance, with a focus on the OMOP Standardized Vocabularies schema, is correctly deployed and fully accessible. Confirm that all required standardized vocabularies have been downloaded from OHDSI Athena, installed, and originate from the latest official OHDSI Vocabulary release.
 - Utilize CSV files within the ontology files for data ingestion.
 
 ## Step 3: Develop Matching Algorithm
@@ -47,15 +47,17 @@ This Standard Operating Protocol (SOP) outlines the process for centrally managi
 | **Field Name**        | **Description**                                                        | **Data Type** | **Example**           |
 |-----------------------|------------------------------------------------------------------------|---------------|-----------------------|
 | `source_table`        | The name of the table from which the source data is extracted.         | String        | `flowsheets`|
-| `source_code`         | The unique code associated with the source term or concept.            | String        | `2000034545`                 |
-| `source_description`  | A textual description or label corresponding to the source code.       | String        | `ETT Depth (Intubation)`        |
-| `max_source_value`    | The most frequently observed value for a specific source term across the dataset. | Numeric/String       | `21`                 |
-| `max_source_unit`     | The unit of measurement associated with the most frequently observed value.    | String        | `CM`                |
+| `source_code`         | The unique code associated with the source term or concept.            | String        | `2000034545` |
+| `source_description`  | A textual description or label corresponding to the source code.       | String        | `ETT Depth (Intubation)`|
+| `max_source_value`    | The most frequently observed value for a specific source term across the dataset. | Numeric/String       | `21`|
+| `max_source_unit`     | The unit of measurement associated with the most frequently observed value.    | String        | `CM`|
+| `comments`        |  Captures notes on the mapping process, including reasons for unsuccessful mappings, challenges encountered, and/or the identity of the person who attempted the mapping.| String        | `Concept too granular, no equivalent in standardized vocabulary; Senior Data Analyst, John Doe`|
 
 - Distribute the delta table to the Standards Team using a preferred method:
   - **Email:** Send directly to Marty Alvarez (Marta.Alvarez@tuftsmedicine.org).
-  - **GitHub:** Create a new branch in the repository [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage) and upload the delta table to the Umapped-Terms folder.
-  - **Google Drive:** Upload to the [collaborative workspace](https://docs.google.com/spreadsheets/d/1kFVIdVcEYx9Y-ewKixmiJPJoKyMhleJVBPgmoM0lbEY/edit?gid=0#gid=0) for team access and review.
+  - **GitHub:** Upload a file with unmapped terms into `Unmapped-Terms` folder in the repository [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage).
+
+The naming convention for the file should be formatted as `UnmappedCategory_SiteName_MMDDYY`, where "UnmappedCategory" specifies the semantic category of unmapped terms (e.g. FlowsheetItems, FlowsheetValues), "SiteName" is the institution (in CamelCase), and "MMDDYY" represents the date in a two-digit format.
 
 Please choose the method for sharing the delta table of unmapped source terms that adheres to your organization's data policy and addresses proprietary concerns. Ensure that the selected approach complies with your security protocols and data management standards before initiating the transfer.
 
