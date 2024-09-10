@@ -5,3 +5,227 @@ description:  An SOP for general conventions related to data privacy
 ---
 
 
+# Awaiting Approval
+
+# SOP for Privacy Scan Tool Operations
+[Version History](https://github.com/chorus-ai/privacy_scan_tool/commits/main)
+
+# Purpose
+This Standard Operating Protocol (SOP) outlines the procedures for using the privacy scan tool to identify and manage potential privacy risks in datasets used within the CHORUS project. It is intended for project team members who are responsible for data privacy assessments, risk mitigation, and compliance with privacy standards.
+
+# Procedures Opeion 1  - Local installed program
+
+## Step 1: Install Privacy Scan Tool
+- Ensure the necessary dependencies are installed:
+  - Python 3.6 or higher.
+  - Required Python libraries from `requirements.txt` in the repository.
+  - Git for repository cloning.
+- Clone the Privacy Scan Tool repository from GitHub:
+  ```bash
+  git clone https://github.com/chorus-ai/privacy_scan_tool.git
+  cd privacy_scan_tool
+  ```
+- Install the dependencies by running:
+  ```bash
+  pip install -r requirements.txt
+  ```
+
+## Step 2: Prepare Datasets for Scanning
+- Ensure datasets are in a suitable format (CSV, JSON, or database connection).
+- Anonymize or pseudonymize sensitive fields if necessary before scanning.
+- Load the dataset into the Privacy Scan Tool’s input directory or configure a connection string for direct database access.
+
+## Step 3: Configure the Scan Tool
+- Adjust the tool’s configuration to match the dataset and privacy rules:
+  - Modify the ` config.py ` file to set parameters such as:
+    - Dataset path or database connection details.
+    - The Model location is there is a model update.
+    - Data Sample Size
+
+## Step 4: Execute the Privacy Scan
+- Run the tool with the following command:
+  ```bash
+  python main.py
+  ```
+- Monitor the output for real-time feedback on privacy vulnerabilities. The tool generates a detailed report highlighting any potential risks, categorized based on severity (low, medium, high).
+
+## Step 5: Review and Interpret Results
+- Examine the generated privacy report, which includes:
+  - **Column**: Identifies the dataset field evaluated.
+  - **Predicted Result**: Severity of the privacy risk (low, medium, high).
+  - **Unique Values**: The total unique value of the sample data. 
+  - **Unique Ratio**: The ratio of unique values vs total values.
+  - **Value Counts**: The top unique values and their counts, which is a preview of the detailed data.
+
+| **Column**            | **Predicted Result** |**Unique Values**|**Unique Ratio**|**Value Counts**       |
+|-----------------------|----------------------|-----------------|----------------|-----------------------|
+| `patient_id`          | 1.0                  | 500             |1.0             |MR001:1,MR002:2 ...    |
+| `zipcode`             | 1.0                  | 100             |0.2             |233:20,772:15,         |
+| `birthdate`           | 1.0                  | 100             |0.1             |Not Avariable          |
+## Step 6: Mitigate Privacy Risks
+- Apply the recommended mitigations to reduce the identified privacy risks:
+  - Aggregate, pseudonymize, or anonymize sensitive fields.
+  - Re-run the Privacy Scan Tool after applying mitigations to ensure risks have been addressed.
+
+## Step 7: Document the Process and Results
+- Document each scan and the mitigations applied for future reference. Include:
+  - Date of the scan.
+  - Dataset description.
+  - Privacy violations detected.
+  - Actions taken to resolve the violations.
+- Store the report and documentation securely in a version-controlled repository:
+  - **GitHub**: Upload the report to the `privacy-scan-reports` folder, using a branch named `scan-report-[dataset-name]` for version control.
+  - Naming convention for the report should be `PrivacyScanReport_DatasetName_MMDDYY`.
+
+## Step 8: Share the Privacy Report with the Team
+- Once the scan is complete and privacy risks have been mitigated, distribute the final privacy report to the designated team members for review:
+  - **Email:** Share the report with the Data Privacy Lead (e.g., Luyao Chen at luyao.chen@uth.tmc.edu).
+  - **GitHub:** Commit and push the report to the repository for broader team access.
+
+## Step 9: Continuous Monitoring and Re-Assessment
+- Set a regular schedule for privacy scans based on data updates (e.g., monthly or quarterly).
+- Periodically review the scan tool configuration and update the privacy rules to align with evolving privacy standards and regulatory requirements (e.g., GDPR, HIPAA).
+
+# Procedures Opeion 2  - Scan with a container 
+Another option is to run it via a docker conainer. 
+
+The below portion explains how to run the Privacy Scan Tool using Docker container, including details on setting up the configuration file `config.json` and specifying the necessary directories for volumes.
+
+##Step 1: Prepair the data
+
+### Create a subfolder to hold input the csv files: `data_folder`for the below samples.
+### Create a subfolder to hold output: `output` for the below samples.
+### Configuring `config.json`
+
+The `config.json` file contains various settings for the Privacy Scan Tool. Below is an example configuration file:
+
+```json
+{
+    "available_dbs": {
+        "PSQL_MIMIC": ["postgresql://userid:password@192.168.0.100:5432/mimic", "mimiciii"],
+        "LOCAL_TEXT_FILES": "LOCAL_TEXT_FILES"
+    },
+    "text_file_location": "./data_folder", 
+    "output_folder": "./output",
+    "result_file": "phi_scan_results.xls",
+
+    "selected_db": "PSQL_MIMIC",
+    "tables_to_scan" : ["admissions","patients"],
+
+    "data_profile_sample_size": 1000,
+    "PHI_SCAN_MODEL": "./phi_scan/XGBClassifier(V220240514).json"
+}
+```
+
+#### Configuration Details
+
+- **available_dbs**: Lists the available databases. 
+  - `PSQL_MIMIC`: PostgreSQL database connection details and the database name.
+  - `LOCAL_TEXT_FILES`: Placeholder for using local text files.
+- **text_file_location**: Directory location for local text files.
+- **output_folder**: Directory for the output results.
+- **result_file**: Name of the result file.
+- **selected_db**: Specifies the database to use (`PSQL_MIMIC` or `LOCAL_TEXT_FILES`).
+- **tables_to_scan**: Lists the tables or files to scan.
+- **data_profile_sample_size**: Specifies the sample size for data profiling.
+- **PHI_SCAN_MODEL**: Path to the PHI scan model.
+
+#### Configurations for Different Scenarios
+
+##### Using Local Text Files
+
+If you want to use local text files, modify the `config.json` as follows:
+
+```json
+{
+    "available_dbs": {
+        "PSQL_MIMIC": ["postgresql://userid:password@192.168.0.100:5432/mimic", "mimiciii"],
+        "LOCAL_TEXT_FILES": "LOCAL_TEXT_FILES"
+    },
+    "text_file_location": "./data_folder", 
+    "output_folder": "./output",
+    "result_file": "phi_scan_results.xls",
+
+    "selected_db": "LOCAL_TEXT_FILES",
+    "tables_to_scan" : ["noshow.csv"],
+
+    "data_profile_sample_size": 1000,
+    "PHI_SCAN_MODEL": "./phi_scan/XGBClassifier(V220240514).json"
+}
+```
+
+##### Using PostgreSQL Database
+
+If you want to use a PostgreSQL database, ensure the `config.json` is set as follows:
+
+```json
+{
+    "available_dbs": {
+        "PSQL_MIMIC": ["postgresql://userid:password@192.168.0.100:5432/mimic", "mimiciii"],
+        "LOCAL_TEXT_FILES": "LOCAL_TEXT_FILES"
+    },
+    "text_file_location": "./data_folder", 
+    "output_folder": "./output",
+    "result_file": "phi_scan_results.xls",
+
+    "selected_db": "PSQL_MIMIC",
+    "tables_to_scan" : ["person","observation"],
+
+    "data_profile_sample_size": 1000,
+    "PHI_SCAN_MODEL": "./phi_scan/XGBClassifier(V220240514).json"
+}
+```
+
+Ensure you replace `postgresql://userid:password@192.168.0.100:5432/mimic` with your actual PostgreSQL connection details and the database name.
+
+
+##Step 2:  Command to Run the Docker Container
+
+To run the Privacy Scan Tool Docker container, use the following command:
+
+```bash
+docker run --rm -v $(pwd)/output:/privacy_scan_tool/output -v $(pwd)/config.json:/privacy_scan_tool/config.json -v $(pwd)/data_folder:/privacy_scan_tool/data_folder ghcr.io/chorus-ai/chorus-privacy:main
+```
+
+### Explanation of the Docker Command
+
+- `docker run`: Runs the Docker container.
+- `-v $(pwd)/output:/privacy_scan_tool/output`: Maps the local `output` directory to the container's `/privacy_scan_tool/output` directory.
+- `-v $(pwd)/config.json:/privacy_scan_tool/config.json`: Maps the local `config.json` file to the container's `/privacy_scan_tool/config.json` file.
+- `--rm`: remove the container after finishing.
+- `-v $(pwd)/data_folder:/privacy_scan_tool/data_folder`: Maps the local `data_folder` directory to the container's `/privacy_scan_tool/data_folder` directory.
+- `ghcr.io/chorus-ai/chorus-privacy:main`: Specifies the Docker image to use.
+
+## Creating Required Local Directories
+
+Before running the Docker command, ensure you create the necessary local directories. Run the following commands to create them:
+
+```bash
+mkdir -p output
+mkdir -p data_folder
+```
+
+
+## Step 4 Running the Tool
+
+1. Ensure Docker is installed and running on your machine.
+2. Create the necessary local directories by running:
+    ```bash
+    mkdir -p output
+    mkdir -p data_folder
+    ```
+3. Place the `config.json` file in the current working directory.
+4. Place any required data files in the `data_folder` directory.
+5. Execute the Docker run command provided above.
+6. The tool will process the data according to the configuration and output the results to the specified `output` directory.
+7. If the table has no or less than 1000 records. A warning message will be put into the output folder as well. 
+
+By following these steps, you can successfully run the Privacy Scan Tool using Docker with the appropriate configuration.
+
+
+
+# Reference Materials
+1. [Privacy Scan Tool GitHub Repository](https://github.com/chorus-ai/privacy_scan_tool)
+2. [GDPR Overview](https://gdpr.eu/)
+3. [HIPAA Compliance Guide](https://www.hipaajournal.com/hipaa-compliance-guide/)
+4. [K-Anonymity](https://en.wikipedia.org/wiki/K-anonymity)
