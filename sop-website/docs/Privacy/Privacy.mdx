@@ -196,16 +196,6 @@ docker run --rm -v $(pwd)/output:/privacy_scan_tool/output -v $(pwd)/config.json
 - `-v $(pwd)/data_folder:/privacy_scan_tool/data_folder`: Maps the local `data_folder` directory to the container's `/privacy_scan_tool/data_folder` directory.
 - `ghcr.io/chorus-ai/chorus-privacy:main`: Specifies the Docker image to use.
 
-## Creating Required Local Directories
-
-Before running the Docker command, ensure you create the necessary local directories. Run the following commands to create them:
-
-```bash
-mkdir -p output
-mkdir -p data_folder
-```
-
-
 ## Step 3 Running the Tool
 
 1. Ensure Docker is installed and running on your machine.
@@ -220,8 +210,11 @@ mkdir -p data_folder
 6. The tool will process the data according to the configuration and output the results to the specified `output` directory.
 7. If the table has no or less than 1000 records. A warning message will be put into the output folder as well. 
 
-By following these steps, you can successfully run the Privacy Scan Tool using Docker with the appropriate configuration.
+## Step 4 Review the result
 
+The result is output in the  `output` folder. The format is the same as step 5 of option 1.
+
+ 
 
 
 # Reference Materials
