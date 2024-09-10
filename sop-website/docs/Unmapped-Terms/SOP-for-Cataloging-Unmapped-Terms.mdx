@@ -23,7 +23,10 @@ This Standard Operating Protocol (SOP) outlines the process for centrally managi
 - Ensure that the OMOP CDM instance, with a focus on the OMOP Standardized Vocabularies schema, is correctly deployed and fully accessible. Confirm that all required standardized vocabularies have been downloaded from OHDSI Athena, installed, and originate from the latest official OHDSI Vocabulary release.
 - Utilize CSV files within the ontology files for data ingestion.
 
-## Step 3: Develop Matching Algorithm
+## Step 3: Prepare Concepts to Be Mapped
+- Leverage the Delphi process and initial source data prioritization to compile a concept set of source terms that require mapping.
+
+## Step 4: Develop Matching Algorithm
 - Create a `JOIN` query to compare source descriptions with B2AI Ontology descriptions.
 - Implement the following matching techniques:
   - Case normalization (lower/upper case conversion)
@@ -36,26 +39,27 @@ This Standard Operating Protocol (SOP) outlines the process for centrally managi
   - Bag-of-words comparison
 - Consider combining multiple matching techniques to optimize accuracy.
 
-## Step 4: Perform Mapping and Validation
+## Step 5: Perform Mapping and Validation
 - Execute the `JOIN` query to identify potential mappings between source and target terms.
 - Validate the generated mappings for accuracy and completeness.
 - Create a delta table containing source descriptions that remain unmapped.
 
-## Step 5: Document and Share Unmapped Terms
+## Step 6: Document and Share Unmapped Terms
 - Record the delta table of unmapped source terms, ensuring all relevant metadata is captured and organized for clarity and ease of reference, as shown below:
 
 | **Field Name**        | **Description**                                                        | **Data Type** | **Example**           |
 |-----------------------|------------------------------------------------------------------------|---------------|-----------------------|
 | `source_table`        | The name of the table from which the source data is extracted.         | String        | `flowsheets`|
+| `count`        | The number of times the source term appears in the source data, representing its frequency of occurrence.         | Numeric        | `2354`|
 | `source_code`         | The unique code associated with the source term or concept.            | String        | `2000034545` |
 | `source_description`  | A textual description or label corresponding to the source code.       | String        | `ETT Depth (Intubation)`|
-| `max_source_value`    | The most frequently observed value for a specific source term across the dataset. | Numeric/String       | `21`|
-| `max_source_unit`     | The unit of measurement associated with the most frequently observed value.    | String        | `CM`|
+| `max_source_value`    | The most frequently observed value for a specific source term across the dataset (relevant for the Observation and Measurement domains) | Numeric/String       | `21`|
+| `max_source_unit`     | The unit of measurement associated with the most frequently observed value (relevant for the Measurement domain)  | String        | `CM`|
 | `comments`        |  Captures notes on the mapping process, including reasons for unsuccessful mappings, challenges encountered, and/or the identity of the person who attempted the mapping.| String        | `Concept too granular, no equivalent in standardized vocabulary; Senior Data Analyst, John Doe`|
 
 - Distribute the delta table to the Standards Team using a preferred method:
   - **Email:** Send directly to Marty Alvarez (Marta.Alvarez@tuftsmedicine.org).
-  - **GitHub:** Upload a file with unmapped terms into `Unmapped-Terms` folder in the repository [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage).
+- **GitHub:** Upload the file containing unmapped terms to the `Unmapped-Terms` folder in the [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage) repository. Use a branch named `review-unmapped-[sitename]` for clarity and version control.
 
 The naming convention for the file should be formatted as `UnmappedCategory_SiteName_MMDDYY`, where "UnmappedCategory" specifies the semantic category of unmapped terms (e.g. FlowsheetItems, FlowsheetValues), "SiteName" is the institution (in CamelCase), and "MMDDYY" represents the date in a two-digit format.
 
