@@ -17,13 +17,14 @@ This Standard Operating Protocol (SOP) outlines the procedures for using the pri
 
 ## Step 1: Install Privacy Scan Tool
 - Ensure the necessary dependencies are installed:
-  - Python 3.6 or higher.
+  - Python 3.8 or higher.
   - Required Python libraries from `requirements.txt` in the repository.
   - Git for repository cloning.
+- Running the program in a virtual environment is strongly recommended. 
 - Clone the Privacy Scan Tool repository from GitHub:
   ```bash
-  git clone https://github.com/chorus-ai/privacy_scan_tool.git
-  cd privacy_scan_tool
+  git clone https://github.com/chorus-ai/ChoRUS_Privacy_Scan.git
+  cd ChoRUS_Privacy_Scan
   ```
 - Install the dependencies by running:
   ```bash
@@ -31,7 +32,7 @@ This Standard Operating Protocol (SOP) outlines the procedures for using the pri
   ```
 
 ## Step 2: Prepare Datasets for Scanning
-- Ensure datasets are in a suitable format (CSV, JSON, or database connection).
+- Ensure datasets are in a suitable format (CSV, or database connection).
 - Anonymize or pseudonymize sensitive fields if necessary before scanning.
 - Load the dataset into the Privacy Scan Tool’s input directory or configure a connection string for direct database access.
 
@@ -47,12 +48,12 @@ This Standard Operating Protocol (SOP) outlines the procedures for using the pri
   ```bash
   python main.py
   ```
-- Monitor the output for real-time feedback on privacy vulnerabilities. The tool generates a detailed report highlighting any potential risks, categorized based on severity (low, medium, high).
+- Monitor the output for real-time feedback on privacy vulnerabilities. The tool generates a detailed report with a risk score highlighting any potential risk.
 
 ## Step 5: Review and Interpret Results
 - Examine the generated privacy report, which includes:
   - **Column**: Identifies the dataset field evaluated.
-  - **Predicted Result**: Severity of the privacy risk (low, medium, high).
+  - **Predicted Result**: Severity of the privacy risk (1 for High risk).
   - **Unique Values**: The total unique value of the sample data. 
   - **Unique Ratio**: The ratio of unique values vs total values.
   - **Value Counts**: The top unique values and their counts, which is a preview of the detailed data.
@@ -61,7 +62,8 @@ This Standard Operating Protocol (SOP) outlines the procedures for using the pri
 |-----------------------|----------------------|-----------------|----------------|-----------------------|
 | `patient_id`          | 1.0                  | 500             |1.0             |MR001:1,MR002:2 ...    |
 | `zipcode`             | 1.0                  | 100             |0.2             |233:20,772:15,         |
-| `birthdate`           | 1.0                  | 100             |0.1             |Not Avariable          |
+| `birthdate`           | 1.0                  | 100             |0.1             |Not Available          |
+
 ## Step 6: Mitigate Privacy Risks
 - Apply the recommended mitigations to reduce the identified privacy risks:
   - Aggregate, pseudonymize, or anonymize sensitive fields.
@@ -86,15 +88,15 @@ This Standard Operating Protocol (SOP) outlines the procedures for using the pri
 - Set a regular schedule for privacy scans based on data updates (e.g., monthly or quarterly).
 - Periodically review the scan tool configuration and update the privacy rules to align with evolving privacy standards and regulatory requirements (e.g., GDPR, HIPAA).
 
-# Procedures Opeion 2  - Scan with a container 
-Another option is to run it via a docker conainer. 
+# Procedures Option 2  - Scan with a container 
+Another option is to run it via a docker container. 
 
-The below portion explains how to run the Privacy Scan Tool using Docker container, including details on setting up the configuration file `config.json` and specifying the necessary directories for volumes.
+The below portion explains how to run the Privacy Scan Tool using a Docker container, including details on setting up the configuration file `config.json` and specifying the necessary directories for volumes.
 
-## Step 1: Prepair the data
+## Step 1: Prepare the data
 
 - Create a subfolder to hold input the csv files: `data_folder`for the below samples.
-- Create a subfolder to hold output: `output` for the below samples.
+- Create a subfolder to hold the output: `output` for the samples below.
 - Configuring the `config.json`
 
 The `config.json` file contains various settings for the Privacy Scan Tool. Below is an example configuration file:
@@ -199,20 +201,15 @@ docker run --rm -v $(pwd)/output:/privacy_scan_tool/output -v $(pwd)/config.json
 ## Step 3 Running the Tool
 
 1. Ensure Docker is installed and running on your machine.
-2. Create the necessary local directories by running:
-    ```bash
-    mkdir -p output
-    mkdir -p data_folder
-    ```
-3. Place the `config.json` file in the current working directory.
-4. Place any required data files in the `data_folder` directory.
-5. Execute the Docker run command provided above.
-6. The tool will process the data according to the configuration and output the results to the specified `output` directory.
-7. If the table has no or less than 1000 records. A warning message will be put into the output folder as well. 
+2. Place the `config.json` file in the current working directory.
+3. Place any required data files in the `data_folder` directory.
+4. Execute the Docker run command provided above.
+5. The tool will process the data according to the configuration and output the results to the specified `output` directory.
+6. If the table has no or less than 1000 records. A warning message will be put into the output folder as well. 
 
-## Step 4 Review the result
+## Step 4 Review the result and follow up on the risks found ( same as step 6 onwards of option 1).
 
-The result is output in the  `output` folder. The format is the same as step 5 of option 1.
+The result is output in the  `output` folder. The format is the same as step 5 of option 1.  
 
  
 
