@@ -1,9 +1,14 @@
 ---
-title: Privacy
-id: Privacy
-description:  An SOP for general conventions related to data privacy
+output: 
+  word_document:
+    reference_doc: ../custom-reference.docx
 ---
 
+---
+title: SOP for Privacy Scan Tool Operations
+id: SOP-PSO
+description: A Standard Operating Protocol for managing the privacy scan tool within the CHORUS project.
+---
 
 # Awaiting Approval
 
@@ -11,9 +16,8 @@ description:  An SOP for general conventions related to data privacy
 [Version History](https://github.com/chorus-ai/privacy_scan_tool/commits/main)
 
 # Purpose
-This Standard Operating Protocol (SOP) outlines the procedures for using the privacy scan tool to identify and manage potential privacy risks in datasets used within the CHORUS project. It is intended for project team members who are responsible for data privacy assessments, risk mitigation, and compliance with privacy standards.
-
-# Procedures Opeion 1  - Local installed program
+This Standard Operating Protocol (SOP) outlines the detailed procedures for utilizing the privacy scan tool to effectively identify, assess, and manage potential privacy risks in datasets used within the CHORUS project. It is intended for project team members responsible for conducting data privacy assessments, implementing risk mitigation strategies, and ensuring compliance with relevant privacy standards and regulations. By adhering to this SOP, team members will be able to systematically approach privacy risk management, thereby safeguarding sensitive information and maintaining the integrity of the project's data handling processes.
+# Procedures Option 1 - Locally installed program
 
 ## Step 1: Install Privacy Scan Tool
 - Ensure the necessary dependencies are installed:
@@ -48,7 +52,7 @@ This Standard Operating Protocol (SOP) outlines the procedures for using the pri
   ```bash
   python main.py
   ```
-- Monitor the output for real-time feedback on privacy vulnerabilities. The tool generates a detailed report with a risk score highlighting any potential risk.
+- Monitor the output for real-time feedback on privacy vulnerabilities. The tool generates a detailed report with a risk score highlighting any potential risk. As an additional recommendation, consider setting a privacy risk threshold, for example, 0.95. However, each site should determine the best threshold for their needs and circumstances.
 
 ## Step 5: Review and Interpret Results
 - Examine the generated privacy report, which includes:
@@ -65,7 +69,7 @@ This Standard Operating Protocol (SOP) outlines the procedures for using the pri
 | `birthdate`           | 1.0                  | 100             |0.1             |Not Available          |
 
 ## Step 6: Mitigate Privacy Risks
-- Apply the recommended mitigations to reduce the identified privacy risks:
+- Apply the recommended mitigations (decided locally by each site) to reduce the identified privacy risks:
   - Aggregate, pseudonymize, or anonymize sensitive fields.
   - Re-run the Privacy Scan Tool after applying mitigations to ensure risks have been addressed.
 
