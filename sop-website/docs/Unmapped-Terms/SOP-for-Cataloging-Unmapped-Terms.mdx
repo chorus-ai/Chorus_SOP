@@ -9,24 +9,35 @@ description:  A template for preparing SOP for Cataloging Unmapped Terms
 # SOP for Cataloging Unmapped Terms
 [Version History](https://github.com/chorus-ai/Chorus_SOP/commits/review-unmapped-terms/sop-website/docs/Unmapped-Terms/SOP-for-Cataloging-Unmapped-Terms.mdx)
 
+# Background
+The research consortium aims to collect and unify rich multimodal data from fifteen contributing sites to support advanced machine learning and artificial intelligence analyses. Consolidating this complex data and providing analytical support is a challenging task that requires diverse expertise, including the development of consortium-specific OMOP concepts to manage multimodal files, such as images and waveforms, alongside datasets structured in the OMOP CDM format.
+This Standard Operating Procedure (SOP) outlines the utilization of reference OMOP mappings, including a set of validated mappings produced through a specific Delphi process. In this process, flowsheet descriptions were identified and prioritized based on their relevance to observational health research in critical care environments. These reference mappings are employed to catalog terms not covered by the existing set, thereby identifying unmapped terms that require further attention.
+
 # Purpose
-This Standard Operating Protocol (SOP) outlines the process for centrally managing unmapped source terms within the CHoRUS B2AI project. This SOP applies to all project team members involved in data mapping and curation.
+This SOP outlines the process for centrally managing unmapped source terms within the CHoRUS B2AI project. It provides detailed steps for integrating existing mappings, identifying unmapped terms, and documenting them for further action. This SOP applies to all project team members involved in data mapping and curation.
 
 # Procedures
 
-## Step 1: Gather Mapping Data
-- Utilize validated mappings from the Delphi process<sup>1</sup>.
-- Obtain `chorus-mapping-stage/ontology` CSV files containing mappings<sup>2</sup>.
+## Step 1: Integrate Reference Mappings into Your OMOP Vocabulary Instance
+1.	Verify OMOP CDM Deployment and Accessibility.
+- Ensure that your OMOP CDM instance is correctly deployed and accessible, with particular attention to the OMOP Standardized Vocabularies schema.
+- Confirm that all required standardized vocabularies have been downloaded from [OHDSI Athena](https://athena.ohdsi.org/vocabulary/list), installed, and are from the latest official OHDSI Vocabulary release. 
+2. Import Mappings into the Vocabulary Tables
+- Access the mappings (B2AI Ontology) available in the [`chorus-mapping-stage/ontology`](https://github.com/chorus-ai/chorus-mapping-stage/tree/main/Ontology) CSV files. If you do not have access, please request it from Jared Houghtaling (jared.houghtaling@tuftsmedicine.org).
+- Load the mappings from chorus-mapping-stage into the corresponding tables within the OMOP CDM Vocabulary schema:
+    -	concept_ancestor table using `concept_ancestor_delta.csv`
+    -	concept_class table using `concept_class_delta.csv`
+    -	concept table using `concept_delta.csv`
+    -	concept_relationship table using `concept_relationship_delta.csv`
+    -	concept_synonym table using `concept_synonym_delta.csv`
+    -	source_to_concept_map table using `source_to_concept_map.csv`
+    -	vocabulary table using `vocabulary_delta.csv`
+    -	mapping_metadata table using `mapping_metadata.csv`
 
-## Step 2: Integrate Mapping Data into OMOP CDM
-- Import `chorus-mapping-stage/ontology` files into the designated OMOP CDM Vocabulary tables.
-- Ensure that the OMOP CDM instance, with a focus on the OMOP Standardized Vocabularies schema, is correctly deployed and fully accessible. Confirm that all required standardized vocabularies have been downloaded from OHDSI Athena, installed, and originate from the latest official OHDSI Vocabulary release.
-- Utilize CSV files within the ontology files for data ingestion.
+## Step 2: Prepare Concepts to Be Mapped
+- Compile a set of source terms requiring mapping. Prioritize terms based on frequency and clinical relevance. Categorize terms based on their respective domain within the OMOP CDM. Common domains include Measurement, Observation, Meas Value, Condition, Procedure, Drug, and Device.
 
-## Step 3: Prepare Concepts to Be Mapped
-- Leverage the Delphi process and initial source data prioritization to compile a concept set of source terms that require mapping.
-
-## Step 4: Develop Matching Algorithm
+## Step 3: Develop Matching Algorithm
 - Create a `JOIN` query to compare source descriptions with B2AI Ontology descriptions.
 - Implement the following matching techniques:
   - Case normalization (lower/upper case conversion)
@@ -39,12 +50,12 @@ This Standard Operating Protocol (SOP) outlines the process for centrally managi
   - Bag-of-words comparison
 - Consider combining multiple matching techniques to optimize accuracy.
 
-## Step 5: Perform Mapping and Validation
+## Step 4: Perform Mapping and Validation
 - Execute the `JOIN` query to identify potential mappings between source and target terms.
 - Validate the generated mappings for accuracy and completeness.
 - Create a delta table containing source descriptions that remain unmapped.
 
-## Step 6: Document and Share Unmapped Terms
+## Step 5: Document and Share Unmapped Terms
 - Record the delta table of unmapped source terms, ensuring all relevant metadata is captured and organized for clarity and ease of reference, as shown below:
 
 | **Field Name**        | **Description**                                                        | **Data Type** | **Example**           |
@@ -57,9 +68,11 @@ This Standard Operating Protocol (SOP) outlines the process for centrally managi
 | `max_source_unit`     | The unit of measurement associated with the most frequently observed value (relevant for the Measurement domain)  | String        | `CM`|
 | `comments`        |  Captures notes on the mapping process, including reasons for unsuccessful mappings, challenges encountered, and/or the identity of the person who attempted the mapping.| String        | `Concept too granular, no equivalent in standardized vocabulary; Senior Data Analyst, John Doe`|
 
+- For observations and measurements, extract units from either a separate column or embedded within the source description (e.g., in brackets). Map these units to standard units in the OMOP vocabulary. If a unit cannot be mapped, document it in the delta table with appropriate comments.
+- Recognize that measurement values can be concepts (e.g., qualitative results like "Positive" or "Negative"). Attempt to map these values to standard concepts. Document any unmapped values in the delta table.
 - Distribute the delta table to the Standards Team using a preferred method:
   - **Email:** Send directly to Marty Alvarez (Marta.Alvarez@tuftsmedicine.org).
-- **GitHub:** Upload the file containing unmapped terms to the `Unmapped-Terms` folder in the [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage) repository. Use a branch named `review-unmapped-[sitename]` for clarity and version control.
+  - **GitHub:** Upload the file containing unmapped terms to the `Unmapped-Terms` folder in the [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage) repository. Use a branch named `review-unmapped-[sitename]` for clarity and version control.
 
 The naming convention for the file should be formatted as `UnmappedCategory_SiteName_MMDDYY`, where "UnmappedCategory" specifies the semantic category of unmapped terms (e.g. FlowsheetItems, FlowsheetValues), "SiteName" is the institution (in CamelCase), and "MMDDYY" represents the date in a two-digit format.
 
@@ -68,8 +81,3 @@ Please choose the method for sharing the delta table of unmapped source terms th
 ## Additional Considerations
 - Regularly review and update the mapping algorithm to improve matching accuracy.
 - Establish clear guidelines for handling ambiguous or multiple matches.
-
-# Reference Materials
-1. [SOP for Mapping Clinical Validation](https://github.com/chorus-ai/Chorus_SOP/blob/main/sop-website/docs/OMOP-Mapping/Mappings-Clinical-Validation.mdx)
-2. [B2AI Mapping Ontology](https://github.com/chorus-ai/chorus-mapping-stage/tree/main/Ontology)
-3. [OHDSI Standardized Vocabularies](https://ohdsi.github.io/TheBookOfOhdsi/StandardizedVocabularies.html)
