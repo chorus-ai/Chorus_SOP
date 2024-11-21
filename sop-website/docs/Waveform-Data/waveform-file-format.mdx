@@ -1,0 +1,110 @@
+---
+title: Waveform File Format
+id: Waveform File Format
+description:  An SOP for the waveform file format
+---
+
+## 1. Purpose
+
+This document defines the standard waveform file format for data contributions to the CHoRUS project. The purpose is to ensure consistent formatting of clinical waveform data submitted by participating hospitals. For a high level summary of the process for contributing waveform data to CHoRUS, see the SOP on [contributing waveforms](/Chorus_SOP/docs/Waveform-Data/).
+
+---
+
+## 2. File Structure
+
+All waveform data must adhere to the following directory structure to facilitate ingestion and processing.
+
+### 2.1. Example File Structure
+
+```plaintext
+.
+├── <person_id>                            # Patient-specific subdirectory
+│   └── waveforms
+│       └── <session_number>
+│           ├── <session_number>.hea       # Header file for waveform record <session_number>
+│           └── <session_number>.dat       # Signal file (second segment)
+└── RECORDS                                # List of all record names (one per line)
+```
+
+### 2.2. Explanation of File Structure
+
+- `<person_id>/`:
+  - Root directory for all patient data. Each patient should have a unique identifier (e.g., `10001`).
+- `waveforms/`:
+  - Patients may have multiple types of data. The `waveforms` folder is intended for grouping waveforms.
+  - Inside each patient directory, files are organized by `<session_number>`.
+- `<session_number>/`:
+  - Session number indicates a unique recording for the patient. A single patient (i.e. a single `<person_id>`) may contain multiple sessions.
+- Record files:
+  - Each record consists of one or more:
+    - `.hea` file/s: Metadata and configuration of the waveform record.
+    - `.dat` file/s: Binary signal files, one or more per record.
+
+---
+
+## 3. Header File (.hea) Format
+
+The WFDB `.hea` file is a text file containing metadata about the waveform record. It must follow the WFDB standard header format. Below is an example:
+
+### 3.1. Example Header File: `12345.hea`
+
+```
+12345 2 360 650000
+12345.dat 16 200/μV 8 0 0 1234 0 ECG1
+12345.dat 16 200/μV 8 0 0 1234 0 ECG2
+# Age: 65
+# Sex: Male
+# Diagnosis: Myocardial Infarction
+```
+
+### 3.2. Explanation of Header Content
+
+1. First Line (General Record Info):
+    - `12345`: Record name (must match the filename prefix).
+    - `2`: Number of signals in the record.
+    - `360`: Sampling frequency in Hz.
+    - `650000`: Number of samples per signal.
+
+2. Subsequent Lines (Signal Descriptions):
+    - `12345x.dat`: Filename of the signal file.
+    - `16`: Storage format (16-bit integers).
+    - `200/μV`: ADC gain (e.g., 200 digital units per microvolt).
+    - `8`: ADC resolution (bits).
+    - `0`: ADC zero value.
+    - `0`: Initial value.
+    - `1234`: Checksum (sum of all samples modulo 2^16).
+    - `0`: Block size.
+    - `ECG1`: Signal label (e.g., lead name).
+
+3. Comments (Optional):
+    - Lines starting with `#` contain additional metadata, such as patient demographics and clinical information.
+    - We discourage use of comments. Instead, metadata should be captured in the associated structured EHR data contribution.
+
+---
+
+## 4. Tools and Resources
+
+- WFDB Conversion Tools:
+  - [WFDB python](https://github.com/MIT-LCP/wfdb-python): WFDB Python package.
+
+---
+
+## 5. Revision History
+
+| Version | Date       | Description                                |
+|---------|------------|--------------------------------------------|
+| 1.0     | 2024-11-21 | Initial version                              |
+
+---
+
+## 6. Contact Information
+
+- **CHoRUS Waveform Working Group**
+  - Email: Brian Gow `<briangow@mit.edu>`
+
+---
+
+## 7. References
+
+- [WFDB Format Documentation](https://wfdb.io/)
+- [NIH CHoRUS Project Overview](https://chorus4ai.org/)
