@@ -89,7 +89,35 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
 
 ---
 
-## 5. Revision History
+## 5. Preparing Waveforms
+The WFDB python toolbox will handle writing the `.hea` and `.dat` files once the required information is provided. 
+
+### 5.1. Segment Definition
+In WFDB, a segment is a continous set of signals. Each segment has a `.hea` file and at least one `.dat` file.
+
+### 5.2. Time Shifting
+If your EHR, waveform, and imaging data are being date shifted, all data for a given subject must be shifted by the same amount
+of time. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
+
+### 5.2. High Frequency Waveforms
+High frequency waveform files (e.g. ECG, EEG) should be saved by writing a WFDB record. A single segment record can be written
+with `wfdb.io.wrsamp`. A multisegment record should be written by creating a `wfdb.io.MultiRecord` and using its `wrsamp` 
+method to save the WFDB file. 
+
+A new segment should be create if either of these conditions are met:
+- The length of the current segment exceeds 8 hours
+- The set of channels in the data changes. In other words if a channel's data stream disappears or a new channel appears. If 
+a channel's data has disappeared for more than 5 minutes a new segment should be created. However, if it disappears for less
+than 5 minutes, the missing data should be filled with NaNs, and a new segment should not be created. 
+
+### 5.3. Low Frequency Vitals / Numerics
+Low frequency signals (e.g. heart rate) should be saved as a CSV file in the same folder as the high frequency waveforms.
+The CSV file should be named as `<session_number>n.csv`. Please do not resample the low frequency signals in an effort to 
+create a uniform time interval. 
+
+---
+
+## 6. Revision History
 
 | Version | Date       | Description                                |
 |---------|------------|--------------------------------------------|
@@ -97,14 +125,14 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
 
 ---
 
-## 6. Contact Information
+## 7. Contact Information
 
 - **CHoRUS Waveform Working Group**
   - Email: Brian Gow `<briangow@mit.edu>`
 
 ---
 
-## 7. References
+## 8. References
 
 - [WFDB Format Documentation](https://wfdb.io/)
 - [NIH CHoRUS Project Overview](https://chorus4ai.org/)
