@@ -35,10 +35,15 @@ All waveform data must adhere to the following directory structure to facilitate
   - Inside each patient directory, files are organized by `<session_number>`.
 - `<session_number>/`:
   - Session number indicates a unique recording for the patient. A single patient (i.e. a single `<person_id>`) may contain multiple sessions.
+
+Submissions in WFDB format:
 - Record files:
   - Each record consists of one or more:
     - `.hea` file/s: Metadata and configuration of the waveform record.
     - `.dat` file/s: Binary signal files, one or more per record.
+
+Submissions not in WFDB format:
+- Should follow the naming structure outlined above but stored in the format being provided (e.g. hdf5)
 
 ---
 
@@ -92,14 +97,16 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
 ## 5. Preparing Waveforms
 The WFDB python toolbox will handle writing the `.hea` and `.dat` files once the required information is provided. 
 
-### 5.1. Segment Definition
+### 5.1. WFDB formatted submissions
+
+### 5.1.1. Segment Definition
 In WFDB, a segment is a continous set of signals. Each segment has a `.hea` file and at least one `.dat` file.
 
-### 5.2. Time Shifting
+### 5.1.2. Time Shifting
 If your EHR, waveform, and imaging data are being date shifted, all data for a given subject must be shifted by the same amount
 of time. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
 
-### 5.2. High Frequency Waveforms
+### 5.1.3. High Frequency Waveforms
 High frequency waveform files (e.g. ECG, EEG) should be saved by writing a WFDB record. A single segment record can be written
 with `wfdb.io.wrsamp`. A multisegment record should be written by creating a `wfdb.io.MultiRecord` and using its `wrsamp` 
 method to save the WFDB file. 
@@ -110,10 +117,21 @@ A new segment should be create if either of these conditions are met:
 a channel's data has disappeared for more than 5 minutes a new segment should be created. However, if it disappears for less
 than 5 minutes, the missing data should be filled with NaNs, and a new segment should not be created. 
 
-### 5.3. Low Frequency Vitals / Numerics
+### 5.2. Low Frequency Vitals / Numerics
 Low frequency signals (e.g. heart rate) should be saved as a CSV file in the same folder as the high frequency waveforms.
 The CSV file should be named as `<session_number>n.csv`. Please do not resample the low frequency signals in an effort to 
 create a uniform time interval. 
+
+### 5.3. Non-WFDB formatted submissions
+As mentioned in [contributing waveforms](/Chorus_SOP/docs/Waveform-Data/), detailed information about submissions not in
+WFDB format need to be provided. This should include the following information in addition to any other relevant information:
+- Explanation for each variable in the submission (e.g. `StartTime` is the time at the start of the first sample in the
+stream)
+- The data type for each variable
+- Units for each variable (as applicable)
+- How the data is encoded
+- Information about how to calculate the sample interval (e.g. `EndTime` - `StartTime` / `# samples`)
+- Indication about whether the sample intervals are uniform for each waveform type and channel.
 
 ---
 
