@@ -98,15 +98,19 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
 
 All hospitals are strongly encouraged to submit waveform data in the WFDB (WaveForm DataBase) format. The WFDB Python toolbox automatically generates the `.hea` and `.dat` file structure when provided with the necessary information.
 
-### 5.1. Segment Definition
+### 5.1 Sample Rate
+
+The exact sample rate (e.g. 249.97 Hz) needs to be passed when saving files in WFDB to ensure accurate timestamps.
+
+### 5.2. Segment Definition
 
 In WFDB, a segment is a contiguous set of signals. Each segment has a `.hea` file and at least one `.dat` file. See below for more information on segments.
 
-### 5.2. Time Shifting
+### 5.3. Time Shifting
 
 If your EHR, waveform, and imaging data are being date-shifted, ensure that all data for a given subject is shifted by the same duration. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
 
-### 5.3. High Frequency Waveforms
+### 5.4. High Frequency Waveforms
 
 High-frequency waveform files (e.g., ECG, EEG) should be saved as WFDB records. Use `wfdb.io.wrsamp` to write a single-segment record. For multisegment records, create a `wfdb.io.MultiRecord` object and use its `wrsamp` method to save the WFDB file.
 
@@ -117,7 +121,7 @@ A new segment should be created if either of the following conditions is met:
   - If a channel's data stream disappears or a new channel appears
   - If a channel's data is missing for more than 5 minutes. For gaps of less than 5 minutes, fill the gap with NaNs
 
-### 5.4. Low Frequency Signals ("Numerics")
+### 5.5. Low Frequency Signals ("Numerics")
 
 Low frequency signals (e.g. heart rate) should be saved as a CSV file in the same folder as the high frequency waveforms. The CSV file should be named as `<session_number>n.csv`. Please do not resample the low frequency signals in an effort to  create a uniform time interval. 
 
@@ -127,6 +131,7 @@ As discussed in the SOP on [contributing waveforms](/Chorus_SOP/docs/Waveform-Da
 
 - A description of each variable (e.g. `StartTime` represents the time at the start of the first sample in the
 stream)
+- The precise sample rate (e.g. 249.97 Hz)
 - The data type for each variable
 - Units of each variable, if applicable
 - Details on how the data is encoded
