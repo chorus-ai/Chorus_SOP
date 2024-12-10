@@ -112,12 +112,12 @@ If your EHR, waveform, and imaging data are being date-shifted, ensure that all 
 When reviewing a waveform signal you may notice the following issues:
 
 - Intervals where data is missing, typically due to a network interruption or a disconnected device
-- Points where the timestamps of the data appear to jump forward or backward in time despite the data itself being continous
-- Jitter in the timestamps if the timestamps were not recorded by the original device
+- Points where the timestamps of the data appear to jump forward or backward in time despite the data itself being continuous
+- Jitter in the timestamps in cases where they were not recorded by the original device
 
 The goal in handling these issues is to maintain integrity of the waveform in order to enable machine analysis. Our suggested approach is to:
 
-- create a new segment whenever there is missing data. We do not recommend NaN filling except in unusual circumstances when starting new segments results in an unmanageable number of segments. In this case you may use your discresion to NaN fill up to no more than 5 minutes. 
+- create a new segment whenever there is missing data. We do not recommend NaN filling except in unusual circumstances when starting new segments results in an unmanageable number of segments. In this case, you may use your discresion to NaN fill up to no more than 5 minutes. 
 - concatenate the data if it is continous
 - annotate each segment with the estimated start and end times, which might not exactly match the manufacturer's sampling rate
 
