@@ -90,6 +90,8 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
 ## 4. Tools and Resources
 
 - WFDB Conversion Tools:
+
+  - [CHoRUS to WFDB converter](https://github.com/chorus-ai/chorus_waveform_conversion): Tools for conversion of waveforms to WFDB format.
   - [WFDB python](https://github.com/MIT-LCP/wfdb-python): WFDB Python package.
 
 ---
@@ -100,13 +102,27 @@ All hospitals are strongly encouraged to submit waveform data in the WFDB (WaveF
 
 ### 5.1. Segment Definition
 
-In WFDB, a segment is a contiguous set of signals. Each segment has a `.hea` file and at least one `.dat` file.
+In WFDB, a segment is a contiguous set of signals. Each segment has a `.hea` file and at least one `.dat` file. See below for more information on segments.
 
 ### 5.2. Time Shifting
 
 If your EHR, waveform, and imaging data are being date-shifted, ensure that all data for a given subject is shifted by the same duration. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
 
-### 5.3. High Frequency Waveforms
+### 5.3 Gaps and Overlaps
+
+When reviewing a waveform signal you may notice the following issues:
+
+- Intervals where data is missing, typically due to a network interruption or a disconnected device
+- Points where the timestamps of the data appear to jump forward or backward in time despite the data itself being continuous
+- Jitter in the timestamps in cases where they were not recorded by the original device
+
+The goal in handling these issues is to maintain integrity of the waveform in order to enable machine analysis. Our suggested approach is to:
+
+- create a new segment whenever there is missing data. We do not recommend NaN filling except in unusual circumstances when starting new segments results in an unmanageable number of segments. In this case, you may use your discretion to NaN fill up to no more than 5 minutes. 
+- concatenate the data if it is continous
+- annotate each segment with the estimated start and end times, which might not exactly match the manufacturer's sampling rate
+
+### 5.4. High Frequency Waveforms
 
 High-frequency waveform files (e.g., ECG, EEG) should be saved as WFDB records. Use `wfdb.io.wrsamp` to write a single-segment record. For multisegment records, create a `wfdb.io.MultiRecord` object and use its `wrsamp` method to save the WFDB file.
 
@@ -115,7 +131,9 @@ A new segment should be created if either of the following conditions is met:
 - The length of the current segment exceeds 8 hours
 - The set of channels in the data changes. Specifically:
   - If a channel's data stream disappears or a new channel appears
-  - If a channel's data is missing for more than 5 minutes. For gaps of less than 5 minutes, fill the gap with NaNs
+  - If a channel's data is missing, as discussed in the section on Gaps and Overlaps
+
+The exact sample rate (e.g. 249.97 Hz) needs to be passed when saving files in WFDB to ensure accurate timestamps. The device manufacturer should provide be able to provide the sample rate. While this may not be perfectly accurate, it is good enough initially.
 
 ### 5.4. Low Frequency Signals ("Numerics")
 
@@ -123,15 +141,16 @@ Low frequency signals (e.g. heart rate) should be saved as a CSV file in the sam
 
 ## 6. Preparing Waveforms in an Alternative Format
 
-As discussed in the SOP on [contributing waveforms](/Chorus_SOP/docs/Waveform-Data/), the WFDB format is strongly preferred. If providing an alternative format, detailed documentation about the format is required to facilitate conversion to WFDB. The documentation should include:
+As discussed in the SOP on [contributing waveforms](/Chorus_SOP/docs/Waveform-Data/), the WFDB format is strongly preferred. If providing an alternative format, detailed documentation about the format is required to facilitate conversion to WFDB. The documentation (in `SUBMISSION.md`) should include:
 
 - A description of each variable (e.g. `StartTime` represents the time at the start of the first sample in the
-stream)
+message stream)
 - The data type for each variable
 - Units of each variable, if applicable
 - Details on how the data is encoded
-- Instructions for calculating the sample interval (e.g. `EndTime - StartTime / # samples`)
-- An indication of whether the sample intervals are uniform accross waveform types and channels.
+- Instructions for how to determine the sample number (or "monotonic time") at the start of each segment / message stream
+- Specification of the timestamp variables that represent the wall-clock time at the start and end of each segment / message stream
+- Details on whether sample intervals are uniform across waveform types and channels. High-frequency waveforms should have uniform sample intervals, but if this is not the case please explain why. We expect that numerics files may have non-uniform sample intervals.
 
 ---
 
