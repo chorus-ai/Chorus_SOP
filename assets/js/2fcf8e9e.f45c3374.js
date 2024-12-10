@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([[9983],{1910:e=>{e.exports=JSON.parse('{"permalink":"/Chorus_SOP/blog/tags/docusaurus","page":1,"postsPerPage":6,"totalPages":1,"totalCount":1,"blogDescription":"Innovative ideas and discovers","blogTitle":"Innovative Ideas!"}')}}]);
