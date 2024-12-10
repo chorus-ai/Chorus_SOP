@@ -117,7 +117,7 @@ When reviewing a waveform signal you may notice the following issues:
 
 The goal in handling these issues is to maintain integrity of the waveform in order to enable machine analysis. Our suggested approach is to:
 
-- create a new segment whenever there is missing data. We do not recommend NaN filling except in unusual circumstances when starting new segments results in an unmanageable number of segments. In this case, you may use your discresion to NaN fill up to no more than 5 minutes. 
+- create a new segment whenever there is missing data. We do not recommend NaN filling except in unusual circumstances when starting new segments results in an unmanageable number of segments. In this case, you may use your discretion to NaN fill up to no more than 5 minutes. 
 - concatenate the data if it is continous
 - annotate each segment with the estimated start and end times, which might not exactly match the manufacturer's sampling rate
 
