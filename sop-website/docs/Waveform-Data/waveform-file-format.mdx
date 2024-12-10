@@ -90,7 +90,8 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
 ## 4. Tools and Resources
 
 - WFDB Conversion Tools:
-  - [CHoRUS to WFDB converter](https://github.com/chorus-ai/chorus_waveform_conversion): Tool which will convert site data into WFDB in a consistent manner when a mapping file is provided.
+
+  - [CHoRUS to WFDB converter](https://github.com/chorus-ai/chorus_waveform_conversion): Tools for conversion of waveforms to WFDB format.
   - [WFDB python](https://github.com/MIT-LCP/wfdb-python): WFDB Python package.
 
 ---
@@ -149,7 +150,7 @@ message stream)
 - Details on how the data is encoded
 - Instructions for how to determine the sample number (or "monotonic time") at the start of each segment / message stream
 - Specification of the timestamp variables that represent the wall-clock time at the start and end of each segment / message stream
-- An indication of whether the sample intervals are uniform accross waveform types and channels. We expect that numerics files may have non-uniform sample intervals. High-frequency waveforms should have uniform sample intervals - if this is not the case in your submission please explain why not
+- Details on whether sample intervals are uniform across waveform types and channels. High-frequency waveforms should have uniform sample intervals, but if this is not the case please explain why. We expect that numerics files may have non-uniform sample intervals.
 
 ---
 
