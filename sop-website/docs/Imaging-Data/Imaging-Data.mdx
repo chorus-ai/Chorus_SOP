@@ -28,11 +28,39 @@ Guidance for Data Acquisition Sites regarding imaging data processing, harmoniza
 
 6. Identify accession numbers (i.e., image_occurrence_id) for specific image tests. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on patient identifier. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
 
-7. Map header metadata relevant to your local site using header metadata selected by CHORUS using OMOP format (list of metadata fields and OMOP mapping in Table 1 below). Including RSNA LOINC codes would be helpful.
+7. Map header metadata relevant to your local site using header metadata selected by CHORUS using OMOP format (list of metadata fields and OMOP mapping in Table 1 below). Including RSNA LOINC codes would help map this information across sites.
 
 8. Identify metadata not covered by CHORUS that would be relevant to your site locally.
 
 9. Pursue local data quality review (e.g., data missingness). 
+
+10. DICOM Metadata fields being prioritized are as follows:
+
+Study Level:
+AccessionNumber
+StudyDescription
+StudyInstanceUID
+Modality
+StudyDate
+Manufacturer
+ManufacturersModelName
+StudyTime
+MagneticFieldStrength
+BodyPartExamined
+Radiopharmaceutical
+ContrastBolusAgent
+ContrastBolusRoute
+
+Series Level:
+SeriesDescription
+SeriesInstanceUID
+SliceThickness
+ViewPosition
+ImageLaterality
+ImagesinAcquisition
+TransducerType
+TransducerFrequency
+SeriesNumber
 
 > DICOM Metadata de-identification deliverables
 
