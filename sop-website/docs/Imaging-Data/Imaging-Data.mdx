@@ -24,11 +24,11 @@ Guidance for Data Acquisition Sites regarding imaging data processing, harmoniza
 
 4. Confirm the type of data format you will receive (e.g., DICOM; DICOM is the target format for CHORUS) 
 
-5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN) => refer to Standards SOP on multimodal linkage
+5. Confirm the type of IDs used to link this data to the patient (e.g., procedure_occurrence_id, image_occurrence_id, image_occurrence_date) or other hospital ID (e.g., person_id, visit_occurrence_id) => refer to Standards SOP on multimodal linkage
 
-6. Identify accession numbers for specific image tests. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on patient identifier. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
+6. Identify accession numbers (i.e., image_occurrence_id) for specific image tests. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on patient identifier. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
 
-7. Map header metadata relevant to your local site using header metadata selected by CHORUS using OMOP format (list of metadata fields and OMOP mapping in Table 1 below).
+7. Map header metadata relevant to your local site using header metadata selected by CHORUS using OMOP format (list of metadata fields and OMOP mapping in Table 1 below). Including RSNA LOINC codes would be helpful.
 
 8. Identify metadata not covered by CHORUS that would be relevant to your site locally.
 
