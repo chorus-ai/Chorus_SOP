@@ -3,3 +3,59 @@ title: Imaging Data
 id: Imaging Data
 description:  An SOP for processing medical images
 ---
+# Awaiting Approval 
+> Before merging an approved SOP, the contributor should change this header from `Awaiting Approval` to `Approved`
+
+# Imaging SOP
+[Version History](https://github.com/chorus-ai/Chorus_SOP/commits/review-imaging/sop-website/docs/Imaging-Data/review-imaging.mdx)
+
+# Purpose
+
+Guidance for Data Acquisition Sites regarding imaging data processing, harmonization, and upload
+
+# Procedures
+
+> Data Preparation
+1. Identify data extraction partners and methods (e.g., CTSI) 
+
+2. Identify the sources of the data (e.g., PACS, site research repository) 
+
+3. Determine which image modalities would need to be extracted, date range, and size 
+
+4. Confirm the type of data format you will receive (e.g., DICOM; DICOM is the target format for CHORUS) 
+
+5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN) => refer to Standards SOP on multimodal linkage
+
+6. Identify accession numbers for specific image tests. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on patient identifier. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
+
+7. Map header metadata relevant to your local site using header metadata selected by CHORUS using OMOP format (list of metadata fields and OMOP mapping in Table 1 below).
+
+8. Identify metadata not covered by CHORUS that would be relevant to your site locally.
+
+9. Pursue local data quality review (e.g., data missingness). 
+
+> DICOM Metadata de-identification deliverables
+
+10. Identifiable crosswalk table creation: maps all original DICOM metadata fields to the deidentification procedure (e.g., replacement, erase, etc) and the new field in the deidentified DICOM, so this can be used as a crosswalk (crosswalk table stays local atthe  site and is not shared).
+
+11. Deidentified DICOM metadata table (for sharing): to enable imaging data querying without loading DICOM data.
+
+12. DICOM with metadata deidentified: Use a CHORUS-specific CTP version. DICOM files should not be shared until a pixel deidentification solution is devised unless the site already has an approved solution.
+
+- CTP set up instructions
+
+13. DICOM deidentification (for sharing): deidentified DICOM files
+
+14. Test deidentified DICOM readability: load file in Horos/Osirix to ensure that DICOM can open
+
+> DICOM Pixel de-identification
+
+- under development
+
+> DICOM defacing
+
+- under development
+
+> Data Upload to Azure
+
+- refer to Azure data upload SOP
