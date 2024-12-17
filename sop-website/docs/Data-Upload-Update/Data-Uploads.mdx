@@ -452,8 +452,16 @@ Optionally, the type of data (`OMOP`, `Images`, `Waveforms`) may be specified to
 python chorus_upload -c config.toml file upload -h
 ```
 
+If the file upload is interrupted, and you need to restart, first locate the local journal file (`[journal_path] local_journal` in the `config.toml` file), then call
+```
+python chorus_upload -c config.toml journal checkin --local-journal {journal_filename}
+```
+
+then rerun the upload command.  The script will upload all the missed files plus up to 100 previously uploaded files.
+
+
 #### Option 2: using generated az-cli script
-A Linux bash script or a Windows batch file can be generated that includes all files that are submission candidates.  Executing this script will invoke `az storage blob upload` to upload the files one by one.  Please note that this is currently single threaded.
+A Linux bash script or a Windows batch file can be generated that includes all files that are submission candidates.  Executing this batch/shell script will invoke `az storage blob upload` to upload the files one by one.  Please note that this is currently single threaded.
 
 ```
 python chorus_upload -c config.toml file list --output-file {output_file_name} --output-type azcli
@@ -463,6 +471,22 @@ Data types can be optionally specified via the `--modalities` flag.  For additio
 ```
 python chorus_upload -c config.toml file list -h
 ```
+
+
+If the file upload is interrupted, and you need to restart, first locate the local journal file (`[journal_path] local_journal` in the `config.toml` file), then call
+```
+python chorus_upload -c config.toml journal checkin --local-journal {journal_filename}
+```
+
+then rerun the `file list` command and execute the generated batch/shell script.  The `file list` command will generate a new batch/shell script with all the missed files plus up to 100 previously uploaded files.
+
+
+> **Optional**
+> ### Verify file uploads
+> This is not required as data upload also verifies the data upload.  Command below would verify the last version uploaded.
+> ```
+> python chorus_upload -c config.toml file verify
+> ```
 
 
 ## Alternatives Considered
