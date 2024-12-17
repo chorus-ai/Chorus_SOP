@@ -27,9 +27,10 @@ The SOP aims to simplify the process for submission package preparation and the 
 - Staging: Refers to central CHoRUS storage or data in the DGS specific container in the Azure cloud
 
 ## Related SOPs:
-- This SOP is related to procedures for DGS data preparation (ETL, transformation, de-identification, etc).  This SOP assumes data preparation has been completed and new data is ready to be submitted.
-- This SOP is related to the SOPs for Central Staging data validation and Central Data Merging.  This SOP does not include procedures from the central data integration SOP.
-- This SOP is related to the SOP for Waveform data preparation.
+- Data-Request
+- Imaging-Data
+- Waveform-Data
+- Multimodal-Linkage
 
 # Tooling and Automation
 
@@ -77,41 +78,101 @@ Each OMOP file should container records for ALL ACTIVE patients submitted to CHo
 ### Images Folder
 The `Images` folder should contain all images for the patient, with images organized in standard DICOM hierarchy with study/series folders.
 
-File names should follow the format below:
+Folder and File names should follow the format below:
 
-* Patient Identification: Typically includes a person ID.
-* Study Date: The date when the study was conducted, usually in the format YYYYMMDD.
-* Study Time: The time of the study, often in HHMMSS format.
-* Modality: Refers to the type of equipment used for the scan, such as MR (Magnetic Resonance), CT (Computed Tomography), or US (Ultrasound).
-* Series Number: Indicates the sequence of a particular series of images in a study.
+* Patient Identification: Typically includes a de-identified person ID.
+* Study Id: The study Id, may be a de-identified version of DICOM tags StudyInstanceUID or StudyId.
+* Series Id: The series Id, may be a de-identified version of DICOM tags SeriesInstanceUID or SeriesNumber.
+* Modality: Refers to the type of equipment used for the scan, such as MR (Magnetic Resonance), CT (Computed Tomography), XR (X-ray), or US (Ultrasound).
 * Instance Number: Represents the specific image number within a series.
 
-Example of a DICOM Image Name
+Example of a DICOM Image folder and filenames
 ```
-PersonID_20230101_101530_CT_01_001.dcm
+root
+  ├── 10001001
+      ├── Images
+          ├── 1234
+              ├── 5678
+                  ├── 10001001_1234_5678_CT_000.dcm
+                  ├── 10001001_1234_5678_CT_001.dcm
+                  ├── 10001001_1234_5678_CT_002.dcm
+                  ...
 ```
 
-This example would represent a CT scan for a patient, conducted on January 1, 2023, at 10:15:30. This image is the first in its instances and the first in that series. Make sure instance and series match with dicom metadata.
+This example would represent a CT scan for patient 1000100020 with Study Id 1234 and Series Id 5678. This image is the first in that series. Please Make sure that these fields match the dicom metadata tags.
+
+> **Optional**: Inclusion of patient id, study id, and series id in the filename helps to recover orphaned files but is optional.
+
+
+> **Deprecated**: The following description was from the initial data upload SOP and has been superseded.
+>
+> File names should follow the format below:
+>
+>* Patient Identification: Typically includes a person ID.
+>* Study Date: The date when the study was conducted, usually in the format YYYYMMDD.
+>* Study Time: The time of the study, often in HHMMSS format.
+>* Modality: Refers to the type of equipment used for the scan, such as MR (Magnetic Resonance), CT (Computed Tomography), or US (Ultrasound).
+>* Series Number: Indicates the sequence of a particular series of images in a study.
+>* Instance Number: Represents the specific image number within a series.
+>
+>Example of a DICOM Image Name
+>```
+>PersonID_20230101_101530_CT_01_001.dcm
+>```
+>
+>This example would represent a CT scan for a patient, conducted on January 1, 2023, at 10:15:30. This image is the first in its instances and the first in that series. Make sure instance and series match with dicom metadata.
 
 ### Waveforms Folder
 
 The `Waveforms` folder should contain all waveforms for the patient organized into `session` folders, each session containing a set of files corresponding to a continuous recording session. 
 
-Waveform data refers to all data acquired from bedside monitors and devices, including alarms, numerics data obtain at regular of irregular intervals, and high-frequency (>1 Hz) waveform data such as digitized EKG tracings. The waveforms should be deidentified.
-
-Files should be named using the following format:
+Waveform data refers to all data acquired from bedside monitors and devices, including alarms, numerics data obtain at regular of irregular intervals, and high-frequency (>1 Hz) waveform data such as digitized EKG tracings. The waveforms should be deidentified.   For Y1 submission, WFDB file format is recommended but not required. 
 
 * Patient Identification: A unique person ID, typically a number or numeric digits from OMOP Person Table.
-* Start Date: The date when the waveform data was recorded, in the format YYYYMMDD.
-* Start Time: The start time of the recording, in HHMMSS format.
-* Duration in Seconds: The duration of the recording in seconds.
+* Session Id: The date when the waveform data was recorded, in the format YYYYMMDD.
 
-Example File Name
+Example HDF5 File Name
 ```
-1000001_20230101_101530_3600.h5
+root
+  ├── 10001001
+      ├── Waveforms
+          ├── 10001001_901234
+              ├── 10001001_901234.hea
+              ├── 10001001_901234_layout.hea
+              ├── 10001001_901234_0001.hea
+              ├── 10001001_901234_0001.dat
+              ├── 10001001_901234_0002.hea
+              ├── 10001001_901234_0002.dat
+              ...
 ```
 
-This example represents a recording for patient 1000001 on January 1, 2023, starting at 10:15:30, with a duration of 3600 seconds.
+The name of the file itself may take different forms depending on the format.   This example represents a recording for patient 1000001 for session 901234 with the files in WFDB format.  For WFDB files, please follow naming convention in the Waveform SOP.   For other formats (Y1 only), it is recommended that a similar file naming convention be used.
+
+> **Optional** Inclusion of patient id and session id in the filename is optional.  Inclusion of the duration is also optional and for WFDB is unnecessary.
+> 
+> * Duration in Seconds: The duration of the recording in seconds.
+> 
+> ```
+> 10001001/Waveforms/1001001_901234/1001001_901234_3600.h5
+> ```
+
+
+
+> **Deprecated**: The following description was from the initial data upload SOP and has been superseded.
+>
+>Files should be named using the following format:
+>
+>* Patient Identification: A unique person ID, typically a number or numeric digits from OMOP Person Table.
+>* Start Date: The date when the waveform data was recorded, in the format YYYYMMDD.
+>* Start Time: The start time of the recording, in HHMMSS format.
+>* Duration in Seconds: The duration of the recording in seconds.
+>
+>Example File Name
+>```
+>1000001_20230101_101530_3600.h5
+>```
+>
+>This example represents a recording for patient 1000001 on January 1, 2023, starting at 10:15:30, with a duration of 3600 seconds.
 
 ### Local versioning
 Sites may wish to separately maintain prior versions of OMOP files at their own discretion (we strongly recommend doing so).  A prescribed organization or naming convention is not provided.  Note also that all previously submitted OMOP files will remain in the Central Staging area.
@@ -123,38 +184,43 @@ Currently, the `chorus-upload` tool does not explicitly support placing the file
 
 Example folder and file structure for a single patient is shown below:
 ```
-OMOP
-  ├── ...
-10001001
-  ├── Images
-      ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.1.1
-          ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.2.1
-              ├── 10001001_20220401_113120_CT_01_0.dcm
-              ├── 10001001_20220401_113120_CT_01_1.dcm
-              ├── 10001001_20220401_113120_CT_01_2.dcm
+root
+  ├── OMOP
+      ├── ...
+  ├── 10001001
+      ├── Images
+          ├── 1234
+              ├── 5678
+                  ├── 10001001_1234_5678_CT_000.dcm
+                  ├── 10001001_1234_5678_CT_001.dcm
+                  ├── 10001001_1234_5678_CT_002.dcm
+                  ...
+      ├── Waveforms
+          ├── 10001001_901234
+              ├── 10001001_901234.hea
+              ├── 10001001_901234_layout.hea
+              ├── 10001001_901234_0001.hea
+              ├── 10001001_901234_0001.dat
+              ├── 10001001_901234_0002.hea
+              ├── 10001001_901234_0002.dat
               ...
-  ├── Waveforms
-      ├── 10001001_20220401_113120
-          ├── 10001001_20220401_113120_3600.hea
-          ├── 10001001_20220401_113120_3600_0001.dat
-          ├── 10001001_20220401_113120_3600_0002.dat
-          ...
 ```
 
 This structure shall be maintained for all submissions.  All additions, deletions, and modifications shall be made in this structure.  
 
 A relaxation of the folder structure is that OMOP, images, and waveforms files may be stored in separate file systems.  For example, images may be stored in the AWS cloud, while waveforms may be stored in an on-prem Linux file system.  Each file system shall maintain the same organization, for example:
 
-In AWS S3 bucket:
+for example AWS S3 bucket:
 ```
-/10001001
-  ├── Images
-      ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.1.1
-          ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.2.1
-              ├── 10001001_20220401_113120_CT_01_0.dcm
-              ├── 10001001_20220401_113120_CT_01_1.dcm
-              ├── 10001001_20220401_113120_CT_01_2.dcm
-              ...
+root
+  ├── /10001001
+      ├── Images
+          ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.1.1
+              ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.2.1
+                  ├── 10001001_20220401_113120_CT_01_0.dcm
+                  ├── 10001001_20220401_113120_CT_01_1.dcm
+                  ├── 10001001_20220401_113120_CT_01_2.dcm
+                  ...
 ```
 
 
@@ -192,6 +258,7 @@ The `chorus-upload` tool is a Python package.  The package can be installed usin
 1. create and configure a conda environment
 ```
 conda create --name chorus python=3.10.14
+
 conda activate chorus
 
 pip install flit
@@ -245,7 +312,7 @@ ErrorCode:AuthorizationFailure
 ```
 
 
-On windows, the `/etc/hosts` file is instead `C:\Windows\system32\drivers\etc\hosts`.   Administrator privilege is needed to edit this file.
+On windows, the `/etc/hosts` file equivalent `C:\Windows\system32\drivers\etc\hosts`.   Administrator privilege is needed to edit this file.
 
 5. AZ CLI installation (only when using `chorus-upload` generated azcli scripts)
 You can configure the tool to use AZ CLI to upload files to the CHoRUS central cloud, or alternatively use the built in azure library for upload.   If you will be using AZ CLI, please install AZ CLI according to Microsoft instructions:
