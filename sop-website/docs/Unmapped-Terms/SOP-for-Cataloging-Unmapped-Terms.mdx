@@ -10,11 +10,12 @@ description:  A template for preparing SOP for Cataloging Unmapped Terms
 [Version History](https://github.com/chorus-ai/Chorus_SOP/commits/review-unmapped-terms/sop-website/docs/Unmapped-Terms/SOP-for-Cataloging-Unmapped-Terms.mdx)
 
 # Background
-The research consortium aims to collect and unify rich multimodal data from fifteen contributing sites to support advanced machine learning and artificial intelligence analyses. Consolidating this complex data and providing analytical support is a challenging task that requires diverse expertise, including the development of consortium-specific OMOP concepts to manage multimodal files, such as images and waveforms, alongside datasets structured in the OMOP CDM format.
-This Standard Operating Procedure (SOP) outlines the utilization of reference OMOP mappings, including a set of validated mappings produced through a specific Delphi process. In this process, flowsheet descriptions were identified and prioritized based on their relevance to observational health research in critical care environments. These reference mappings are employed to catalog terms not covered by the existing set, thereby identifying unmapped terms that require further attention.
+The research consortium is dedicated to collecting and harmonizing rich multimodal data from diverse contributing sites to support advanced machine learning and artificial intelligence analyses. This ambitious effort involves integrating various data types, including structured datasets aligned with the OMOP CDM and complex multimodal files such as medical images and waveforms. The inherent challenges of this task require multidisciplinary expertise and the development of customized OMOP concepts to address gaps in data standardization. This Standard Operating Procedure (SOP) establishes a structured framework for identifying unmapped source concepts, leveraging validated OMOP reference mappings developed through a specific Delphi process.
 
 # Purpose
-This SOP outlines the process for centrally managing unmapped source terms within the CHoRUS B2AI project. It provides detailed steps for integrating existing mappings, identifying unmapped terms, and documenting them for further action. This SOP applies to all project team members involved in data mapping and curation.
+This SOP defines a centralized process for managing unmapped source terms within the CHoRUS B2AI project. It outlines detailed steps for integrating existing mappings, systematically identifying unmapped terms, and documenting them for the Standards team's subsequent actions such as terms categorization, proposing potential mappings, and defining candidate concepts to enhance the critical care flowsheet ontology and, potentially, OHDSI Standardized Vocabularies. 
+
+This SOP applies to all project team members involved in data mapping and curation.
 
 # Procedures
 
@@ -24,7 +25,7 @@ This SOP outlines the process for centrally managing unmapped source terms withi
 - Confirm that all required standardized vocabularies have been downloaded from [OHDSI Athena](https://athena.ohdsi.org/vocabulary/list), installed, and are from the latest official OHDSI Vocabulary release. 
 2. Import Mappings into the Vocabulary Tables
 - Access the mappings (B2AI Ontology) available in the [`chorus-mapping-stage/ontology`](https://github.com/chorus-ai/chorus-mapping-stage/tree/main/Ontology) CSV files. If you do not have access, please request it from Jared Houghtaling (jared.houghtaling@tuftsmedicine.org).
-- Load the mappings from chorus-mapping-stage into the corresponding tables within the OMOP CDM Vocabulary schema:
+- Load the mappings from `chorus-mapping-stage` into the corresponding tables within the OMOP CDM Vocabulary schema:
     -	concept_ancestor table using `concept_ancestor_delta.csv`
     -	concept_class table using `concept_class_delta.csv`
     -	concept table using `concept_delta.csv`
@@ -35,7 +36,7 @@ This SOP outlines the process for centrally managing unmapped source terms withi
     -	mapping_metadata table using `mapping_metadata.csv`
 
 ## Step 2: Prepare Concepts to Be Mapped
-- Compile a set of source terms requiring mapping. Prioritize terms based on frequency and clinical relevance. Categorize terms based on their respective domain within the OMOP CDM. Common domains include Measurement, Observation, Meas Value, Condition, Procedure, Drug, and Device.
+- Compile a set of source terms requiring mapping. Prioritize terms based on frequency and clinical relevance. Categorize terms based on their respective domain within the OMOP CDM. Common domains include Measurement, Observation, Meas Value, Visits, Condition, Procedure, Drug, and Device.
 
 ## Step 3: Develop Matching Algorithm
 - Create a `JOIN` query to compare source descriptions with B2AI Ontology descriptions.
@@ -58,26 +59,52 @@ This SOP outlines the process for centrally managing unmapped source terms withi
 ## Step 5: Document and Share Unmapped Terms
 - Record the delta table of unmapped source terms, ensuring all relevant metadata is captured and organized for clarity and ease of reference, as shown below:
 
-| **Field Name**        | **Description**                                                        | **Data Type** | **Example**           |
-|-----------------------|------------------------------------------------------------------------|---------------|-----------------------|
-| `source_table`        | The name of the table from which the source data is extracted.         | String        | `flowsheets`|
-| `count`        | The number of times the source term appears in the source data, representing its frequency of occurrence.         | Numeric        | `2354`|
-| `source_code`         | The unique code associated with the source term or concept.            | String        | `2000034545` |
-| `source_description`  | A textual description or label corresponding to the source code.       | String        | `ETT Depth (Intubation)`|
-| `max_source_value`    | The most frequently observed value for a specific source term across the dataset (relevant for the Observation and Measurement domains) | Numeric/String       | `21`|
-| `max_source_unit`     | The unit of measurement associated with the most frequently observed value (relevant for the Measurement domain)  | String        | `CM`|
-| `comments`        |  Captures notes on the mapping process, including reasons for unsuccessful mappings, challenges encountered, and/or the identity of the person who attempted the mapping.| String        | `Concept too granular, no equivalent in standardized vocabulary; Senior Data Analyst, John Doe`|
+| **Field Name**   | **Description**  | **Data Type**  | **Example**   | **Required** |
+|-----------------------------|------------------------------------------------------------------------------------------------------|----------------|---------------------------------------------------------|--------------|
+| `count`  | The number of times the source term appears in the source data, representing its frequency of occurrence. | Numeric  | `2354`   | Yes  |
+| `number_of_patients`   | The number of unique patients associated with the source term in the dataset.   | Numeric  | `657`  | Yes  |
+| `source_code`  | The unique code associated with the source term or concept.   | String   | `2000034545`   | Yes  |
+| `source_description`   | A textual description or label corresponding to the source code.  | String   | `ETT Depth (Intubation)`   | Yes  |
+| `source_domain_id`   | OMOP-defined domain to which the source concepts can belong (e.g., Visit, Condition, Measurement).   | String   | `Measurement`  | Yes  |
+| `max_source_value`   | The most frequently observed value for a specific source term across the dataset.   | Numeric/String | `21`  | No   |
+| `max_source_unit`  | The unit of measurement associated with the most frequently observed value.   | String   | `CM`  | No   |
+| `source_table`   | The name of the source table from which the term is extracted. If the name of the source table is proprietary, use an alias that provides a clear and descriptive meaning  | String   | `flowsheets`  | No   |
+| `clinical_setting`   | The clinical setting where the data was collected (e.g., ICU, emergency department).   | String   | `ICU`  | Yes  |
+| `source_population`  | The specific patient population from which the data was derived (e.g., adults, pediatric, unspecified). | String   | `Adults`   | Yes  |
+| `important_for_research`   | Indicates whether the concept has been identified as important for research purposes (can be 'Yes'/'No'/'Unknown').   | String  | `Yes`   | No  |
+| `who_identified_importance`| The name or role of the individual(s) who indicated the term's research importance.   | String   | `Dr. Jane Smith, Oncology Specialist`   | No  |
+| `research_question`   | A description of the research questions the concept was deemed important to address.  | String   | `Study of intubation practices and clinical outcomes.` | No   |
+| `comments`   | Captures notes on the mapping process, including reasons for unsuccessful mappings, challenges, and the identity of the person responsible. | String | `Concept too granular, no equivalent in standardized vocabulary; Senior Data Analyst, John Doe` | No   |
 
+- Please note that if additional metadata is not available at this time, you may proceed by submitting the data with only the required fields.
 - For observations and measurements, extract units from either a separate column or embedded within the source description (e.g., in brackets). Map these units to standard units in the OMOP vocabulary. If a unit cannot be mapped, document it in the delta table with appropriate comments.
 - Recognize that measurement values can be concepts (e.g., qualitative results like "Positive" or "Negative"). Attempt to map these values to standard concepts. Document any unmapped values in the delta table.
-- Distribute the delta table to the Standards Team using a preferred method:
-  - **Email:** Send directly to Marty Alvarez (Marta.Alvarez@tuftsmedicine.org).
-  - **GitHub:** Upload the file containing unmapped terms to the `Unmapped-Terms` folder in the [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage) repository. Use a branch named `review-unmapped-[sitename]` for clarity and version control.
+- Distribute the delta table to the Standards Team using **GitHub:** upload the file containing unmapped terms to the `Unmapped-Terms` folder in the [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage) repository. Use a branch named `review-unmapped-[sitename]` for clarity and version control. If you do not have access, please request it from Jared Houghtaling (jared.houghtaling@tuftsmedicine.org).
 
-The naming convention for the file should be formatted as `UnmappedCategory_SiteName_MMDDYY`, where "UnmappedCategory" specifies the semantic category of unmapped terms (e.g. FlowsheetItems, FlowsheetValues), "SiteName" is the institution (in CamelCase), and "MMDDYY" represents the date in a two-digit format.
+The naming convention for the file should be formatted as `UnmappedCategory_SiteName_MMDDYY`, where "UnmappedCategory" specifies the semantic category of unmapped terms (e.g. FlowsheetItems, FlowsheetValues, Visits), "SiteName" is the institution (in CamelCase), and "MMDDYY" represents the date in a two-digit format.
 
 Please choose the method for sharing the delta table of unmapped source terms that adheres to your organization's data policy and addresses proprietary concerns. Ensure that the selected approach complies with your security protocols and data management standards before initiating the transfer.
+
+If you encounter any issues or uncertainties during the process, please reach out to Marty Alvarez (marta.alvarez@tuftsmedicine.org) for assistance and guidance. 
 
 ## Additional Considerations
 - Regularly review and update the mapping algorithm to improve matching accuracy.
 - Establish clear guidelines for handling ambiguous or multiple matches.
+
+## Unmapped Term Curation and Validation Workflow
+After completing the initial cataloging steps for unmapped terms, the following process will be applied:
+1. **Secure Handling of Submitted Terms**
+- All submitted unmapped terms will be securely stored in a restricted-access repository, ensuring that only authorized personnel can view and manage the data.
+- Access protocols will be implemented to comply with data privacy and security standards.
+2. **Prioritization**
+Terms will be prioritized using the following criteria:
+- Importance to Research: Determined based on input from clinical experts, collected as metadata during the process of gathering unmapped concepts.
+- Patient Data Representation: The number of patients associated with the term will also be used to assess its impact and coverage.
+3. **Aggregation and Categorization**
+- Terms will be aggregated from all sources to create a consolidated dataset.
+- Terms will be further grouped into meaningful clusters based on their context or clinical relevance, such as "ventilation parameters," or "mental health assessments".
+4. **Mapping and Validation by Topic Groups**
+The standards team will evaluate whether the terms can be mapped to the OMOP CDM (e.g., using a broad match) and assess the relevance of unmapped concepts for potential inclusion in the critical care flowsheet ontology. All terms will be validated in topic-based batches. Validation includes:
+- Semantic Review: Ensuring terms are formulated and/or mapped correctly.
+- Clinical Validation: Engaging domain experts to review the terms for relevance and alignment with research needs.
+- OMOP Mapping Feasibility: Evaluating terms for potential alignment with OMOP CDM and standardized vocabularies.
