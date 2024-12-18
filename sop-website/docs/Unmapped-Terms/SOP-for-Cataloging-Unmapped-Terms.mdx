@@ -71,12 +71,10 @@ This SOP applies to all project team members involved in data mapping and curati
 | `source_table`   | The name of the source table from which the term is extracted. If the name of the source table is proprietary, use an alias that provides a clear and descriptive meaning  | String   | `flowsheets`  | No   |
 | `clinical_setting`   | The clinical setting where the data was collected (e.g., ICU, emergency department).   | String   | `ICU`  | Yes  |
 | `source_population`  | The specific patient population from which the data was derived (e.g., adults, pediatric, unspecified). | String   | `Adults`   | Yes  |
-| `important_for_research`   | Indicates whether the concept has been identified as important for research purposes (can be 'Yes'/'No'/'Unknown').   | String  | `Yes`   | No  |
-| `who_identified_importance`| The name or role of the individual(s) who indicated the term's research importance.   | String   | `Dr. Jane Smith, Oncology Specialist`   | No  |
-| `research_question`   | A description of the research questions the concept was deemed important to address.  | String   | `Study of intubation practices and clinical outcomes.` | No   |
-| `comments`   | Captures notes on the mapping process, including reasons for unsuccessful mappings, challenges, and the identity of the person responsible. | String | `Concept too granular, no equivalent in standardized vocabulary; Senior Data Analyst, John Doe` | No   |
+| `site_name`  | The name of the institution or organization responsible for submitting unmapped concepts. | String   | `Tufts CTSI`   | Yes  |
+| `contributor_name`  | The full name of the individual submitting the unmapped concepts for review and processing. | String   | `John Doe`   | Yes  |
+| `comments`   | Captures notes on the mapping process, including reasons for unsuccessful mapping and challenges. | String | `Concept too granular, no equivalent in OMOP vocabulary` | No   |
 
-- Please note that if additional metadata is not available at this time, you may proceed by submitting the data with only the required fields.
 - For observations and measurements, extract units from either a separate column or embedded within the source description (e.g., in brackets). Map these units to standard units in the OMOP vocabulary. If a unit cannot be mapped, document it in the delta table with appropriate comments.
 - Recognize that measurement values can be concepts (e.g., qualitative results like "Positive" or "Negative"). Attempt to map these values to standard concepts. Document any unmapped values in the delta table.
 - Distribute the delta table to the Standards Team using **GitHub:** upload the file containing unmapped terms to the `Unmapped-Terms` folder in the [chorus-mapping-stage](https://github.com/chorus-ai/chorus-mapping-stage) repository. Use a branch named `review-unmapped-[sitename]` for clarity and version control. If you do not have access, please request it from Jared Houghtaling (jared.houghtaling@tuftsmedicine.org).
@@ -96,15 +94,13 @@ After completing the initial cataloging steps for unmapped terms, the following 
 1. **Secure Handling of Submitted Terms**
 - All submitted unmapped terms will be securely stored in a restricted-access repository, ensuring that only authorized personnel can view and manage the data.
 - Access protocols will be implemented to comply with data privacy and security standards.
-2. **Prioritization**
-Terms will be prioritized using the following criteria:
+2. **Prioritization**: Terms will be prioritized using the following criteria:
 - Importance to Research: Determined based on input from clinical experts, collected as metadata during the process of gathering unmapped concepts.
 - Patient Data Representation: The number of patients associated with the term will also be used to assess its impact and coverage.
 3. **Aggregation and Categorization**
 - Terms will be aggregated from all sources to create a consolidated dataset.
 - Terms will be further grouped into meaningful clusters based on their context or clinical relevance, such as "ventilation parameters," or "mental health assessments".
-4. **Mapping and Validation by Topic Groups**
-The standards team will evaluate whether the terms can be mapped to the OMOP CDM (e.g., using a broad match) and assess the relevance of unmapped concepts for potential inclusion in the critical care flowsheet ontology. All terms will be validated in topic-based batches. Validation includes:
+4. **Mapping and Validation by Topic Groups**: The standards team will evaluate whether the terms can be mapped to the OMOP CDM (e.g., using a broad match) and assess the relevance of unmapped concepts for potential inclusion in the critical care flowsheet ontology. All terms will be validated in topic-based batches. Validation includes:
 - Semantic Review: Ensuring terms are formulated and/or mapped correctly.
 - Clinical Validation: Engaging domain experts to review the terms for relevance and alignment with research needs.
 - OMOP Mapping Feasibility: Evaluating terms for potential alignment with OMOP CDM and standardized vocabularies.
