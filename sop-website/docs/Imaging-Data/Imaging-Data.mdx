@@ -5,7 +5,7 @@ description:  An SOP for processing medical images
 ---
 
 # Awaiting Approval 
-> Prior to merging an approved SOP, the contributor should change this header from `Awaiting Approval` to `Approved`
+> Before merging an approved SOP, the contributor should change this header from `Awaiting Approval` to `Approved`
 
 # Imaging SOP
 [Version History](https://github.com/chorus-ai/Chorus_SOP/commits/review-imaging/sop-website/docs/Imaging-Data/review-imaging.mdx)
@@ -27,9 +27,38 @@ Guidance for Data Acquisition Sites regarding imaging data processing, harmoniza
 
 5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN) => refer to Standards SOP on data linkage
 
-6. Identify accession numbers for specific image tests. Preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on patient identifier. This is to simplify image test mapping to the primary encounter of interest for the multimoda ldata pull.
+6. Identify accession numbers for specific image tests. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on the patient identifiers. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
 
-7. Map header metadata reevant ot your local site with header metadata selected by CHORUS using OMOP format (list of metadata fields and OMOP mapping in Table 1 below).
+7. Map header metadata relevant to your local site with header metadata selected by CHORUS (list of metadata fields below). Mapping to OMOP to be completed later. RSNA LOINC codes specifying the type of study would be useful to include. Imaging studies should have a corresponding entry in the PROCEDURE_OCCURENCE OMOP table. Thus imaging studies can be linked to the rest of the data using the procedure_occurence_id field. Refer to multimodal linkage SOP on specifics about linking images to the other data: https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/ . For date shifting, please refer to the  Date Shifting SOP.
+
+Study Level:
+AccessionNumber
+StudyDescription
+StudyInstanceUID
+Modality
+StudyDate
+Manufacturer
+ManufacturersModelName
+StudyTime
+MagneticFieldStrength
+BodyPartExamined
+Radiopharmaceutical
+ContrastBolusAgent
+ContrastBolusRoute
+
+Series Level:
+SeriesDescription
+SeriesInstanceUID
+SliceThickness
+ViewPosition
+ImageLaterality
+ImagesinAcquisition
+TransducerType
+TransducerFrequency
+SeriesNumber
+
+Image Level: 
+N/A
 
 8. Identify metadata not covered by CHORUS that would be relevant to your site locally.
 
@@ -41,9 +70,9 @@ Guidance for Data Acquisition Sites regarding imaging data processing, harmoniza
 
 11. Deidentified DICOM metadata table (for sharing): to enable imaging data querying without loading DICOM data.
 
-12. DICOM with metadata deidentified: to use a CHORUS-specific CTP version; DICOM files not to be shared until pixel deidentification solution devised unless site already has an approved solution.
+12. DICOM with metadata deidentified: touse a CHORUS-specific CTP version; DICOM files not to be shared until pixel deidentification solution devised unless site already has an approved solution.
 
-- CTP set up instructions
+- For CTP set up instructions, contact Xiang Li,PhD: XLI60@mgh.harvard.edu
 
 13. DICOM deidentification (for sharing): deidentified DICOM files
 
