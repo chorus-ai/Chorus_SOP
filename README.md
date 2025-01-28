@@ -8,22 +8,21 @@ This repository provides documentation on the processes for contributing data to
 
 The following SOPs are under [development](https://github.com/orgs/chorus-ai/projects/13):
 
-| SOP Title | Lead | Issue Link | Status |
-| :--- | :--- | :--- | :--- |
-| Structured EHR data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/2 | IN PROGRESS |
-| Flowsheet data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/3 | IN PROGRESS |
-| Waveform data | @briangow | https://github.com/chorus-ai/Chorus_SOP/issues/4 | IN PROGRESS |
-| Imaging data | @edilbertoamorim | https://github.com/chorus-ai/Chorus_SOP/issues/5 | IN PROGRESS |
-| Data Requests | @clermontg | https://github.com/chorus-ai/Chorus_SOP/issues/6 | IN REVIEW |
-| Free-Text data | @hol7001 | https://github.com/chorus-ai/Chorus_SOP/issues/7 | IN PROGRESS |
-| Data update | @tcpan | https://github.com/chorus-ai/Chorus_SOP/issues/9 | IN PROGRESS |
-| Data quality | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/10 | COMPLETE |
-| Central Processing | @rkamaleswaran | https://github.com/chorus-ai/Chorus_SOP/issues/11 | IN PROGRESS |
-| Privacy | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/12 | IN PROGRESS |
-| Common data elements | @ucabhkw | https://github.com/chorus-ai/Chorus_SOP/issues/13 | IN PROGRESS |
-| Safe Harboring Approach | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/14 | IN PROGRESS |
-| Clinical Validation of Mappings | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/17 | COMPLETE |
-| Multimodal Data Linkage | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/28 | COMPLETE |
+| SOP Title | Lead | Status | Provisional Created | Draft Due Date | Notes
+| :--- | :--- | :--- | :--- |:--- |:--- |
+| Structured EHR data | @jshoughtaling | In Progress |  | 21 Feb | Supporting the time committed for cloud
+| Flowsheet data | @jshoughtaling | In Progress |  | 21 Feb | Supporting the time committed for cloud
+| Waveform | @briangow | In Progress | Yes| 31 Jan| Finalize
+| Imaging | @edilbertoamorim | In Progress |  | 7 March | Considering current testing ongoing 
+| 2nd Data Request/re-upload | @clermontg | In Review |  | 7 Feb | Updating to add more technical information and need timeline for first data quality requirements 
+| Free-Text data | @hol7001 (Hongfang)| In Progress |  | 7 Feb |  
+| Data update | @tcpan | In Progress | Yes | 31 Jan | Finalize the process and get reviewed
+| Central Processing | @rkamaleswaran | In Progress |  | 14 Feb | Provisional at least. Recognize things can/will change 
+| Azure Roles | Pending (Sara helping create) | In Progress |  | 7 Feb | 
+| Privacy/Safe Harboring | Xiaoqian (need GitHub handle) | In Progress | Yes | 31 Jan | Checklist created, need to confirm if that is enough
+| Common data elements | Eric (need GitHub handle) | In Progress | Yes | 31 Jan | Initial delphi list created, but need specific list of elements we will review for in each upload
+| Date Shifting SOP | @clermontg (Should this be Gilles?) | In Progress |  | 31 Jan | We should have good idea of what we should be doing for date shifting, but need to put down on virtual paper 
+| Annotations/Chart Review | Joo (need GitHub handle)| In Progress |  | 21 Feb |  
 
 ## How to contribute
 
