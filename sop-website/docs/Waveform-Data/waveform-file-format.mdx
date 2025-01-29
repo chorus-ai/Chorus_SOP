@@ -85,6 +85,11 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
     - Lines starting with `#` contain additional metadata, such as patient demographics and clinical information.
     - We discourage use of comments. Instead, metadata should be captured in the associated structured EHR data contribution.
 
+### 3.3. Stadardized channel naming
+
+We expect the signal label to follow the ISO/IEEE 11073 standards. The signal labels for
+channels that required or recommended can be found here (LINK).
+
 ---
 
 ## 4. Tools and Resources
@@ -100,15 +105,19 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
 
 All hospitals are strongly encouraged to submit waveform data in the WFDB (WaveForm DataBase) format. The WFDB Python toolbox automatically generates the `.hea` and `.dat` file structure when provided with the necessary information.
 
-### 5.1. Segment Definition
+### 5.1. Session Definition
+
+A session (or record in WFDB terminology) represents a single "continous" recording from a patient. It is possible for a patient to have multiple sessions within a given hospital visit. We suggest making use of unique identifiers or bed numbers to separate waveform recordings. ADD EXAMPLE?? If there are no unique indentifiers for the recording in the data stream and bed numbers are not available, it is acceptable to provide all waveform data for a given patient's visit under a single session.  
+
+### 5.2. Segment Definition
 
 In WFDB, a segment is a contiguous set of signals. Each segment has a `.hea` file and at least one `.dat` file. See below for more information on segments.
 
-### 5.2. Time Shifting
+### 5.3. Time Shifting
 
 If your EHR, waveform, and imaging data are being date-shifted, ensure that all data for a given subject is shifted by the same duration. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
 
-### 5.3 Gaps and Overlaps
+### 5.4. Gaps and Overlaps
 
 When reviewing a waveform signal you may notice the following issues:
 
@@ -122,7 +131,7 @@ The goal in handling these issues is to maintain integrity of the waveform in or
 - concatenate the data if it is continuous
 - annotate each segment with the estimated start and end times, which might not exactly match the manufacturer's sampling rate
 
-### 5.4. High Frequency Waveforms
+### 5.5. High Frequency Waveforms
 
 High-frequency waveform files (e.g., ECG, EEG) should be saved as WFDB records. Use `wfdb.io.wrsamp` to write a single-segment record. For multisegment records, create a `wfdb.io.MultiRecord` object and use its `wrsamp` method to save the WFDB file.
 
@@ -133,11 +142,39 @@ A new segment should be created if either of the following conditions is met:
   - If a channel's data stream disappears or a new channel appears
   - If a channel's data is missing, as discussed in the section on Gaps and Overlaps
 
-The exact sample rate (e.g. 249.97 Hz) needs to be passed when saving files in WFDB to ensure accurate timestamps. The device manufacturer should provide be able to provide the sample rate. While this may not be perfectly accurate, it is good enough initially.
+The exact sample rate (e.g. 249.97 Hz) needs to be passed when saving files in WFDB to ensure accurate timestamps. The device manufacturer should be able to provide the sample rate. While this may not be perfectly accurate, it is good enough initially.
 
-### 5.4. Low Frequency Signals ("Numerics")
+### 5.6. Low Frequency Signals ("Numerics")
 
-Low frequency signals (e.g. heart rate) should be saved as a CSV file in the same folder as the high frequency waveforms. The CSV file should be named as `<session_number>n.csv`. Please do not resample the low frequency signals in an effort to  create a uniform time interval. 
+Low frequency signals (e.g. heart rate) should be saved as a CSV file in the same folder as the high frequency waveforms. The CSV file should be named as `<session_number>n.csv`. Please do not resample the low frequency signals in an effort to  create a uniform time interval. Please note that dates in numerics data must be shifted in manner consistent with the other electronic health record and waveform data being submitted, as described in the Time Shifting section above.
+
+---
+## 6. Submitting Waveforms
+
+We encourage submitting waveforms in the "raw" format that you get as an output from your monitor. When waveform data is submitted with explicit timestamps we can take advantage of tools which help correct for gaps in an appropriate manner. 
+
+In your SUBMISSION.md file, please indiacate which of the below options you took when submitting your data:
+
+### 6.1. Submit in "raw" format with a mapping file
+
+Please describe the "raw" format and include these details as appropriate:
+
+- A description of each variable (e.g. `StartTime` represents the time at the start of the first sample in the
+message stream)
+- The data type for each variable
+- Units of each variable, if applicable
+- Details on how the data is encoded
+- Instructions for how to determine the sample number (or "monotonic time") at the start of each segment / message stream
+- Specification of the timestamp variables that represent the wall-clock time at the start and end of each segment / message stream
+- Details on whether sample intervals are uniform across waveform types and channels. High-frequency waveforms should have uniform sample intervals, but if this is not the case please explain why. We expect that numerics files may have non-uniform sample intervals.
+
+Also, please submit a mapping file as requested in the next section.
+
+#### 6.1.1. Mapping file requirements
+
+Alasdair TO SUPPLY CONTENT
+
+### 6.2. Submit in WFDB format
 
 ## 6. Preparing Waveforms in an Alternative Format
 
@@ -154,7 +191,13 @@ message stream)
 
 ---
 
-## 7. Revision History
+## 7. Linking waveform sessions to visits
+
+A table named `waveform_visit_links.csv` should be provided under the `/OMOP/` folder. This table should have a column for `visit_occurrence_id`, and `session`. If an identifier is availabe which links a given waveform session to a visit then it should be used to generate this table. If such an identifier is not available, the waveform should be linked to a visit based on timestamps. If the start time of a waveform occurs between the start and end of a visit it should be linked to that visit. HOW TO TREAT EDGE CASES?
+
+---
+
+## 8. Revision History
 
 | Version | Date       | Description                                |
 |---------|------------|--------------------------------------------|
@@ -162,14 +205,14 @@ message stream)
 
 ---
 
-## 8. Contact Information
+## 9. Contact Information
 
 - **CHoRUS Waveform Working Group**
   - Email: Brian Gow `<briangow@mit.edu>`
 
 ---
 
-## 9. References
+## 10. References
 
 - [WFDB Format Documentation](https://wfdb.io/)
 - [NIH CHoRUS Project Overview](https://chorus4ai.org/)
