@@ -87,8 +87,9 @@ The WFDB `.hea` file is a text file containing metadata about the waveform recor
 
 ### 3.3. Stadardized channel naming
 
-We expect the signal label to follow the ISO/IEEE 11073 standards. The signal labels for
-channels that required or recommended can be found here (LINK).
+We expect the signal labels for each channel to follow the ISO/IEEE 11073 standards. The signal labels for requested channels can be found here:
+- <wiki_telemetry_link>
+- <wiki_eeg_link>
 
 ---
 
@@ -105,9 +106,9 @@ channels that required or recommended can be found here (LINK).
 
 All hospitals are strongly encouraged to submit waveform data in the WFDB (WaveForm DataBase) format. The WFDB Python toolbox automatically generates the `.hea` and `.dat` file structure when provided with the necessary information.
 
-### 5.1. Session Definition
+### 5.1. Session Definition  
 
-A session (or record in WFDB terminology) represents a single "continous" recording from a patient. It is possible for a patient to have multiple sessions within a given hospital visit. We suggest making use of unique identifiers or bed numbers to separate waveform recordings. ADD EXAMPLE?? If there are no unique indentifiers for the recording in the data stream and bed numbers are not available, it is acceptable to provide all waveform data for a given patient's visit under a single session.  
+A session (or record in WFDB terminology) represents a single "continous" recording from a patient. One or more sessions may be captured within a single hospital admission. Ideally, each session should contain data continously collected from a single device, but if detailed device identification is not available, it is acceptable to store all data for a single visit as one session. A session is sometimes identifiable by a “session ID” that is captured within the recording.  
 
 ### 5.2. Segment Definition
 
@@ -176,6 +177,11 @@ Alasdair TO SUPPLY CONTENT
 
 ### 6.2. Submit in WFDB format
 
+If you do not have access to your waveform data in a "raw" format with explicit timestamps, you can submit it in WFDB format. Ideally your WFDB files would have been converted to WFDB by using the CHoRUS to WFDB converter. When submitting in WFDB please indicate if the conversion was done with the CHoRUS to WFDB converter. If it was not done with this official converter please indicate:
+
+- How you handled splitting data in to segments. Also, please indicate if you limited your maximum segment length to 8 hours as suggested above.
+- How you handled gaps. Please indicate whether you were able to differentiate between gaps due to missing data and other types of gaps (e.g. a gap due to a clock resync). Please indicate how you modified your data for each gap type. 
+
 ## 6. Preparing Waveforms in an Alternative Format
 
 As discussed in the SOP on [contributing waveforms](/Chorus_SOP/docs/Waveform-Data/), the WFDB format is strongly preferred. If providing an alternative format, detailed documentation about the format is required to facilitate conversion to WFDB. The documentation (in `SUBMISSION.md`) should include:
@@ -191,9 +197,9 @@ message stream)
 
 ---
 
-## 7. Linking waveform sessions to visits
+## 7. Linking Waveform Sessions to Visits
 
-A table named `waveform_visit_links.csv` should be provided under the `/OMOP/` folder. This table should have a column for `visit_occurrence_id`, and `session`. If an identifier is availabe which links a given waveform session to a visit then it should be used to generate this table. If such an identifier is not available, the waveform should be linked to a visit based on timestamps. If the start time of a waveform occurs between the start and end of a visit it should be linked to that visit. HOW TO TREAT EDGE CASES?
+A table named `waveform_visit_links.csv` should be provided under the `/OMOP/` folder. This table should have a column for `visit_occurrence_id`, and `session`. If the data collection system does not provide a direct linkage between session and visit_occurrence_id, it may be necessary to infer this linkage based on the start and end time of the session. Keep in mind that the session start and end may not exactly match the admission, discharge, or transfer time in the EHR.
 
 ---
 
