@@ -1,45 +1,38 @@
-# Chorus_SOP
-ChoRUS centralized SOP documentation site
+# Standard Operating Procedures (SOPs) for the CHoRUS consortium
 
-This repository is trying to organize all SOPs in an elengant manner to help each site contribute to the CHoRUS consortium.
-The website is built with [Docusaurus](https://docusaurus.io/) and all contents are written with Markdown and MDX syntax.
+This repository provides documentation on the processes for contributing data to the CHoRUS consortium. Content is written in Markdown, which is then converted to HTML with [Docusaurus](https://docusaurus.io/).
 
 [**Online documentation SOP site**](https://chorus-ai.github.io/Chorus_SOP/). 
 
 ## SOP Development
 
-This repository is also used to track the development of SOP documentation through an associated [GitHub Project](https://github.com/orgs/chorus-ai/projects/13).
+The following SOPs are under [development](https://github.com/orgs/chorus-ai/projects/13):
 
-The following SOPs are under development:
-| SOP Title | Lead | Issue Link |
-| :--- | :--- | :--- |
-| Structured EHR data | Andrew/Jared | https://github.com/chorus-ai/Chorus_SOP/issues/2 |
-| Flowsheet data | Andrew/Jared | https://github.com/chorus-ai/Chorus_SOP/issues/3 |
-| Waveform data | Brian | https://github.com/chorus-ai/Chorus_SOP/issues/4 |
-| Imaging data | Eddy/Xiang | https://github.com/chorus-ai/Chorus_SOP/issues/5 |
-| Data Requests | Gilles/Randall | https://github.com/chorus-ai/Chorus_SOP/issues/6 |
-| Free-Text data | Hongfang | https://github.com/chorus-ai/Chorus_SOP/issues/7 |
-| Broad SOP | Gilles/Randall | https://github.com/chorus-ai/Chorus_SOP/issues/8 |
-| Data update | Tony | https://github.com/chorus-ai/Chorus_SOP/issues/9 |
-| Data quality | Andrew/Jared | https://github.com/chorus-ai/Chorus_SOP/issues/10 |
-| Central Processing | Rishi | https://github.com/chorus-ai/Chorus_SOP/issues/11 |
-| Privacy | Xioqian | https://github.com/chorus-ai/Chorus_SOP/issues/12 |
-| Common data elements | Tezcan | https://github.com/chorus-ai/Chorus_SOP/issues/13 |
-| Safe Harboring Approach | Xioqian | https://github.com/chorus-ai/Chorus_SOP/issues/14 |
-| OMOP Mapping | Polina | https://github.com/chorus-ai/Chorus_SOP/issues/15 |
+| SOP Title | Lead | Status | Provisional Created | Draft Due Date | Notes
+| :--- | :--- | :--- | :--- |:--- |:--- |
+| Structured EHR data | @jshoughtaling | In Progress |  | 21 Feb | Supporting the time committed for cloud
+| Flowsheet data | @jshoughtaling | In Progress |  | 21 Feb | Supporting the time committed for cloud
+| Waveform | @briangow | In Progress | Yes| 31 Jan| Finalize
+| Imaging | @edilbertoamorim | In Progress |  | 7 March | Considering current testing ongoing 
+| 2nd Data Request/re-upload | @clermontg | In Review |  | 7 Feb | Updating to add more technical information and need timeline for first data quality requirements 
+| Free-Text data | @hol7001 (Hongfang)| In Progress |  | 7 Feb |  
+| Data update | @tcpan | In Progress | Yes | 31 Jan | Finalize the process and get reviewed
+| Central Processing | @rkamaleswaran | In Progress |  | 14 Feb | Provisional at least. Recognize things can/will change 
+| Azure Roles | Pending (Sara helping create) | In Progress |  | 7 Feb | 
+| Privacy/Safe Harboring | Xiaoqian (need GitHub handle) | In Progress | Yes | 31 Jan | Checklist created, need to confirm if that is enough
+| Common data elements | Eric (need GitHub handle) | In Progress | Yes | 31 Jan | Initial delphi list created, but need specific list of elements we will review for in each upload
+| Date Shifting SOP | @clermontg (Should this be Gilles?) | In Progress |  | 31 Jan | We should have good idea of what we should be doing for date shifting, but need to put down on virtual paper 
+| Annotations/Chart Review | Joo (need GitHub handle)| In Progress |  | 21 Feb |  
 
-## How to contribute to the SOP documentation
+## How to contribute
 
-[Link to Template]
+To add or update the guidelines, you will need to edit the relevant markdown files. The easiest way to do this is to find the relevant file on GitHub, click "edit", and then follow the steps to create a "pull request". You can navigate to the relevant markdown file on GitHub from the website by clicking the `Edit this page` button at the bottom. Alternatively, if you are familiar with git, you can submit a pull request in the usual way.
 
-## How to edit the contents of online documentation site
+Once a pull request is opened it will be reviewed by CHoRUS colleagues. After the pull is request is approved, you may merge it into the repository by clicking "Merge". Merging a pull request will trigger a rebuild of the website.
 
-1. Navigate to the target page of online documentation site, and click `Edit this page` button at the bottom.
-2. A GitHub editing page will pop up for you to edit the contents, make your own edition and commit your changes to a new branch.
-3. Submit the pull request
-
-if you would like to add topics that are not yet represented, please add your request to [`issues`](https://github.com/chorus-ai/Chorus_SOP/issues).
+If you would like to add topics that are not yet represented, please add your request to [`issues`](https://github.com/chorus-ai/Chorus_SOP/issues).
 
 ## Resources
+
 - [MDX](https://mdxjs.com/)
 - [Docusaurus](https://docusaurus.io/)
