@@ -22,7 +22,12 @@ The following SOPs are under [development](https://github.com/orgs/chorus-ai/pro
 | Privacy/Safe Harboring | Xiaoqian (need GitHub handle) | In Progress | Yes | 31 Jan | Checklist created, need to confirm if that is enough
 | Common data elements | Eric (need GitHub handle) | In Progress | Yes | 31 Jan | Initial delphi list created, but need specific list of elements we will review for in each upload
 | Date Shifting SOP | @clermontg (Should this be Gilles?) | In Progress |  | 31 Jan | We should have good idea of what we should be doing for date shifting, but need to put down on virtual paper 
-| Annotations/Chart Review | Joo (need GitHub handle)| In Progress |  | 21 Feb |  
+| Annotations/Chart Review | Joo (need GitHub handle)| In Progress |  | 21 Feb | 
+| Cultures/organism reporting used in ICU | Standards Team| In progress |  | TBD |  
+| OMOP extension for waveform acquisition parameters & derived features | Standards Team|  |  | TBD |  
+| Data provenance & institution specific data generation | Standards Team|  |  | TBD |  
+| SDoH Data | Standards Team|  |  | TBD | collaborate with UF team | 
+| Amendment to Linkage SOP | Standards Team|  |  | TBD | ICU representation and procedure ID representation |
 
 ## How to contribute
 
