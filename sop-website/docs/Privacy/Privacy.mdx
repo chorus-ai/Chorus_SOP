@@ -1,7 +1,99 @@
----
-title: Privacy
-id: Privacy
-description:  An SOP for general conventions related to data privacy
----
+**AWAITING APPROVAL**
+
+**SOP for Privacy Scan Tool Operations**
+
+Version History
+
+**Purpose**
+
+This Standard Operating Protocol (SOP) outlines the procedures for using the privacy scan tool to identify and
+manage potential privacy risks in datasets used within the CHORUS project. It is intended for project team
+members who are responsible for data p
+rivacy assessments, risk mitigation, and compliance with privacy
+standards.
+
+**Procedures**
+
+**STEP 1: INSTALL PRIVACY SCAN TOOL**
+
+- Ensure the necessary dependencies are installed:
+  - Python 3.6 or higher.
+  - Required Python libraries from requirements.txt in the repository.
+  - Git for repository cloning.
+- Clone the Privacy Scan Tool repository from GitHub:
+  - git clone https://github.com/chorus-ai/privacy_scan_tool.git
+  - cd privacy_scan_tooL
+- install the dependencies by running:
+  - pip install -r requirements.txt
+
+**STEP 2:  PREPARE DATASETS FOR SCANNING**
+
+- Ensure datasets are in a suitable format (CSV, JSON, or database connection).
+- Anonymize or pseudonymize sensitive fields if necessary before scanning.
+- Load the dataset into the Privacy Scan Tool’s input directory or configure a connection string for direct database access.
+
+**STEP 3: CONFIGURE THE SCAN TOOL**
+
+- Adjust the tool’s configuration to match the dataset and privacy rules:
+  - Modify the config.yaml file to set parameters such as:
+    - Dataset path or database connection details.
+    - Privacy thresholds (e.g., k-anonymity, l-diversity levels).
+    - Fields to scan (specify sensitive fields to be evaluated).
+- Define custom privacy rules if needed by extending the rule set in rules.py.
+
+**STEP 4: EXECUTE THE PRIVACY SCAN**
+
+- Run the tool with the following command
+  - python privacy_scan.py --config config.yaml
+- Monitor the output for real-time feedback on privacy vulnerabilities. The tool generates a detailed report highlighting any potential risks, categorized based on severity (low, medium, high)
+
+**STEP 5: REVIEW AND INTERPRET RESULTS**
+
+- Examine the generated privacy report, which includes:
+  - **Field Name**: Identifies the dataset field evaluated.
+  - **Risk Level**: Severity of the privacy risk (low, medium, high).
+  - **Privacy Violation Type**: Indicates the type of privacy violation (e.g., re-identification risk, insufficient anonymization).
+  - **Recommendation**: Suggested actions to mitigate the risk
+
+| Field Name | Risk Level | Violation Type               | Recommendation                             |   |
+|------------|------------|------------------------------|--------------------------------------------|---|
+| patient_id | High       | Re-identification Risk       | Apply pseudonymization or remove the field |   |
+| zipcode    | Medium     | Granularity of Location Data | Aggregate data to 3-digit zip code         |   |
+| birthdate  | High       | Direct indentifier           | Use age range instead of exact birthdate   |   |
+|            |            |                              |                                            |   |
+
+**STEP 6: MITIGATE PRIVACY RISKS**
+
+- Apply the recommended mitigations to reduce the identified privacy risks:
+  -  Aggregate, pseudonymize, or anonymize sensitive fields.
+  -  Re-run the Privacy Scan Tool after applying mitigations to ensure risks have been addressed.
+
+**STEP 7: DOCUMENT THE PROCESS AND RESULTS**
+
+- Document each scan and the mitigations applied for future reference. Include:
+  - Date of the scan.
+  - Dataset description.
+  - Privacy violations detected.
+  - Actions taken to resolve the violations.
+- Store the report and documentation securely in a version-controlled repository:
+  - GitHub: Upload the report to the privacy-scan-reports folder, using a branch named scan-report-[dataset-name] for version control.
+  - Naming convention for the report should be PrivacyScanReport_DatasetName_MMDDYY
+
+**STEP 8: SHARE THE PRIVACY REPORT WITH THE TEAM**
+
+- Once the scan is complete and privacy risks have been mitigated, distribute the final privacy report to the designated team members for review:
+  - **Email**: Share the report with the Data Privacy Lead (e.g., Jane Doe at jane.doe@organization.org)
+  - **GitHub**: Commit and push the report to the repository for broader team access.
+
+**STEP 9: CONTINUOUS MONITORING AND RE-ASSESSMENT**
+
+- Set a regular schedule for privacy scans based on data updates (e.g., monthly or quarterly).
+- Periodically review the scan tool configuration and update the privacy rules to align with evolving privacy standards and regulatory requirements (e.g., GDPR, HIPAA).
+
+**Reference Materials**
+1.  [Privacy Scan Tool GitHub Repository](https://github.com/chorus-ai/privacy_scan_tool)
+2.  [GDPR Overview](https://gdpr.eu/)
+3.  [HIPPA Compliance Guide](https://www.hipaajournal.com/hipaa-compliance-checklist/)
+4.  [K-Anonymity](https://en.wikipedia.org/wiki/K-anonymity)
 
 
