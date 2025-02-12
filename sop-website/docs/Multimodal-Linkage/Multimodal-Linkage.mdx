@@ -1,0 +1,132 @@
+---
+title: Multimodal Data Linkage
+id: Multimodal Data Linkage
+description:  An SOP for general conventions related to linking data between modalities
+---
+
+# Approved
+# [PROVISIONAL] Standard Operating Protocol for Linking Multiple Modes of Data
+
+# Purpose
+
+Each image and waveform file in a CHoRUS data extract should be linked to a record in the EHR data for an associated patient and encounter using OMOP-specific identifiers.
+
+This SOP outlines a step-by-step approach for linking various modes of data together to ensure relational consistency and enable powerful cohort selection and analytical processes downstream.
+
+The sections below describe work that has already been done on the MIMIC synthetic dataset, and describe CHoRUS conventions for linkage as well as their underlying motivations.
+
+# Scope
+
+This SOP is narrowly focused on linking imaging and waveform data acquired on the same patient to ensure data integrity.
+
+**What this SOP does not do:**
+- Manage bundles of related waveform or imaging files acquired in a single procedure.
+- Include procedures for data deidentification, such as data shifting.
+- Cover the submission of data to the cloud.
+- Address data linking activities that occur in the cloud environment after sites have submitted the data.
+
+# Audience
+
+This SOP is intended for data acquisition site engineers that are assembling the required multi-modal dataset across a set of patients and are ready to preserve known linkages in a CHoRUS-standard format.
+
+<img src={"https://raw.githubusercontent.com/chorus-ai/Chorus_SOP/refs/heads/main/sop-website/docs/Multimodal-Linkage/MMLinkage_Overview.png"} alt="Multimodal Linkage Workflow" />
+
+
+## A: FILE ORGANIZATION
+
+The ways in which data are organized has been defined by the Data Acquisition team and is defined in the Data-Upload-Update SOP. Further specification about the formatting of filenames will be covered in format-specific SOPs found in this documentation site.
+
+This organizational structure has been modified from the original Upload SOP, such that structured EHR data in OMOP CDM format are no longer included in the per-person file structure, as was recommended previously.
+
+The structure shown in Section A in the diagram above represents the most up-to-date version of the organization in which sites are expected to deliver data.
+
+* Note that the directory labeled 'root' in the 'Release' section can either be a dated release directory (if your site chooses to retain all files in each release in individual dirs) or it could be a naming convention of your choice.
+
+The [data upload/update SOP] will provide additional details on this directory structure and the creation of an associated upload manifest.
+
+## B: REGISTRY CONSTRUCTION
+
+The files listed in both the Images and Waveform subdirectories will need to be processed individually by sites for reasons that include re-organization, date shifting, removal of PHI (and verification of absence), etc.
+
+During this processing, sites should construct two tabular *REGISTRIES* that contain a **SINGLE ROW PER FILE** with data relevant to linking those files (1) together via session/accession, and (2) to data from other modalities.
+
+These registries should contain the following columns:
+- **file_id**
+  - Unique identifier pertaining to the file.
+  - Could be a hash, or any other identifier you would like.
+  - Should be unique (e.g. primary key) within registry table.
+  - Collisions across registry tables are discouraged but do not break the model
+- **proc_id**
+  - In the example shown in the diagram above, image files are assigned procedure identifiers between 2000000000 and 2000999999, and waveform files are assigned procedure identifiers greater than 2001000000
+  - The cardinality may not match *file_id* (e.g. multiple distinct *file_id* values could be associated with a single *proc_id* value)
+    - Information regarding organizational structures for waveform and imaging files, sessions, and studies will follow in those SOPs, respectively
+  - Must not overlap with other *procedure_occurrence_id* values assigned to EHR-derived procedures
+  - *DATATYPE*: integer or bigint
+- **person_id**
+  - *person_id* value associated with the patient in your **OMOP** dataset. This id should also match the name of that files parent directory
+  - *DATATYPE*: integer or bigint
+- **group_id**
+  - Identifier that pertains to some grouping of files (e.g. session, accession, recording, etc.)
+  - This column is flexible to accommodate different formats and in-house grouping strategies, but it should enable relevant connections between rows in your registries
+  - *DATATYPE*: string
+- **visit_id**
+  - *visit_occurrence_id* value associated with the associated encounter recorded in your **OMOP** dataset.
+  - IF you don't have an explicit link between your file and an encounter identifier, you should infer the visit based on datetime (i.e. select the visit for the given patient that overlaps with the timestamp of the file capture)
+    - IF there is no visit for that patient that overlaps with the file's timestamp (e.g. file was captured during an outpatient visit outside of OMOP) **LEAVE THIS FIELD NULL**
+  - *DATATYPE*: integer or bigint
+- **datetime**
+  - Timestamp of the point at which the file was captured, within the **LOCAL** timezone
+  - IF your site is shifting dates for EHR data prior to delivery, this field should represent the **SHIFTED** timestamp rather than the original timestmap
+  - *DATATYPE*: timestamp (local TZ)
+- **src_file**
+  - Name and path of the source file in your data storage system, to enable traceback and quality control
+  - *DATATYPE*: string
+- **trg_file**
+  - Name and path of the renamed file to be delivered with your extract, following the [naming convention] defined by the Data Acquisition team
+  - *DATATYPE*: string
+
+The registries that you produce should be delivered as CSV files, along with your extract, inside the **RELEASE** directory.
+
+> [!NOTE]
+> We will eventually add columns to these registries that contain information about the ways in which the files were captured.
+> This information will then be used to map files to **procedure_concept_id** values with additional granularity (e.g. ECG instead of Monitoring Procedure).
+> Provisionally, all rows in the *IMAGE REGISTRY* should be mapped to a **procedure_concept_id** of 4180938 (Imaging Procedure).
+> All rows in the *WAVEFORM REGISTRY* should be mapped to a **procedure_concept_id** of 4141651 (Monitoring Procedure)
+
+## C: OMOP INTEGRATION
+
+> [!WARNING]
+> The **procedure_occurrence_id** field serves a different purpose than the **procedure_concept_id** field.
+> **procedure_occurrence_id** is a unique identifier for a given row in the [PROCEDURE_OCCURRENCE table](https://ohdsi.github.io/CommonDataModel/cdm54.html#procedure_occurrence), while
+> **procedure_concept_id** is a [standard concept in the OMOP vocabulary](https://athena.ohdsi.org/search-terms/terms?standardConcept=Standard&page=1&pageSize=15&query=) that denotes a particular medical procedure.
+> This distinction is critical in understanding how OMOP entities are created from the two file registries.
+
+After creating the two registries, you should be able to use them directly to create rows in your OMOP PROCEDURE_OCCURRENCE table, [as was done for the MIMIC dataset](https://github.com/chorus-ai/MIMIC/blob/fcb9b22ef13424f04a65e612eaf2ffe1d72485ea/etl/src/etl/mimic.py#L416)
+
+Correspondence between the registry columns and PROCEDURE_OCCURRENCE columns are shown in color in SECTION C of the diagram above.
+
+As was mentioned above in **B**, there are several important constraints to maintain during this integration:
+1. *person_id* values should reference the appropriate patient in the PERSON table, and those values should also correspond with the person-level directory name in your extract organization
+2. *visit_occurrence_id* values should reference the appropriate encounter in the VISIT_OCCURRENCE table
+3. *procedure_occurrence_id* values should be distinct **PER PROCEDURE** and should not overlap with other procedure events in the PROCEDURE_OCCURRENCE table. It could be the case that multiple files/rows in the registry are associated with a single *procedure_occurrence_id* value.
+4. *procedure_concept_id* values should either be set to **4180938** (Imaging Procedure) for images, or **4141651** (Monitoring Procedure) for waveform files. **NOTE** that after this first implementation, we will suggest that sites map their imaging and waveforms with additional granularity. Any code needed to create the registries should be flexible to accommodate (sub)modality procedure mappings in the future.
+5. *procedure_source_value* values should include a concatenated representation of (1) the target file path/name and (2) the group identifier associated with the particular file, should there be one.
+  - We suggest that you concatenate these items as key:value pairs (e.g. "path: /some/file/path, group: [somegroupid])
+
+\* Note that the **procedure_type_concept_id** field refers to the provenance of the data. The current vocabulary does not fully support this use case; in the interim, you can use [standard algorithm](https://athena.ohdsi.org/search-terms/terms/32880), but we are investigating the minting of a new term in the **Type Concept** domain that accurately captures these linkage events.
+
+## D: ANALYTICS INTEGRATION
+
+The newly created rows in your OMOP CDM data allow for OMOP-specific cohort selection routines to isolate and capture non-tabular data forms.
+
+Eventually, we will implement a data structure using OMOP extension tables that enables both the data capture procedure, and features extracted from the resulting data, to be organized alongside other OMOP data.
+
+## SUPPLEMENTARY MATERIAL
+
+### MIMIC Approach
+
+We have created and shared a [preliminary codebase for the MIMIC dataset](https://github.com/chorus-ai/MIMIC/tree/main) that includes the following:
+- [Description](https://github.com/chorus-ai/MIMIC/blob/main/README.md) of registry creation and motivation
+- [Function](https://github.com/chorus-ai/MIMIC/blob/fcb9b22ef13424f04a65e612eaf2ffe1d72485ea/etl/src/etl/mimic.py#L233) to parse, transform, and rename imaging files
+- [Function](https://github.com/chorus-ai/MIMIC/blob/fcb9b22ef13424f04a65e612eaf2ffe1d72485ea/etl/src/etl/mimic.py#L285) to parse, transform, and rename waveform files
+- [Function](https://github.com/chorus-ai/MIMIC/blob/fcb9b22ef13424f04a65e612eaf2ffe1d72485ea/etl/src/etl/mimic.py#L390) to create dynamic insert SQL statements that insert rows into the PROCEDURE_OCCURRENCE table using the registry tables
