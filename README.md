@@ -12,14 +12,14 @@ The following SOPs are under [development](https://github.com/orgs/chorus-ai/pro
 | :--- | :--- | :--- | :--- |:--- |:--- |
 | Structured EHR data | @jshoughtaling | In Progress |  | 21 Feb | Supporting the time committed for cloud
 | Flowsheet data | @jshoughtaling | In Progress |  | 21 Feb | Supporting the time committed for cloud
-| Waveform | @briangow | In Progress | Yes| 31 Jan| Finalize
+| Waveform | @briangow | In Review | Yes| 31 Jan| Finalize
 | Imaging | @edilbertoamorim | In Progress |  | 7 March | Considering current testing ongoing 
 | 2nd Data Request/re-upload | @clermontg | In Review |  | 7 Feb | Updating to add more technical information and need timeline for first data quality requirements 
 | Free-Text data | @hol7001 (Hongfang)| In Progress |  | 7 Feb |  
 | Data update | @tcpan | In Progress | Yes | 31 Jan | Finalize the process and get reviewed
-| Central Processing | @rkamaleswaran | In Progress |  | 14 Feb | Provisional at least. Recognize things can/will change 
-| Azure Roles | Pending (Sara helping create) | In Progress |  | 7 Feb | 
-| Privacy/Safe Harboring | Xiaoqian (need GitHub handle) | In Progress | Yes | 31 Jan | Checklist created, need to confirm if that is enough
+| Central Processing | @rkamaleswaran | In Progress |  | 31 Mar | Taking longer as figures are being created and detailed outline of architexture being created 
+| Azure Roles | Pending (Sara helping create) | In Progress |  | 14 Mar | Have defined the roles, but outlining what each can do
+| Privacy/Safe Harboring | Xiaoqian (need GitHub handle) | In Review | Yes | 31 Jan | Checklist created, need to confirm if that is enough
 | Common data elements | Eric (need GitHub handle) | In Progress | Yes | 31 Jan | Initial delphi list created, but need specific list of elements we will review for in each upload
 | Date Shifting SOP | @clermontg (Should this be Gilles?) | In Progress |  | 31 Jan | We should have good idea of what we should be doing for date shifting, but need to put down on virtual paper 
 | Annotations/Chart Review | Joo (need GitHub handle)| In Progress |  | 21 Feb | 
