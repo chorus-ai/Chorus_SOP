@@ -179,7 +179,7 @@ The name of the file itself may take different forms depending on the format.   
 ### Local versioning
 Sites may wish to separately maintain prior versions of OMOP files at their own discretion (we strongly recommend doing so).  A prescribed organization or naming convention is not provided.  Note also that all previously submitted OMOP files will remain in the Central Staging area.
 
-Currently, the `chorus-upload` tool does not explicitly support placing the files to be submitted in a dated directory, e.g. {root folder} of the form "20241101", but this can be handled by changing the configuration file for chorus-extract-update, IF `append` mode is chosen.
+Currently, the `chorus-upload` tool does not explicitly support placing the files to be submitted in a dated directory, e.g. [root folder] of the form "20241101", but this can be handled by changing the configuration file for chorus-extract-update, IF `append` mode is chosen.
 
 
 ### Example Local Folder Structure
@@ -227,7 +227,7 @@ root
 
 
 ## Central Staging File Organization
-This virtual environment is hosted in an Azure platform. The containers structure is setup such that each DGS has its own container (e.g. mgh).  The container name for each DGS is used in the `config.toml` files as `{DGS_container}` in the [Configuration](#configuration) section.
+This virtual environment is hosted in an Azure platform. The containers structure is setup such that each DGS has its own container (e.g. mgh).  The container name for each DGS is used in the `config.toml` files as `[DGS_container]` in the [Configuration](#configuration) section.
 
 ![Central Data Organization](https://github.com/chorus-ai/data_acq_SOP/assets/2847495/d7d1d67a-2695-4b2d-92aa-2285b608a09d)
 
