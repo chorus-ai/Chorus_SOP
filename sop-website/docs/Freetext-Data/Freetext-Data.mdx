@@ -3,3 +3,59 @@ title: Freetext Data
 id: Freetext Data
 description:  An SOP for processing freetext information in clinical notes
 ---
+# Awaiting Approval 
+# Standard Operating Protocol for Freetext Data
+
+Information Extraction: As specified in the exploratory calls with sites, CHoRUS is requesting a tokenized version of the notes, not the notes or reports themselves. Here “tokens” refer to clinical entities (e.g., Diagnoses, Procedures, Medications, etc.) mentioned in text along with associated metadata (e.g., the Document ID, OMOP Athena Concept Code associated with the clinical entity, negation, certainty)
+
+Final deliverable: The expected final product is the table note-nlp of the OMOP 5.4 Common Data Model. The specific output should follow the following standard http://ohdsi.github.io/CommonDataModel/cdm54.html#NOTE_NLP. 
+
+Initial extraction: The initial extraction will be site dependent but will follow the general process. A list of patients will be generated from a structured EHR data. To each admission corresponds admission and discharge dates. The initial step is to request/perform an extraction of all reports and notes generated during the visit corresponding to these dates.
+
+Pipeline Setup: Installation instructions can be found under the “Meeting Recordings” folder located at https://drive.google.com/drive/folders/1bDBSF2pkx50kTyTXmWJYt1Ta6pgwh4HH?dmr=1&ec=wgc-drive-globalnav-goto . Specifically, the Week 3 “OHNLP Toolkit Installation Instructions” video will walk you through setting up the framework. Instructions in text form are reproduced below:
+
+1. Go to https://www.github.com/OHNLP/OHNLPTK_SETUP and clone the repository (via download or via 'git clone https://www.github.com/OHNLP/OHNLPTK_SETUP.git')
+ 
+2. In the resulting folder, run 'install_and_update_ohnlptk.sh'
+ 
+3. Open the OHNLPTK folder and run 'run_backbone_configurator.sh' and modify the base config that you wish to work with. Most likely, for initial deployments, you will want to use filesystem in/csv out for testing purposes before changing the config to your own datasources
+ 
+4. Execute ./run_pipeline_local.sh, or whichever one is appropriate for your environment. If running locally, it will download an embedded flink cluster. You will be prompted to update several configuration settings to match your system for scaling/parallel processing support
+ 
+5. Once you have your configuration set, future changes to the NLP models can simply be done by exporting/placing in the "resources" folder and pointing the configuration to something of the same name
+
+Task Setup: To configure OHNLPTK to run the general clinical dictionary as used for this step, additional steps must be taken. Please refer to the “Task 1 materials” subfolder of the google drive. Instructions reproduced here for clarity (you will need to download a file from the google drive after confirming you have a UTS/UMLS license)
+
+In your NLP pipeline configuration (make a copy first if desired):
+1.	Under the "MedTagger NLP" component, change the following settings:
+
+    a.  Configuration Item "Whether to use IE or dictionary-based rulesets..."
+
+        i.  Change to "STANDALONE_DICT_ONLY"
+
+    b.  Configuration Item “The ruleset definition…”
+
+        i.  Change to “OHNLP_General_OHDSI.lookup.dict"
+
+2.	Under the “MedTagger to OHDSI OMOP CDM Format” component, change the following settings:
+
+    a.	Configuration Item “The ruleset folder…”
+
+        i.	Change to “NONE”, if not already so
+
+3.	Download OHNLP_General_OHDSI.lookup.dict from the same folder as this document and place in the “resources” folder within your backbone install
+
+4.	Run!
+
+De-identification (Optional): The second step in the process is to produce a de-identified version of the UEHR data. The process of de-identification may be transparent to investigators, as institutional data scientist may already provide a de-identified version of all UEHR. More likely though, it will be the investigators task to produce this de-identified version. De-identification is the process of producing a version of the note devoid of PHI. If elements of dates are preserved, the result is a “limited” dataset. If elements of dates are not preserved, but dates are time shifted, the resulting dataset is “safe harbor”. This is a general definition of those terms and relevant to all data, not only UEHR.
+
+Investigators are encouraged to find out whether there is an institution-favored method of de-identifying text, or an institutional policy pertaining to verify the result of text de-identification. We note that CHoRUS is not requesting de-identified text, but that this step is available for any sites interested in further developing this capability.
+
+## IMPORTANT: 
+Please note that if you are planning on running de-identification and reusing the generated output in conjunction with NLP output, NLP must be run on the de-identified/resynthesized text, not the original, as otherwise offsets will be incorrect.
+
+Instructions:
+https://github.com/chorus-ai/deidentification_notes/wiki/De%E2%80%90Identification-To%E2%80%90Dos
+
+ 
+
