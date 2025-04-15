@@ -4,58 +4,125 @@ id: Freetext Data
 description:  An SOP for processing freetext information in clinical notes
 ---
 # Awaiting Approval 
-# Standard Operating Protocol for Freetext Data
 
-Information Extraction: As specified in the exploratory calls with sites, CHoRUS is requesting a tokenized version of the notes, not the notes or reports themselves. Here “tokens” refer to clinical entities (e.g., Diagnoses, Procedures, Medications, etc.) mentioned in text along with associated metadata (e.g., the Document ID, OMOP Athena Concept Code associated with the clinical entity, negation, certainty)
+## 1. Purpose
 
-Final deliverable: The expected final product is the table note-nlp of the OMOP 5.4 Common Data Model. The specific output should follow the following standard http://ohdsi.github.io/CommonDataModel/cdm54.html#NOTE_NLP. 
+This SOP provides guidelines for the extraction, processing, and handling of freetext data within CHoRUS. It ensures that only tokenized versions of notes are used, preserving clinical insights while maintaining data privacy.
 
-Initial extraction: The initial extraction will be site dependent but will follow the general process. A list of patients will be generated from a structured EHR data. To each admission corresponds admission and discharge dates. The initial step is to request/perform an extraction of all reports and notes generated during the visit corresponding to these dates.
+---
 
-Pipeline Setup: Installation instructions can be found under the “Meeting Recordings” folder located at https://drive.google.com/drive/folders/1bDBSF2pkx50kTyTXmWJYt1Ta6pgwh4HH?dmr=1&ec=wgc-drive-globalnav-goto . Specifically, the Week 3 “OHNLP Toolkit Installation Instructions” video will walk you through setting up the framework. Instructions in text form are reproduced below:
+## 2. Scope
 
-1. Go to https://www.github.com/OHNLP/OHNLPTK_SETUP and clone the repository (via download or via 'git clone https://www.github.com/OHNLP/OHNLPTK_SETUP.git')
- 
-2. In the resulting folder, run 'install_and_update_ohnlptk.sh'
- 
-3. Open the OHNLPTK folder and run 'run_backbone_configurator.sh' and modify the base config that you wish to work with. Most likely, for initial deployments, you will want to use filesystem in/csv out for testing purposes before changing the config to your own datasources
- 
-4. Execute ./run_pipeline_local.sh, or whichever one is appropriate for your environment. If running locally, it will download an embedded flink cluster. You will be prompted to update several configuration settings to match your system for scaling/parallel processing support
- 
-5. Once you have your configuration set, future changes to the NLP models can simply be done by exporting/placing in the "resources" folder and pointing the configuration to something of the same name
+This SOP applies to data engineers, data scientists, and analysts responsible for processing unstructured clinical text data. It defines the procedures to extract structured information from clinical notes while ensuring compliance with CHoRUS data standards.
 
-Task Setup: To configure OHNLPTK to run the general clinical dictionary as used for this step, additional steps must be taken. Please refer to the “Task 1 materials” subfolder of the google drive. Instructions reproduced here for clarity (you will need to download a file from the google drive after confirming you have a UTS/UMLS license)
+---
+
+## 3. Definitions
+
+- Tokenization: The process of extracting clinical entities (e.g., Diagnoses, Procedures, Medications) along with metadata (e.g., Document ID, OMOP Concept Code, negation, certainty).
+- NOTE_NLP Table: The final structured output conforming to the OHDSI OMOP 5.4 Common Data Model (CDM) containing requested tokens and linkage to the NOTE table.
+- NOTE Table: The final structured output conforming to the OHDSI OMOP 5.4 Common Data Model (CDM) containing linkage information to PERSON and VISIT_OCCURRENCE tables.
+- De-identification: The process of removing protected health information (PHI) from text data to generate a limited or safe harbor dataset.
+- OHNLPTK: The CHoRUS-approved NLP pipeline for processing freetext clinical notes.
+
+---
+
+## 4. Roles and Responsibilities
+
+- Data Engineer: Implements the NLP pipeline and ensures the correct formatting of extracted data.
+- Data Analyst: Validates the tokenized outputs and ensures compliance with OMOP CDM requirements.
+- Quality Control (QC) Analyst: Reviews the processed data to confirm completeness and accuracy.
+
+---
+
+## 5. Materials Needed
+
+- Access to structured Electronic Health Record (EHR) data.
+- Notes and reports to be included with this data submission include Admission (H&P), Emergency, Progress notes, Consultation, Procedure and Operative reports, Discharge Summaries, Radiology, US and ECHO reports. Notes from clinical and non-clinical ancillary services should be included, if available.This information is also available in the Data Request SOP.
+- Access to unstructured clinical notes for tokenization.
+- NLP pipeline tools (OHNLPTK) and associated documentation.
+
+---
+
+## 6. Procedures
+
+### 6.1. **Initial Data Extration**
+
+1. Generate a list of patients form structured EHR data
+
+2. Extract clincical notes and reports within the corresponding admission and discharge dates
+
+### 6.2. **Pipeline Setup**
+Installation instructions can be found under the "Meetings Recordings" folder located at https://drive.google.com/drive/folders/1bDBSF2pkx50kTyTXmWJYt1Ta6pgwh4HH?dmr=1&ec=wgc-drive-globalnav-goto  . Specifically, the Week 3 “OHNLP Toolkit Installation Instructions” video will walk you through setting up the framework. Instructions in text form are reproduced below:
+
+1. Clone teh OHNLPTK repository: git clone
+https://www.github.com/OHNLP/OHNLPTK_SETUP.git. 
+2. In the resulting folder, run installation script: install_and_update_ohnlptk.sh
+3. Configure the backbone: run_backbone_configurator.sh, selecting CSV output for initial testing
+4. Execute teh pipeline: ./run_pipeline_local.sh, adjusting configuration settings as necessary
+
+### 6.3. Task Setup
+To configure OHNLPTK to run the general clinical dictionary as used for this step, additional steps must be taken. Please refer to the “Task 1 materials” subfolder of the google drive. Instructions reproduced here for clarity (you will need to download a file from the google drive after confirming you have a UTS/UMLS license)
 
 In your NLP pipeline configuration (make a copy first if desired):
-1.	Under the "MedTagger NLP" component, change the following settings:
-
-    a.  Configuration Item "Whether to use IE or dictionary-based rulesets..."
-
-        i.  Change to "STANDALONE_DICT_ONLY"
-
-    b.  Configuration Item “The ruleset definition…”
-
-        i.  Change to “OHNLP_General_OHDSI.lookup.dict"
-
+1.	Under the “MedTagger NLP” component, change the following settings:
+      -	Configuration Item “Whether to use IE or dictionary-based rulesets…”
+      -	Change to “STANDALONE_DICT_ONLY”
+      -	Configuration Item “The ruleset definition…”
+      -	Change to “OHNLP_General_OHDSI.lookup.dict”
 2.	Under the “MedTagger to OHDSI OMOP CDM Format” component, change the following settings:
-
-    a.	Configuration Item “The ruleset folder…”
-
-        i.	Change to “NONE”, if not already so
-
+      - Configuration Item “The ruleset folder…”
+      -	Change to “NONE”, if not already so
 3.	Download OHNLP_General_OHDSI.lookup.dict from the same folder as this document and place in the “resources” folder within your backbone install
-
 4.	Run!
 
-De-identification (Optional): The second step in the process is to produce a de-identified version of the UEHR data. The process of de-identification may be transparent to investigators, as institutional data scientist may already provide a de-identified version of all UEHR. More likely though, it will be the investigators task to produce this de-identified version. De-identification is the process of producing a version of the note devoid of PHI. If elements of dates are preserved, the result is a “limited” dataset. If elements of dates are not preserved, but dates are time shifted, the resulting dataset is “safe harbor”. This is a general definition of those terms and relevant to all data, not only UEHR.
+### 6.4. Data Formatting for OMOP CDM
+1.	Convert extracted tokens into OMOP-compatible format.
+2.	Store structured outputs in the NOTE_NLP table of the OMOP 5.4 CDM.
+3.	Store linkage information, leaving the note_text field empty, in the NOTE table of the OMOP 5.4 CDM.
+4.	Validate data consistency against CHoRUS data standards. http://ohdsi.github.io/CommonDataModel/cdm54.html#NOTE_NLP, http://ohdsi.github.io/CommonDataModel/cdm54.html#NOTE.
+5.	There should be a single NOTE_NLP table per upload with data from all visit_occurrences.
+6.	There should be a single NOTE table, where the note_text field is left empty, but does allow linkage to other OMOP table.
 
-Investigators are encouraged to find out whether there is an institution-favored method of de-identifying text, or an institutional policy pertaining to verify the result of text de-identification. We note that CHoRUS is not requesting de-identified text, but that this step is available for any sites interested in further developing this capability.
+### 6.5. De-identifcation (Optional)
+- Investigators may apply site-specific de-identification methods before running NLP.
+- If de-identification is applied, ensure that offsets remain consistent with structured data.
+- Reference CHoRUS de-identification guidelines: https://github.com/chorus-ai/deidentification_notes/wiki/De%E2%80%90Identification-To%E2%80%90Dos
 
-## IMPORTANT: 
-Please note that if you are planning on running de-identification and reusing the generated output in conjunction with NLP output, NLP must be run on the de-identified/resynthesized text, not the original, as otherwise offsets will be incorrect.
+**IMPORTANT**: Please note that if you are planning on running de-identification and reusing the generated output in conjunction with NLP output, NLP must be run on the de-identified/resynthesized text, not the original, as otherwise offsets will be incorrect.
 
-Instructions:
-https://github.com/chorus-ai/deidentification_notes/wiki/De%E2%80%90Identification-To%E2%80%90Dos
+---
+
+## 7. Quality Control (QC) Procedures
+
+- Sample Validation: Verify extracted tokens for a subset of notes (10). As a guideline, there should be at least as many tokens as words in the note. It is recommended that various types of notes are chosen.
+- Consistency Check: Confirm metadata integrity (e.g., date alignment, OMOP Concept Codes).
+- Compliance Review: Ensure adherence to CHoRUS guidelines.
+
+---
+
+## 8. Documentation and Storage
+
+- Maintain logs of NLP pipeline runs, including configuration changes.
+- Store processed data securely in compliance with institutional policies.
+- Ensure version control of extracted datasets.
+
+---
+
+## 9. Deviations from the SOP
+
+- Any deviations must be documented, justified, and approved by CHoRUS Data Acquisition and Standards governance.
+
+---
+
+## 10. Revision History
+
+| Version | Date       | Description                                |
+|---------|------------|--------------------------------------------|
+| 1.0     | 2025-04-07 | Initial version                              |
+
+
+
 
  
 
