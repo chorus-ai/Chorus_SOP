@@ -25,11 +25,13 @@ Guidance for Data Acquisition Sites regarding imaging data processing, harmoniza
 
 4. Confirm the type of data format you will receive (e.g., DICOM; DICOM is the target format for CHORUS) 
 
-5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN) => refer to Standards SOP on data linkage
+5. Confirm the type of IDs used to link this data to the patient (e.g., name) or other hospital ID (e.g., MRN), procedure codes, and time shifting => refer to Standards SOP on data linkage and date shifting. Linkage ID
+a)	Accession number = OMOP: image_occurrence_id 
+b)	Procedure number = OMOP: procedure_occurrence_id
 
-6. Identify accession numbers for specific image tests. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on the patient identifiers. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
+6. Ensure accession numbers for specific image tests are part of the encounters of interest. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on the patient identifiers. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
 
-7. Map header metadata relevant to your local site with header metadata selected by CHORUS (list of metadata fields below). Mapping to OMOP to be completed later. RSNA LOINC codes specifying the type of study would be useful to include. Imaging studies should have a corresponding entry in the PROCEDURE_OCCURENCE OMOP table. Thus imaging studies can be linked to the rest of the data using the procedure_occurence_id field. Refer to multimodal linkage SOP on specifics about linking images to the other data: https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/ . For date shifting, please refer to the  Date Shifting SOP.
+7. Map header metadata relevant to your local site with header metadata selected by CHORUS (list of metadata fields below).  RSNA LOINC codes specifying the type of study would be useful to include. Imaging studies should have a corresponding entry in the PROCEDURE_OCCURENCE OMOP table. Thus, imaging studies can be linked to the rest of the data using the procedure_occurence_id field. Refer to multimodal linkage SOP on specifics about linking images to the other data: https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/ . For date shifting, please refer to the  Date Shifting SOP.
 
 Study Level:
 AccessionNumber
@@ -66,13 +68,13 @@ N/A
 
 > DICOM Metadata de-identification deliverables
 
-10. Identifiable cross walk table creation: maps all original DICOM metadatafields to the deidentification procedure (e.g., replacement, erase, etc) and the new field in the deidentified DICOM, so this can be used as a crosswalk (crosswalk table stays local at site and is not shared).
+10. Identifiable cross-walk table creation (stays local): maps all original DICOM metadata fields to the deidentification procedure (e.g., replacement, erase, etc) and the new field in the deidentified DICOM, so this can be used as a crosswalk (crosswalk table stays local at site and is not shared).
 
 11. Deidentified DICOM metadata table (for sharing): to enable imaging data querying without loading DICOM data.
 
-12. DICOM with metadata deidentified: touse a CHORUS-specific CTP version; DICOM files not to be shared until pixel deidentification solution devised unless site already has an approved solution.
+12. DICOM with metadata deidentified: to use a CHORUS-specific CTP version; DICOM files scan be shared if the site already has an approved solution that may or may not require pixel deidentification.
 
-- For CTP set up instructions, contact Xiang Li,PhD: XLI60@mgh.harvard.edu
+- For CTP set up instructions, contact Xiang Li, PhD: XLI60@mgh.harvard.edu
 
 13. DICOM deidentification (for sharing): deidentified DICOM files
 
