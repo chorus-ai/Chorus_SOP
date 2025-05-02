@@ -1,0 +1,128 @@
+---
+title: Contributing waveform data to CHoRUS
+id: Waveform Data
+description:  An SOP for handling various waveform signals
+---
+
+## 1. Purpose
+
+This Standard Operating Procedure (SOP) outlines the process for hospitals participating in the CHoRUS project to contribute clinical waveform data (e.g., ECG, EEG). The CHoRUS project is a collaborative effort to create a shared research dataset. To ensure consistency and usability, this SOP defines the requirements and procedures for data formatting, documentation, and submission.
+
+---
+
+## 2. Scope
+
+This SOP applies to all hospitals participating in the CHoRUS project and covers the submission of clinical waveform data. All contributors are expected to follow this SOP to facilitate efficient data integration and analysis.
+
+---
+
+## 3. Responsibilities
+
+- **Participating Hospitals:** Submit waveform data per the [Data Requests SOP](https://chorus-ai.github.io/Chorus_SOP/docs/Data-Requests/). Ensure data is provided as outlined below.
+- **CHoRUS Waveform Working Group:** Review submitted data for compliance, convert to WFDB format, and maintain a centralized dataset.
+
+---
+
+## 4. Waveform Data Requirements
+
+Below we list some of the waveform signals that should be submitted. A more complete list along with the standardized **signal label** for each signal being requested, can be found here: [https://github.com/chorus-ai/chorus_waveform_conversion/wiki/Waveform-Conversion](https://github.com/chorus-ai/chorus_waveform_conversion/wiki/Waveform-Conversion).
+
+
+### 4.1. Telemetry Waveforms
+
+Sites should provide any and all of the following high-frequency waveform signals, if
+they are available for a given patient:
+
+- Electrocardiogram (ECG)
+- Photoplethysmogram (PPG)
+- Respiration waveform (belt or impedance)
+- Arterial blood pressure (ABP)
+- Central venous pressure (CVP)
+- Pulmonary artery pressure (PAP)
+- Intracranial pressure (ICP)
+- Airway flow (AWF)
+- Airway pressure (AWP)
+- Airway volume (AWV)
+- Capnogram (CO2)
+
+Additionally, sites should provide any and all low-frequency waveforms ("numeric" values) that are
+measured by the telemetry system, such as (but not limited to):
+
+- Heart rate (HR)
+- QT interval
+- ST elevation/depression
+- Respiratory rate (RR)
+- Oxygen saturation (SpO2)
+- Perfusion index
+- Pulse rate (from PPG or BP waveform)
+- Mean, systolic, and diastolic arterial blood pressure (ABPm, ABPs,
+ ABPd)
+- Mean, systolic, and diastolic noninvasive blood pressure (NBPm, NBPs,
+ NBPd)
+- End tidal CO2 (etCO2)
+- Cerebral oxygen saturation (rSO2)
+
+### 4.2. Electroencephalogram Waveforms
+
+- Electroencephalogram (EEG) waveforms should also be submitted, if available, and should be in files independent of the telemetry waveforms. 
+---
+
+## 5. Data Format Requirements
+
+Waveform data will ultimately be stored in WFDB. However, we encourage submitting your waveform data in a your preferred format (preferably with explicit timestamps), along with a mapping file, as detailed in the **Submitting Waveforms** section in the SOP on [waveform file format](waveform-file-format.mdx).
+
+---
+
+## 6. Procedures
+
+### 6.1. Data Submission Formats
+
+Waveform data should be submitted in your preferred format with minimal modification. This data should be kept as close to the "raw" format from your monitors as possible. However, you should deidentify it in alignment with your institution's policies for CHoRUS submissions. A mapping file also needs to be submitted.
+
+See the **Submitting Waveforms** section in the SOP on [waveform file format](waveform-file-format.mdx), for details.
+
+### 6.2. Submission Process
+
+1. **Upload to CHoRUS Repository:**
+   - Use the secure data submission tool provided by CHoRUS to upload files.
+2. **Submission Overview:**
+   - Provide a text file named `SUBMISSION.md` (template available [here](https://raw.githubusercontent.com/chorus-ai/chorus_waveform_conversion/refs/heads/main/submission/templates/SUBMISSION_template.md)) at the same level as the `/OMOP/` folder, with the following high-level details:
+     - Hospital name
+     - Brief description of the dataset (number of patients, the years covered by your waveform data, the types (e.g. high-frequency telemetry, low-frequency telemetry, EEG) of waveform files being submitted and the number of each type)
+     - Any known issues (if there are any known issues with the waveforms, please make them known so we can try to address them)
+3. **Waveform EHR linkage**
+   - Provide a file named `waveform_visit_links.csv` which links waveform files to visits. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) and the **Linking Waveform Sessions to Visits** section in the SOP on [waveform file format](waveform-file-format.mdx) for details
+4. **Code Submission:**
+   - Mapping file (required): submit to the [CHoRUS to WFDB converter repo](https://github.com/chorus-ai/chorus_waveform_conversion)
+   - Conversion code: please submit any code you used to convert or deidentify your waveform data to the [CHoRUS to WFDB converter repo](https://github.com/chorus-ai/chorus_waveform_conversion). Provide all code under `converters/<site>/` 
+5. **Readiness Checklist:**
+   - Fill out a waveform readiness checklist for your site after opening a new `Readiness Checklist` issue in the [Waveform Readiness repo](https://github.com/chorus-ai/chorus_waveform_readiness)
+
+
+### 6.3. Validation and Feedback
+
+- CHoRUS Central will review all submitted data for:
+  - Compliance with the guidelines in this SOP
+  - Completeness and consistency
+- Contributors will be notified of any issues or required corrections
+
+## 7. Revision History
+
+| Version | Date       | Description                                |
+|---------|------------|--------------------------------------------|
+| 1.0     | 2024-11-21 | Initial version                            |
+| 2.0     | 2025-02-10 | Added requested signal types. Clarified that waveforms should be submitted in preferred format                            |
+
+---
+
+## 8. Contact Information
+
+- **CHoRUS Waveform Working Group**
+  - Email: Brian Gow `<briangow@mit.edu>`
+
+---
+
+## 9. References
+
+- [WFDB Format Documentation](https://wfdb.io/)
+- [NIH CHoRUS Project Overview](https://chorus4ai.org/)
