@@ -1,0 +1,222 @@
+---
+title: Waveform Extension
+id: Waveform-Extension
+description:  An SOP for the waveform extension to the OMOP CDM
+---
+
+## 1. Purpose
+
+This SOP provides detailed implementation guidance for the OMOP CDM Waveform Extension, encompassing specifications and updated procedures for the following tables: waveform_occurrence, waveform_registry, waveform_feature, and waveform_channel_metadata. It serves as an addendum to the previously published Multimodal Linkage SOP [https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/], which first introduced the waveform_registry table. This addendum modifies and expands the scope of that guidance to reflect a broader, semantically integrated model for representing waveform acquisition events, derived features, and signal metadata. The updated schema enables consistent ingestion, standardization, and temporal alignment of physiological waveform data (e.g., ECG, EEG, ABP), supporting use cases in critical care, AI model development, and observational research within the OMOP CDM ecosystem.
+
+## 2. Scope
+
+Applicable to all ETL pipelines and data engineers responsible for transforming raw physiological waveform files into OMOP CDM via harmonized linkage tables.
+
+## 3. Procedural Steps
+
+### 3A. Understand The Table Population Order & Rationale
+
+The waveform_occurrence table must be populated first, as it defines the core acquisition event and provides a semantic and temporal anchor for all other tables. Each waveform file (waveform_registry), feature (waveform_feature), and channel metadata (waveform_channel_metadata) must link back to this acquisition context.
+
+| Step |           Table           |                              Rationale                              |
+|:----:|:-------------------------:|:-------------------------------------------------------------------:|
+| 1    | waveform_occurrence       | Establishes clinical and temporal context for the recording session |
+| 2    | waveform_registry         | Registers each raw waveform file, linked to the occurrence          |
+| 3    | waveform_channel_metadata | Describes per-signal-channel metadata for each registered file      |
+| 4    | waveform_feature          | Stores derived features from specific waveform-channel combinations |
+
+## 4.  Scan & Detect
+
+Scan source directories (or data lakes) for waveform files to be processed, based on project-specific triggers (e.g., hourly ingestion, daily batch, or one-time archival loads). Files may include both newly acquired and previously unprocessed recordings.
+Maintain an audit trail or metadata log to track:
+
+- File name and hash
+- Ingestion timestamp
+- ETL status (e.g., “pending”, “linked”, “failed”)
+- Any warnings (e.g., missing timestamps, unmapped formats)
+
+Ensure idempotency by checking for existing waveform_target_file_path or file hashes in the waveform_registry table (if already exists) before processing.
+For each newly detected file:
+
+- Extract the following attributes, either from file headers (e.g., EDF, WFDB metadata) or companion metadata files:
+- source path and file name
+- file extension (e.g., .edf, .csv)
+- recording start and end timestamps
+- session ID, accession number, or acquisition identifier (if available)
+
+Store this metadata in a temporary staging table or in-memory object for the matching logic.
+
+| Order |                Field               | Data Type |        Required        |                                                                                                                                                                                                                                                  How to Populate                                                                                                                                                                                                                                                  |
+|:-----:|:----------------------------------:|:---------:|:----------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| 1     | waveform_occurrence_id             | int       |  Yes                   | Generate a unique surrogate key. Use a database sequence or ETL UUID system to guarantee uniqueness across all acquisition events.                                                                                                                                                                                                                                                                                                                                                                                |
+| 2     | waveform_occurrence_concept_id     | int       | Yes                    | Determine the clinical or operational purpose of the acquisition (e.g., “ICU telemetry”, “12-lead diagnostic ECG”). Map to a standard OMOP concept. If no match exists, use a 2-billion custom concept ID and log it for vocabulary review.                                                                                                                                                                                                                                                                       |
+| 3     | person_id                          | int       | Yes                    | Link to the PERSON table using EHR metadata (e.g., from admission record, monitoring system export, or device mapping). Validate that the person exists and is not a test/dummy ID.                                                                                                                                                                                                                                                                                                                               |
+| 4     | waveform_occurrence_start_datetime | datetime  | Yes                    | Extract the earliest start timestamp from the associated waveform files (via headers or metadata). In asynchronous settings (e.g., streaming), this may precede individual file start times.                                                                                                                                                                                                                                                                                                                      |
+| 5     | waveform_occurrence_end_datetime   | datetime  | Yes                    | Extract the latest end timestamp among all associated files. Can exceed the last file if acquisition continued but files were truncated or rolled. Ensure end ≥ start.                                                                                                                                                                                                                                                                                                                                            |
+| 6     | visit_occurrence_id                | int       | Yes                    | Derive from linked clinical encounter in the EHR. Join on person_id, acquisition time, or session_id. Use closest visit in time if exact match is unavailable. Required for OMOP compliance.                                                                                                                                                                                                                                                                                                                      |
+| 7     | visit_detail_id                    | int       | Optional               | Populate if more granular context is available (e.g., ward, unit, device location). Useful in ICU or telemetry use cases. Leave null if not available.                                                                                                                                                                                                                                                                                                                                                            |
+| 8     | preceding_waveform_occurrence_id   | int       | Optional               | Populate with the waveform_occurrence_id of the immediately preceding waveform acquisition event for the same person, when a clear temporal sequence or session linkage is known. This field supports ordered association of sequential waveform recordings - useful for analyzing repeated measurements, segment continuity, or longitudinal monitoring (e.g., ICU telemetry every 30 minutes). Leave null if this is the first known acquisition for the person or if sequencing cannot be reliably determined. |
+| 9     | waveform_format_concept_id         | int       | Optional               | Use if the entire acquisition session has a common format (e.g., WFDB, EDF). Map to OMOP concept if it exists; otherwise, generate a custom 2-billion concept ID. Skip if formats vary per file.                                                                                                                                                                                                                                                                                                                  |
+| 10    | waveform_occurrence_source_value   | string    | Recommended            | Use the raw session ID, accession number, or study instance UID from the monitoring system or file metadata. Helps with traceability and QA.                                                                                                                                                                                                                                                                                                                                                                      |
+| 11    | num_of_files                       | int       | Recommended (Deferred) | Compute after ingesting linked waveform_registry entries. Count all files with the same waveform_occurrence_id. Helps in QA and completeness tracking.                                                                                                                                                                                                                                                                                                                                                            |
+| 12    | waveform_format_source_value       | string    | Optional               | Store raw label for format as extracted from header or source system (e.g., “.dat/.hea”, “HL7 aECG”). Helps with retrospective mapping and vocabulary improvement.                                                                                                                                                                                                                                                                                                                                                |
+
+### 4A. Common issues & solutions:
+
+- Missing timestamps → Estimate using file headers; flag for manual verification.
+- Multiple visits matched → Use most specific visit_detail_id or define business rule.
+
+## 5. Populate waveform_registry
+
+This table records file-level metadata and linkages.
+Now that each file can be linked to a waveform_occurrence, proceed to register each file:
+
+| Order |             Field            | Data Type |   Required  |                                                                                                                                                                                                                                  How to Populate                                                                                                                                                                                                                                  |
+|:-----:|:----------------------------:|:---------:|:-----------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| 1     | waveform_registry_id         | int       | Yes         | Generate a unique surrogate key for each waveform file. Use an auto-incremented sequence or UUID logic. Must be persistent across ETL reruns.                                                                                                                                                                                                                                                                                                                                     |
+| 2     | waveform_occurrence_id       | int       | Yes         | Foreign key to the waveform_occurrence table. Must be resolved before file ingestion by matching session ID or aligning timestamps. Raise an exception if missing.                                                                                                                                                                                                                                                                                                                |
+| 3     | waveform_feature_id          | int       | No          | Populate only if the file in this row is itself a feature representation (e.g., a derived high-density time series, spectrogram, or vectorized representation). This value must point to an existing waveform_feature.waveform_feature_id. Use this when a file represents the output of a feature pipeline, not a raw signal. Leave null for traditional raw waveform files. Ensures unambiguous linkage when calculating additional features on derived signal representations. |
+| 4     | person_id                    | int       | Yes         | Inherit directly from the linked waveform_occurrence. Do not independently derive from file metadata. This ensures consistency across all tables.                                                                                                                                                                                                                                                                                                                                 |
+| 5     | waveform_file_start_datetime | datetime  | Yes         | Extract from the file header (e.g., EDF+, WFDB .hea, HDF5 metadata). If unavailable, fallback to waveform_occurrence_start_datetime but log as approximate.                                                                                                                                                                                                                                                                                                                       |
+| 6     | waveform_file_end_datetime   | datetime  | Yes         | Same as above. If duration is not explicit, estimate using sample count × sampling rate. Always ensure end ≥ start. If file is a single snapshot, start = end.                                                                                                                                                                                                                                                                                                                    |
+| 7     | visit_occurrence_id          | int       | Yes         | Inherit directly from waveform_occurrence. Ensure that it matches the patient’s visit where waveform acquisition occurred. Required for OMOP compliance.                                                                                                                                                                                                                                                                                                                          |
+| 8     | visit_detail_id              | int       | Optional    | Inherit from waveform_occurrence if available. Populate for ICU or unit-level granularity. Leave null if not tracked in the system.                                                                                                                                                                                                                                                                                                                                               |
+| 9     | file_extension_concept_id    | int       | Recommended | Map the file extension (e.g., .edf, .csv, .hea) to a standard OMOP concept ID. If not found, assign a temporary 2-billion concept ID and record for future vocabulary harmonization. Maintain a controlled mapping table.                                                                                                                                                                                                                                                         |
+| 10    | file_extension_source_value  | string    | Yes         | Store the raw file extension exactly as extracted from the filename. Examples: .edf, .hea, .mat. Case-sensitive preservation is preferred.                                                                                                                                                                                                                                                                                                                                        |
+| 11    | waveform_source_file_uri     | string    | Optional    | Store the original file path or URI from the source system. Useful for traceability, re-extraction, or audit. If not captured, leave null. Encrypt if paths contain PHI.                                                                                                                                                                                                                                                                                                          |
+| 12    | waveform_target_file_uri     | string    | Yes         | Store the final standardized path, object storage URI, or relative location of the file in the transformed dataset. This value is required for downstream access (e.g., visualization, AI pipelines). Naming conventions should include waveform_registry_id or session UID.                                                                                                                                                                                                      |
+
+### 5A. Edge cases:
+
+- Missing file timestamps → Fall back to occurrence; log reduced precision.
+- Files not uniquely named → Use hash, device ID, or accession to disambiguate.
+- Unmapped file extensions → Temporarily assign custom concept ID (2B range); notify vocabulary steward.
+
+## 6. Populate waveform_channel_metadata
+
+Iterate over each file's signal channels and extract per-channel metadata:
+
+| Order |             Field             | Data Type |        Required        |                                                                                         How to Populate                                                                                         |
+|:-----:|:-----------------------------:|:---------:|:----------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| 1     | waveform_channel_metadata_id  | int       | Yes                    | Generate a unique surrogate key (integer). Use database sequence or ETL logic to ensure uniqueness across all channel metadata entries.                                                         |
+| 2     | waveform_registry_id          | int       | Yes                    | Foreign key from the associated waveform file (waveform_registry). Must already exist. Join via filename or internal file ID parsed from source.                                                |
+| 3     | procedure_occurrence_id       | int       | Conditionally Required | Populate if the waveform is tied to a documented clinical procedure (e.g., diagnostic ECG, EEG study). Extract from EHR or metadata tags; if not available, leave null.                         |
+| 4     | device_exposure_id            | int       | Optional               | Link to device record if available (e.g., from ICU device logs or telemetry registry). If a device used is known (Philips monitor, EEG cap), map via ETL joins; else leave null.                |
+| 5     | waveform_channel_source_value | string    | Recommended            | Use channel label from the raw waveform file (e.g., “Lead II”, “ECG I”, “SpO2”, “ABP”). If not present, derive from channel index or use placeholder (“Channel 1”).                             |
+| 6     | channel_concept_id            | int       | Yes                    | Map the channel label or signal type to a standard OMOP concept (2-billion range or community extension). Use a lookup table for common physiological signals. Log unmapped entries for review. |
+| 7     | metadata_source_value         | string    | Yes                    | Populate with the metadata type, such as “sampling_rate”, “gain”, “calibration_factor”, “compression_ratio”. Extracted from header fields or external metadata.                                 |
+| 8     | metadata_concept_id           | int       | Yes                    | Map the metadata_source_value to a standard OMOP concept (e.g., "Sampling rate" → CONCEPT_ID = X). Maintain an internal vocabulary map; flag unknowns.                                          |
+| 9     | value_as_string               | string    | Optional               | Use for non-numeric, human-readable metadata (e.g., “DC coupling”, “auto-scaled”, “2x compression”). Store the raw metadata value as a string if it does not fit numeric or concept fields.     |
+| 10    | value_as_number               | float     | Optional               | Use if the metadata is numeric (e.g., sampling_rate = 500, gain = 0.2). Validate precision and units. Use float type.                                                                           |
+| 11    | value_as_concept_id           | int       | Optional               | Use if the value is categorical and can be mapped to an OMOP concept (e.g., “Invasive” → concept ID, “High Quality” → concept ID). Optional if stored in value_as_string.                       |
+| 12    | unit_concept_id               | int       | Recommended            | Populate for physical values (e.g., Hz, mmHg, mV) using OMOP standard units. Use unit lookup table or join against raw units found in header.                                                   |
+| 13    | unit_source_value             | string    | Recommended            | Raw unit string as it appeared in the source (e.g., “Hz”, “mmHg”, “uV”). Helps track unusual or non-standard units and improves auditability.                                                   |
+
+### 6A. Conflicts:
+
+- Multiple labels per channel → Standardize via channel index.
+- Conflicting sampling rates → Default to most frequent or highest resolution.
+
+
+## 7. Populate waveform_feature
+
+Once the files are registered and metadata is in place, apply ML pipelines or signal-processing algorithms to derive waveform features (e.g., QT interval, entropy, apnea detection). For each extracted feature, populate:
+
+| Order |               Field              | Data Type |        Required        |                                                                                                                                                                                 How to Populate                                                                                                                                                                                |
+|:-----:|:--------------------------------:|:---------:|:----------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| 1     | waveform_feature_id              | int       | Yes                    | Generate a unique surrogate key (e.g., via sequence or UUID). Each derived feature must have its own ID.                                                                                                                                                                                                                                                                       |
+| 2     | waveform_occurrence_id           | int       | Yes                    | Foreign key to waveform_occurrence. Must be assigned from the session that provided the raw waveform data. Extracted from upstream linkage or stored in intermediate metadata pipeline.                                                                                                                                                                                        |
+| 3     | waveform_registry_id             | int       | Yes                    | Foreign key to waveform_registry. Identifies the specific file from which the feature was extracted. Ensure file was processed and exists in the registry.                                                                                                                                                                                                                     |
+| 4     | waveform_channel_metadata_id     | int       | Yes                    | Foreign key to waveform_channel_metadata. Indicates the exact channel used to compute the feature (e.g., ECG Lead II). Use the signal name and channel index to link.                                                                                                                                                                                                          |
+| 5     | measurement_id / observation_id  | int       | Conditionally Required | If the derived feature matches an existing OMOP MEASUREMENT (e.g., heart rate) or OBSERVATION (e.g., “apnea event”), populate the appropriate foreign key. Use LOINC/OMOP vocabularies. Leave null if no standard concept applies.                                                                                                                                             |
+| 6     | algorithm_concept_id             | int       | Yes                    | Map the derivation method to a standard OMOP concept (e.g., “Bazett’s formula”, “HRV SDNN method”). If no concept exists, use a 2-billion custom ID and record for future standardization.                                                                                                                                                                                     |
+| 7     | algorithm_source_value           | string    | Recommended            | Record the descriptive name of the algorithm, method, or software package used (e.g., “Kubios HRV 3.4”, “Neurokit entropy”). Helps with reproducibility and audit. Null - if unknown.                                                                                                                                                                                          |
+| 8     | anatomic_site_concept_id         | int       | Optional               | If the waveform was collected from a known anatomical site (e.g., “left wrist”, “chest”), map to a standard OMOP concept. Helps disambiguate multichannel/multimodal recordings.                                                                                                                                                                                               |
+| 9     | waveform_feature_start_timestamp | time      | Recommended            | Start time of the temporal window over which the feature was derived (e.g., 10:12:00 AM if computed from minute 12). Must fall within file timestamps.                                                                                                                                                                                                                         |
+| 10    | waveform_feature_end_timestamp   | time      | Recommended            | End time of the window. Required for interval-based features like HRV, respiratory rate, or entropy. Equal to start time for instantaneous features.                                                                                                                                                                                                                           |
+| 11    | is_feature_overflow              | boolean   | Optional               | Populate as TRUE if the feature was derived from signal segments that span multiple waveform files, waveform occurrences, or signal channels. This field helps downstream consumers account for composite or stitched features that cannot be strictly attributed to a single source. Leave NULL if undetermined.                                                              |
+| 12    | value_as_number                  | float     | Recommended            | Populate if the feature is quantitative (e.g., HR = 75 bpm, Entropy = 0.85). Must be a valid float.                                                                                                                                                                                                                                                                            |
+| 13    | value_as_concept_id              | int       | Recommended            | Use if the feature is categorical (e.g., “Low signal quality”, “Apnea present”). Map to OMOP concept or use custom 2B ID.                                                                                                                                                                                                                                                      |
+| 14    | value_as_string                  | string    | Optional               | Use if the feature cannot be mapped or is stored in descriptive form (e.g., “artifact detected”, “tachycardia”). Supports flexibility in early-stage pipelines.                                                                                                                                                                                                                |
+| 15    | value_is_a_registry_file         | boolean   | No                     | Set to TRUE (1) if the feature value is stored as a file in WAVEFORM_REGISTRY, rather than a discrete number or concept (e.g., time-frequency embedding, long-form entropy sequence). When true, link to the file using waveform_feature_id. Leave as NULL or FALSE if the value is numeric, categorical, or string-based. Helps differentiate scalar vs. file-based features. |
+| 15    | unit_concept_id                  | int       | Recommended if numeric | Required if value_as_number is populated. Map the physical unit to an OMOP concept (e.g., “ms”, “Hz”, “bpm”).                                                                                                                                                                                                                                                                  |
+| 16    | unit_source_value                | string    | Recommended if numeric | Record the unit label exactly as it appeared in the source (e.g., “bpm”, “s”, “mV”). Use for audit and future vocabulary improvement.                                                                                                                                                                                                                                          |
+
+### 7A. Pitfalls:
+
+- No clear mapping to MEASUREMENT → Use observation_id or record independently.
+- Low-confidence results → Use waveform_feature_modifier or external flag table.
+
+## 8. Validate & Control Quality
+
+|                 Check                 |                        Action                        |
+|:-------------------------------------:|:----------------------------------------------------:|
+| Timestamps inconsistent across tables | Reject row, escalate to data QC                      |
+| Unmapped concepts                     | Log and assign temporary ID; notify a Standards team |
+| Missing FKs                           | Log and block downstream linkage                     |
+| Duplicate files or channels           | Hash-based duplication check                         |
+
+### 8A. Maintain logs for:
+
+- Missing or low-confidence mappings
+- Outlier timestamps
+- ETL batch stats: counts, failure reasons, nulls
+
+## 9.  Post-ETL Auditing
+
+- Run counts across waveform_occurrence, waveform_registry, waveform_channel_metadata, waveform_feature
+- Validate 1:N relationships (e.g., one occurrence → N files)
+- Validate time consistency between registry and occurrence
+- Optional: Implement hash-based verification of file integrity
+
+## 10. Exception Handling
+
+- Missing occurrence: Halt file ingestion; generate ticket.
+- Future datetimes: Flag as temporal error; require manual correction.
+- Extension concept missing: Default to a custom 'unmapped extension'; schedule vocab update.
+- File path missing: Halt ingestion; escalate to data engineering.
+
+## 11. Operational Considerations
+
+- The registry table may be updated multiple times in a day; use batch loaders.
+- Maintain consistent waveform_registry_id across ETL runs for idempotency.
+- QC metrics: number of files ingested, timestamps outside expected windows, missing links per run.
+- Perform daily reconciliation between source files and registry entries.
+
+
+## 12. Audit Trail & Lineage
+
+Every row insertion/update in waveform_registry must include record_insert_datetime, record_source_system, and etl_run_id, ensuring reproducibility and provenance.
+
+
+## 13. Dependencies
+
+Relies on:
+
+- Properly populated waveform_occurrence, PERSON, VISIT_OCCURRENCE, and vocabulary tables.
+- Access to controlled ETL staging directories.
+- External mapping file from extensions to OMOP extension concept IDs.
+
+
+## 14. Update Management
+
+- Changes to extension mappings must be versioned via an internal registry and reviewed.
+- Major schema changes trigger calendar updates to this SOP.
+
+
+## 15. Compliance & Tools
+
+- Use standard SQL-based insertion/upsert logic.
+- Implement CI tests for field-level constraints.
+- Leverage ETL orchestration tools (e.g., Airflow) to schedule ingestion, validation, and logging.
+
+## 16. Contact Information
+
+- Email: Jared Houghtaling `<jared.houghtaling@tuftsmedicine.org>`
+- Email: Polina Talapova  `<ptalapova@tuftsmedicine.org>`
+- Email: Brian Gow `<briangow@mit.edu>`
+
+
+## 17. References
+
+- [Waveform Extension Proposal](https://docs.google.com/document/d/1q-DV5EU4xahj_KkMVETkkosddzfkI8Sxbq4gd-AC0qY/edit?tab=t.0)
