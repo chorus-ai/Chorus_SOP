@@ -25,7 +25,7 @@ The waveform_occurrence table must be populated first, as it defines the core ac
 | 3    | waveform_channel_metadata | Describes per-signal-channel metadata for each registered file      |
 | 4    | waveform_feature          | Stores derived features from specific waveform-channel combinations |
 
-## 4.  Populate Waveform Occurrence
+## 4.  Scan & Detect
 
 Scan source directories (or data lakes) for waveform files to be processed, based on project-specific triggers (e.g., hourly ingestion, daily batch, or one-time archival loads). Files may include both newly acquired and previously unprocessed recordings.
 Maintain an audit trail or metadata log to track:
@@ -65,14 +65,6 @@ Store this metadata in a temporary staging table or in-memory object for the mat
 
 - Missing timestamps → Estimate using file headers; flag for manual verification.
 - Multiple visits matched → Use most specific visit_detail_id or define business rule.
-
-### 4B. Mapping Logic Examples and Extension Support
-
-- Source data has multiple files per waveform occurrence -> supported
-- Source data has one file per waveform occurrence -> supported
-- Source data has multiple waveform occurrences per file:
-  - The same acquisition type (i.e., waveform_occurrence_concept_id) collected for disconnected periods in the patient’s trajectory -> supported; the waveform_registry entry will point to the earliest waveform_occurrence; backtracking of later waveform_occurrences will use preceeding_waveform_occurrence_id. For CHoRUS, these files will be split by the WFDB converter resulting in possibility 1.
-  - Different acquisition types collected during overlapping periods and stored in the same file -> unsupported; files must be split by acquisition type. For CHoRUS, this will be performed by the WFDB converter.
 
 ## 5. Populate waveform_registry
 
@@ -114,9 +106,9 @@ Iterate over each file's signal channels and extract per-channel metadata:
 | 6     | channel_concept_id            | int       | Yes                    | Map the channel label or signal type to a standard OMOP concept (2-billion range or community extension). Use a lookup table for common physiological signals. Log unmapped entries for review. |
 | 7     | metadata_source_value         | string    | Yes                    | Populate with the metadata type, such as “sampling_rate”, “gain”, “calibration_factor”, “compression_ratio”. Extracted from header fields or external metadata.                                 |
 | 8     | metadata_concept_id           | int       | Yes                    | Map the metadata_source_value to a standard OMOP concept (e.g., "Sampling rate" → CONCEPT_ID = X). Maintain an internal vocabulary map; flag unknowns.                                          |
-| 9     | value_as_number               | float     | Optional               | Use if the metadata is numeric (e.g., sampling_rate = 500, gain = 0.2). Validate precision and units. Use float type.                                                                           |
-| 10    | value_as_concept_id           | int       | Optional               | Use if the value is categorical and can be mapped to an OMOP concept (e.g., "Invasive" → concept ID, "High Quality" → concept ID). Optional if stored in value_as_string.                       |
-| 11    | value_as_string               | string    | Optional               | Use for non-numeric, human-readable metadata (e.g., "DC coupling", "auto-scaled", "2x compression"). Store the raw metadata value as a string if it does not fit numeric or concept fields.     |
+| 9     | value_as_string               | string    | Optional               | Use for non-numeric, human-readable metadata (e.g., “DC coupling”, “auto-scaled”, “2x compression”). Store the raw metadata value as a string if it does not fit numeric or concept fields.     |
+| 10    | value_as_number               | float     | Optional               | Use if the metadata is numeric (e.g., sampling_rate = 500, gain = 0.2). Validate precision and units. Use float type.                                                                           |
+| 11    | value_as_concept_id           | int       | Optional               | Use if the value is categorical and can be mapped to an OMOP concept (e.g., “Invasive” → concept ID, “High Quality” → concept ID). Optional if stored in value_as_string.                       |
 | 12    | unit_concept_id               | int       | Recommended            | Populate for physical values (e.g., Hz, mmHg, mV) using OMOP standard units. Use unit lookup table or join against raw units found in header.                                                   |
 | 13    | unit_source_value             | string    | Recommended            | Raw unit string as it appeared in the source (e.g., “Hz”, “mmHg”, “uV”). Helps track unusual or non-standard units and improves auditability.                                                   |
 
@@ -124,7 +116,6 @@ Iterate over each file's signal channels and extract per-channel metadata:
 
 - Multiple labels per channel → Standardize via channel index.
 - Conflicting sampling rates → Default to most frequent or highest resolution.
-- Variable sampling rates → Use "non-uniform" option for irregular time intervals.
 
 
 ## 7. Populate waveform_feature
@@ -147,7 +138,7 @@ Once the files are registered and metadata is in place, apply ML pipelines or si
 | 12    | value_as_number                  | float     | Recommended            | Populate if the feature is quantitative (e.g., HR = 75 bpm, Entropy = 0.85). Must be a valid float.                                                                                                                                                                                                                                                                            |
 | 13    | value_as_concept_id              | int       | Recommended            | Use if the feature is categorical (e.g., “Low signal quality”, “Apnea present”). Map to OMOP concept or use custom 2B ID.                                                                                                                                                                                                                                                      |
 | 14    | value_as_string                  | string    | Optional               | Use if the feature cannot be mapped or is stored in descriptive form (e.g., “artifact detected”, “tachycardia”). Supports flexibility in early-stage pipelines.                                                                                                                                                                                                                |
-| 15    | value_is_a_registry_file         | boolean   | No                     | Set to TRUE (1) if the feature value is stored as a file in WAVEFORM_REGISTRY, rather than a discrete number or concept (e.g., time-frequency embedding, long-form entropy sequence). When true, link to the file using waveform_feature_id. Should typically be FALSE for most scalar feature values; only set to TRUE when the feature itself is represented as a file. Helps differentiate scalar vs. file-based features. |
+| 15    | value_is_a_registry_file         | boolean   | No                     | Set to TRUE (1) if the feature value is stored as a file in WAVEFORM_REGISTRY, rather than a discrete number or concept (e.g., time-frequency embedding, long-form entropy sequence). When true, link to the file using waveform_feature_id. Leave as NULL or FALSE if the value is numeric, categorical, or string-based. Helps differentiate scalar vs. file-based features. |
 | 15    | unit_concept_id                  | int       | Recommended if numeric | Required if value_as_number is populated. Map the physical unit to an OMOP concept (e.g., “ms”, “Hz”, “bpm”).                                                                                                                                                                                                                                                                  |
 | 16    | unit_source_value                | string    | Recommended if numeric | Record the unit label exactly as it appeared in the source (e.g., “bpm”, “s”, “mV”). Use for audit and future vocabulary improvement.                                                                                                                                                                                                                                          |
 
@@ -161,8 +152,8 @@ Once the files are registered and metadata is in place, apply ML pipelines or si
 |                 Check                 |                        Action                        |
 |:-------------------------------------:|:----------------------------------------------------:|
 | Timestamps inconsistent across tables | Reject row, escalate to data QC                      |
-| Unmapped concepts                     | Log and assign temporary ID; notify the Standards team |
-| Missing foreign keys                           | Log and block downstream linkage                     |
+| Unmapped concepts                     | Log and assign temporary ID; notify a Standards team |
+| Missing FKs                           | Log and block downstream linkage                     |
 | Duplicate files or channels           | Hash-based duplication check                         |
 
 ### 8A. Maintain logs for:
