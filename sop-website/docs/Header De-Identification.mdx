@@ -1,0 +1,83 @@
+---
+title: Header De-Identification
+id: Header De-Identification
+description:  An SOP for Header De-Identification
+---
+
+# Awaiting Approval
+
+# Materials and Equipment
+- Python 3.x and Pydicom package (need installation)
+- RSNA CTP software (included in the package)
+- Lookup tables: image_map.csv, personal_map.csv, see /pydicom/lookup_table/ for templates
+
+# Procedures
+
+**STEP 1: De-Identification using Pydicom Script**
+
+**Preparation**
+- Ensure lookup tables (image_map.csv, personal_map.csv) are available in the lookup directory.
+- Install dependencies:
+            pip install pydicom
+
+**Execution**
+
+Run the de-identification script:
+
+
+              python pydicom_deid.py --map_table_dir <lookup_table_dir> --input_dir
+              <DICOM_input_root_dir> --output_dir <DICOM_output_root_dir> 2>&1 | tee logs.txt
+
+**Input Parameters**
+- <lookup_table_dir>: Path to lookup CSVs
+- <DICOM_input_root_dir>: Input DICOM directory, organized by patient
+- <DICOM_output_root_dir>: Output directory for processed files
+
+**Output Subfolders:**
+- dicom_processed/: De-identified files
+- dicom_unprocessed/: Files skipped due to missing PatientID/AccessionNumber or improper tag type
+
+**Metadata Shift Tags:**
+
+Refer to the manual for the complete list of DICOM data tags that will be shifted by a ptient-specific offset.
+
+
+**STEP 2: De-Identification using RSNA CTP Software**
+
+**Installation**
+
+      Launch the installer to Install RSNA CTP in the desired directory.
+
+              CTP-installer.jar
+
+**Configuration**
+
+- Modify config.xml:
+  - Update root and treeRoot paths
+  - Adjust server settings (port, maxThreads) if needed
+- Copy scripts into/scripts directory:
+  - DicomAnonymizer_chorus.scipt
+  - DicomFilter.script
+
+**Pipeline Overview**
+
+- **ArchiveImportService**: Reads and imports DICOM files
+- **DicomFilter**: Filters modalities (CR, DX, MG, CT, MR)
+- **IDMap**: Maps UID elements
+- **DicomAnonymizer**: De-identifies metadata
+- **DirectoryStorageService**: Saves output in organized folder structure
+
+**Execution**
+
+- Launch CTP using Launcher.jar
+- In the UI, under the "General" tab, click **Start** to begin processing
+- Click **Stop** to halt the pipeline when needed
+
+**Output Folder Structure:**
+
+- roots/: De-identified DICOM files and mapping files
+- quarantines/: Problematic files
+
+# Reference Materials
+
+> Can reference manual here
