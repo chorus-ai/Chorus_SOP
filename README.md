@@ -69,7 +69,7 @@ The following SOPs are under [development](https://github.com/orgs/chorus-ai/pro
 | Data provenance & institution specific data generation | Standards Team|  |  | TBD |  
 | SDoH Data | Standards Team|  |  | TBD | collaborate with UF team | 
 | Amendment to Linkage SOP | Standards Team|  |  | TBD | ICU representation and procedure ID representation |
-
+| Concept Set Creation for Selected Data Elements in OHDSI Atlas | Standards Team/@p-talapova | In Review | Yes | 24 Jul 2025 |  |
 ## How to contribute
 
 To add or update the guidelines, you will need to edit the relevant markdown files. The easiest way to do this is to find the relevant file on GitHub, click "edit", and then follow the steps to create a "pull request". You can navigate to the relevant markdown file on GitHub from the website by clicking the `Edit this page` button at the bottom. Alternatively, if you are familiar with git, you can submit a pull request in the usual way.
