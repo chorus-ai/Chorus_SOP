@@ -92,14 +92,12 @@ All roles are expected to adhere to the procedures outlined in this SOP to promo
 - Click on `Included Concepts` to review the final list of included concepts (with descendants and exclusions applied). This step allows you to 1) Verify what is actually included in the concept set; 2) Manually remove or exclude any remaining unwanted concepts; 3) Catch edge cases that may have been automatically pulled in via descendants.
 - Then, under the `Included Concepts` section, use the `Exclude` checkbox to remove any concepts that are not relevant to your target population. 
 > Example: If you are creating a concept set for Sepsis cases unrelated to pregnancy, childbirth, or the neonatal period, use the `Exclude` checkbox to remove concepts not relevant to the intended population, such as:  `Sepsis of the newborn` (4071063), `Perinatal sepsis` (37017557), `Puerperal sepsis` (4102318), `Sepsis during labor` (4009954), `Miscarriage with sepsis` (4285746).
-
 > Tip: This is where you confirm the effect of your inclusion/exclusion logic, and where most common mistakes are caught.
-- Return to the `Concept Set Expression` section and click the `Optimize` button (if available). This will remove redundant child concepts that are already covered by a parent with Descendants checked, simplifying the expression logic and making it easier to manage.
-> Note: Optimization ensures a cleaner concept set expression but does not change the underlying list of included concepts used for cohort logic.
-- After optimization and final review, click `Save` to store your concept set.
+- Click `Save` to store your concept set.
 
 ### Step 4: Apply Naming Convention to the Concept Set
-- Enter the Concept Set name in the white input field at the top of the screen. Use the following naming format to ensure consistency across the project:
+- Return to the `Concept Set Expression` section.
+- Enter the Concept Set name in the white input field at the top of the screen and click `Save`. Use the following naming format to ensure consistency across the project:
 
 `Project Name`-`OMOP Domain`-`Data Element Name`-`Version`-`Status Tag`
 
@@ -118,15 +116,16 @@ All roles are expected to adhere to the procedures outlined in this SOP to promo
 - `B2AI`-`Condition`-`Sepsis`-`v1`-`draft`  
 - `B2AI`-`Measurement`-`Serum Sodium`-`v2`-`validated`
 
-### Step 5: Document and Save
-
+### Step 5: Optimize, Document and Save
+- Click the `Optimize` button (top-right corner of the screen, if available). This will remove redundant child concepts that are already covered by a parent with Descendants checked, simplifying the expression logic and making it easier to manage.
+> Note: Optimization ensures a cleaner concept set expression but does not change the underlying list of included concepts used for cohort logic.
 - In the `Concept Set Expression` tab, locate the input field labeled "Enter the concept set description here".
 - Enter a clear and concise concept set description, including but not limited to a Clinical Justification.
 > Example: "Sepsis is a clinically significant condition used to identify systemic infection and organ dysfunction. In B2AI, it supports phenotypes related to infection severity stratification, ICU admission prediction, and early clinical deterioration. This concept set includes only Condition domain standard concepts related to systemic and bacterial sepsis. Perinatal, neonatal, and obstetric-specific sepsis concepts (e.g., puerperal sepsis, sepsis during labor) were excluded to maintain focus on non-obstetric populations."
+![Concept Set Name and Description Example](./images/concept-set-name-and-description-example.png)
 
- ![Concept Set Name and Description Example](./images/concept-set-name-and-description-example.png)
-  
-- Click **Save**.
+- After final review, click `Save`.
+- Once the concept set is finalized and saved, close it and navigate to the "Concept Sets" tab. Find the concept set you created, copy its ID, and paste it into the "Concept Set ID" field in the table of [Phenotype-based list of data elements - Tier 1 Justification](https://docs.google.com/document/d/1_Cs5jx_SFv4TjtD0-nx0te0wmIhPsfsaUFE4lJHJIB8/edit?tab=t.0) document.
 
 ### Step 6: Register Concept Set in the Inventory Catalog
 
