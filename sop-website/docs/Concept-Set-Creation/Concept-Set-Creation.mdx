@@ -9,7 +9,7 @@ description:  An SOP for general conventions related to creating, reviewing, and
 
 ## Purpose
 
-This SOP provides standardized instructions for creating, reviewing, and managing Concept Sets in [B2AI OHDSI Atlas](https://ca-chorus-www-dgs.ashymoss-446baac1.eastus2.azurecontainerapps.io/atlas/#/home) for selected data elements (e.g., measurements, conditions, drugs, procedures, observations) from [Tier 1](https://docs.google.com/document/d/1_Cs5jx_SFv4TjtD0-nx0te0wmIhPsfsaUFE4lJHJIB8/edit?tab=t.0). Concept sets are curated, reusable semantic groupings of OMOP standard concepts that operationalize a specific clinical idea or research variable for use in cohort definitions, phenotype algorithms, or analytic queries within the OMOP CDM framework.
+This SOP provides standardized instructions for creating, reviewing, and managing Concept Sets in [B2AI OHDSI Atlas](https://ca-chorus-www-dgs.ashymoss-446baac1.eastus2.azurecontainerapps.io/atlas/#/home) for selected data elements (e.g., measurements, conditions, drugs, procedures, observations) from [Tier 1](https://docs.google.com/document/d/1_Cs5jx_SFv4TjtD0-nx0te0wmIhPsfsaUFE4lJHJIB8/edit?tab=t.0). Concept sets (also referred to as conceptsets or codesets) are curated, reusable semantic groupings of OMOP standard or classification concepts that operationalize a specific clinical idea or research variable. A concept set may include a single concept or multiple related concepts, depending on how the idea is represented in the vocabulary. They are used to operationalize meaning within the OMOP CDM framework, supporting cohort definitions, phenotype algorithms, and analytic queries.
 
 ## Scope
 
@@ -37,6 +37,10 @@ All roles are expected to adhere to the procedures outlined in this SOP to promo
 | **Concept Set Expression** | The logic that defines which standard concepts are included in a concept set, based on user-selected concepts, use of `Descendants`, and `Exclude` flags. It determines the final semantic scope of the concept set used in cohort logic. |
 | **Included Concepts** | The resolved list of all standard concepts included in a concept set, after applying descendants and exclusions from the Concept Set Expression. These are the actual concept IDs used in cohort generation and analysis. |
 | **Included Source Codes** | The list of non-standard source codes (e.g., ICD-10, CPT4) that are mapped to the included standard concepts. Useful for understanding what upstream source codes will be captured by the concept set. |
+| **RC (Record Count)** | The number of individual records in the OMOP CDM that are mapped directly to the selected concept. This reflects how frequently that specific concept (without descendants) appears across CDM tables. |
+| **DRC (Descendant Record Count)** | The number of records in the CDM mapped to the selected concept and all of its descendant concepts in the vocabulary hierarchy. This value provides a broader measure of how often the clinical idea represented by the parent concept appears in the data. |
+| **PC (Person Count)** | The number of distinct persons in the CDM who have at least one record coded with the selected concept (without descendants). This helps estimate how many unique patients are directly associated with the concept. |
+| **DPC (Descendant Person Count)** | The number of distinct persons in the CDM who have at least one record coded with the selected concept or any of its descendants. This shows the overall patient population that could be captured when the concept is used with the “include descendants” option. |
 | **Optimize** | A utility in the Concept Set Expression editor that removes unnecessary child concepts when a parent concept is included with `Descendants`, simplifying the expression without changing the underlying concept inclusion. |
 | **Descendants Checkbox** | A flag in ATLAS used during concept selection to automatically include all semantic children of the selected concept based on vocabulary hierarchies. |
 | **Exclude Checkbox** | A flag used to remove a concept (and optionally its descendants) from a concept set, typically used to refine broad inclusions or remove off-target concepts. |
@@ -68,13 +72,18 @@ All roles are expected to adhere to the procedures outlined in this SOP to promo
 
 ### Step 2: Search for Standard Concepts in Atlas
 
-- Access [B2AI OHDSI Atlas](https://ca-chorus-www-dgs.ashymoss-446baac1.eastus2.azurecontainerapps.io/atlas/#/home) and select the “Search” tab from the main navigation.
+- Access [B2AI OHDSI Atlas](https://ca-chorus-www-dgs.ashymoss-446baac1.eastus2.azurecontainerapps.io/atlas/#/home) and select the `Search` tab from the main navigation.
 - Enter the data element into the Atlas search bar (note: the search is character-sensitive).
 > Alternatively, use the [OHDSI Athena browser](https://athena.ohdsi.org/search-terms/terms) to explore specific concept names and IDs - Athena offers more flexible search capabilities and may be more effective for identifying exact matches. Once identified, you can copy the relevant concept IDs into Atlas.
 - Click the **Search** button.
-- Use filters by `standard concept`, `domain` (e.g., Condition, Drug), and `vocabulary` (e.g., SNOMED, RxNorm) to narrow down the list of returned concepts and focus your search on the most relevant standard terms for your data element.
+> Tip: Instead of manually searching and selecting concepts, you can type a concept name and click the **Shopping Cart** button. Atlas will add the selected concept automatically into the Concept Set Expression. This can be useful at the start of concept set creation to quickly capture candidate terms, though you should still review and refine them afterward.
+- Use filters by `standard concept`, `domain` (e.g., Condition, Drug), and `vocabulary` (e.g., SNOMED, RxNorm) to narrow down the list of returned concepts.
+> Tip: Selecting the correct domain for concepts ensures that your concept set is properly aligned with downstream cohort definitions and analytic workflows. If you are uncertain, check the OMOP [CDM v5.4 specification](https://ohdsi.github.io/CommonDataModel/cdm54.html#Current_Support_for_CDM_v54), revisit the [respective office hours session](https://drive.google.com/drive/u/4/folders/1iSl3ZZmZYq5i8wLoJq5S3NIrdh9NXHkX), or consult [the helper table](https://github.com/chorus-ai/Chorus_SOP/blob/review-concept-set-creation/sop-website/docs/Concept-Set-Creation/OMOP-Domain-Definition.mdx) for additional information.
+- To determine which concepts are most relevant for your data element, review the record/patient count (RC/PC) and descendant record/patient count (DRC/DPC) columns.
+- A practical approach is to order results by DRC to identify the concepts (often higher-level parents) that are most prevalent in the dataset, and then refine by excluding unrelated descendants.
+- Combine this prevalence-based check with your clinical knowledge and project requirements to select the most appropriate concept(s).
 
-### Step 3: Add Concepts to the Concept Set Expression with Attention to Descendants and Exclusions
+### Step 3: Add Concepts to the Concept Set Expression with Attention to Descendants, Exclusions and Source Codes
 
 - Select checkboxes next to standard concepts that accurately represent your data element.
 > Example, if your data element is Sepsis, search for "Sepsis" in the Condition domain and select the Standard concept.
@@ -89,10 +98,13 @@ All roles are expected to adhere to the procedures outlined in this SOP to promo
 
 - Once you have selected the desired concepts, click the `Add to Concept Set` button to include them. 
 - Then click the `Concept Set` tab. If concepts have been added, the shopping cart icon and the tab label will appear in red. In this tab, you can review the `Concept Set Expression`, including all included and intentionally excluded concepts.
-- Click on `Included Concepts` to review the final list of included concepts (with descendants and exclusions applied). This step allows you to 1) Verify what is actually included in the concept set; 2) Manually remove or exclude any remaining unwanted concepts; 3) Catch edge cases that may have been automatically pulled in via descendants.
+- Click on `Included Concepts` to review the final list of included concepts (with descendants and exclusions applied). This step allows you to 1) verify what is actually included in the concept set; 2) manually remove or exclude any remaining unwanted concepts; 3) catch edge cases that may have been automatically pulled in via descendants.
 - Then, under the `Included Concepts` section, use the `Exclude` checkbox to remove any concepts that are not relevant to your target population. 
 > Example: If you are creating a concept set for Sepsis cases unrelated to pregnancy, childbirth, or the neonatal period, use the `Exclude` checkbox to remove concepts not relevant to the intended population, such as:  `Sepsis of the newborn` (4071063), `Perinatal sepsis` (37017557), `Puerperal sepsis` (4102318), `Sepsis during labor` (4009954), `Miscarriage with sepsis` (4285746).
 > Tip: This is where you confirm the effect of your inclusion/exclusion logic, and where most common mistakes are caught.
+- After defining your concept set, switch to the 'Included Source Codes' tab. Here you can 1) compare captured codes against those reported in the literature or clinical guidelines; 2) ensure no important source codes are missing, particularly those frequently used at your site.
+> Tip: Avoid mixing standard and source codes inappropriately within the same concept set expression and attempting to exclude source codes with the Exclude flag (this does not work in Atlas).
+- After you have created a draft concept set, the 'Recommend' tab can suggest additional related concepts you may not have considered. Review all suggested concepts carefully before including them, as the algorithm may also surface terms that are clinically irrelevant or outside your intended scope.
 - Click `Save` to store your concept set.
 
 ### Step 4: Apply Naming Convention to the Concept Set
@@ -116,6 +128,22 @@ All roles are expected to adhere to the procedures outlined in this SOP to promo
 - `B2AI`-`Condition`-`Sepsis`-`v1`-`draft`  
 - `B2AI`-`Measurement`-`Serum Sodium`-`v2`-`validated`
 
+#### Versioning Guidance
+- **Major version change (v1 → v2):**  
+  Apply when the logic of the concept set changes in a way that could alter the clinical definition or analytic results:
+  - Adding or removing a concept  
+  - Changing descendant or exclusion logic  
+  - Switching to a different domain concept  
+- **Minor version change (v1.0 → v1.1):**  
+  Apply when only metadata or supporting details are updated, but the underlying logic remains the same: 
+  - Refining the clinical justification text  
+  - Correcting typos or formatting  
+- **Status Tag:** Moves independently of versioning to reflect review stage (e.g., `draft` → `pending validation` → `validated`).  
+> Example: `B2AI-Condition-Sepsis-v1-draft` → [update applied] → `B2AI-Condition-Sepsis-v2-pending validation` → [review completed] → `B2AI-Condition-Sepsis-v2-validated`
+- **Rules**: 
+  - Each update to a concept set must be reflected by updating the concept set name to a new version.
+  - Do not create a new concept set for minor or major revisions. Instead, rename the existing one to reflect the new version.
+
 ### Step 5: Optimize, Document and Save
 - Click the `Optimize` button (top-right corner of the screen, if available). This will remove redundant child concepts that are already covered by a parent with Descendants checked, simplifying the expression logic and making it easier to manage.
 > Note: Optimization ensures a cleaner concept set expression but does not change the underlying list of included concepts used for cohort logic.
@@ -137,6 +165,7 @@ Log the new concept set in the [**Concept Set Inventory**](https://docs.google.c
 - Author(s)  
 - Date Created  
 - Atlas URL  
+- Vocabulary Version
 - Review Status  
 - Date Reviewed  
 - Reviewer Name  
@@ -165,37 +194,43 @@ Reviewer documents the review outcome in the Concept Set Inventory (fields: Revi
 - Not versioning or documenting updates.
 - Including both children and parents in the concept set expression simultaneously.
 
-### Step X: Importing Concept Identifiers or Recreating Concept Sets from Another Atlas Instance
-To recreate a concept set using known OMOP Concept IDs (e.g., from another Atlas instance or documentation):
+### Step X: Importing and Exporting Concept Sets in Atlas
 
-1. Go to **`Concept Sets`** → click **`New Concept Set`**.
-2. Rename the concept set to follow naming conventions (avoid the default name).
-3. Click the **`Import`** tab.
-4. Under **`Concept Identifiers`**, paste the Concept IDs (e.g., `132797` for Sepsis). If entering multiple Concept IDs, separate them using commas without spaces.
-5. Before clicking `Add To Concept Set`, select:
-   - `Descendants` to include child concepts
-   - `Exclude` if the concept should be subtracted
-   - Both `Exclude` and `Descendants` to exclude entire branches
-6. Click **`Add To Concept Set`**.
+Atlas supports several methods for transferring concept sets between environments. 
 
-![Importing Concept Identifiers Example](./images/import-concept-set-example.png)
+#### Import Options
+The choice depends on whether you want to **recreate**, **enrich**, or **fully reproduce** a concept set.
+- **Concept Identifiers:** Paste one or more Concept IDs (e.g., `132797` for Sepsis).  
+  - Multiple IDs should be separated by commas (no spaces).  
+  - Useful for quick reconstruction from documentation or spreadsheets.  
+- **Source Codes:** Enter raw source codes (ICD, CPT, etc.) for Atlas to resolve to standard concepts.  
+  - Useful when importing directly from site-specific code lists.  
+- **Concept Set Expression JSON:** Paste a full JSON representation of a concept set.  
+  - Preserves descendants, exclusions, and optimization flags.  
+  - Recommended for transferring validated or finalized sets across environments.  
+- **Repository (Copy Existing):** Select an existing concept set in Atlas and copy it as a starting point.  
+  - Useful for reusing or adapting previously curated sets.  
 
-#### After Importing:
-Continue with the standard Concept Set creation workflow:
-- Go to **`Concept Set Expression`** to review logic
-- Click **`Included Concepts`** to validate the resolved concept list
-- Use **`Optimize`** (if available) to simplify the expression
-- Enter **Concept Set Description** with Clinical Justification
-- Click **`Save`** and register the set in the inventory
+#### After Importing (All Methods)
+Once a concept set is imported into Atlas, continue with the standard workflow:
+1. Go to **`Concept Set Expression`** to review the logic.  
+2. Click **`Included Concepts`** to validate the resolved list.  
+   - Check for unintended inclusions from descendants.  
+   - Manually exclude or remove irrelevant terms.  
+3. Click **`Included Source Codes`** to confirm coverage of site-specific codes and compare against published code lists or literature.  
+   - Avoid mixing source and standard codes in the expression.  
+   - Remember: the `Exclude` checkbox does **not** exclude source codes.  
+4. Use **`Optimize`** (if available) to simplify the expression by removing redundant child concepts already covered by parent + descendants. A concept set may already appear optimized, but there is no way to be certain without running the function - so always apply it to confirm.
+5. Enter **Concept Set Name** and a **Concept Set Description** including the clinical justification.  
+6. Click **`Save`** and register the concept set in the Concept Set Inventory.
 
-> **Tip:** This method is ideal for transferring concept sets across environments or manually reconstructing shared definitions.
-
-## Versioning
-
-Each major update to a concept set - such as adding or removing concepts, changing inclusion/exclusion logic, or modifying descendant flags - **must be reflected by updating the concept set name to a new version**.
-
-> **Do not create a new concept set for minor or major revisions.** Instead, rename the existing one to reflect the new version.
-> Example: `B2AI-Condition-Sepsis-v1-draft` → [update applied] → `B2AI-Condition-Sepsis-v2-pending validation` → [review completed] → `B2AI-Condition-Sepsis-v2-validated`
+#### Export Options
+- **Concept Set Expression JSON:** Exports the full expression, including descendants, exclusions, and annotations.  
+  - Best for sharing validated sets across sites or environments.  
+- **Concept Identifier List:** Exports only the IDs from the expression.  
+  - Useful for lightweight documentation or sharing minimal lists.  
+- **Included Concept Identifier List:** Exports the fully resolved set of included concepts (with descendants).  
+  - Useful for validation, review, and cross-checking against literature or source data.  
 
 ## Resources and References
 - [Book of OHDSI. Chapter 8 OHDSI Analytics Tools](https://ohdsi.github.io/TheBookOfOhdsi/OhdsiAnalyticsTools.html)
