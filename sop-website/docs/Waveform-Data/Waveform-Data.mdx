@@ -91,7 +91,7 @@ See the **Submitting Waveforms** section in the SOP on [waveform file format](wa
      - Brief description of the dataset (number of patients, the years covered by your waveform data, the types (e.g. high-frequency telemetry, low-frequency telemetry, EEG) of waveform files being submitted and the number of each type)
      - Any known issues (if there are any known issues with the waveforms, please make them known so we can try to address them)
 3. **Waveform EHR linkage**
-   - Provide a file named `waveform_visit_links.csv` which links waveform files to visits. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) and the **Linking Waveform Sessions to Visits** section in the SOP on [waveform file format](waveform-file-format.mdx) for details
+   - Provide the files requested in the [Multimodal-Linkage SOP](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/)
 4. **Code Submission:**
    - Mapping file (required): submit a mapping file for telemetry waveforms and EEG waveforms (if applicable) under the `Metadata` folder. See the **Submitting Waveforms** section in the SOP on [waveform file format](waveform-file-format.mdx) for details.
    - Conversion code: please submit any code you used to convert or deidentify your waveform data to the [CHoRUS to WFDB converter repo](https://github.com/chorus-ai/chorus_waveform_conversion). Provide all code under `converters/<site>/` 
