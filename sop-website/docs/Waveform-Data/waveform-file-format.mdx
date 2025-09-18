@@ -16,16 +16,19 @@ All waveform data must adhere to the following directory structure to facilitate
 
 ```plaintext
 .
-├── OMOP
-|  └── waveform_visit_links.csv             # File linking visit occurrence and waveform session
-├── SUBMISSION.md  
+├── Metadata
+|  ├── READINESS.md                         # Checklist to indicate that SOP requirements have been met
+|  ├── SUBMISSION.md                        # File outlining details of your submission
+|  ├── Telemetry_mapping.csv                # Mapping file for telemetry waveforms
+|  ├── EEG_mapping.csv                      # Mapping file for EEG waveforms (if applicable)
+|  └── waveform_visit_links.csv             # File linking visit occurrence and waveform session (optional duplicate)
 └── <person_id>                             # Patient-specific subdirectory
-   └── waveforms                            # "waveforms" folder
-       ├── telemetry                        # Folder for telemetry waveforms
+   └── Waveforms                            # "Waveforms" folder
+       ├── Telemetry                        # Folder for telemetry waveforms
        |   └── <session_id>                 # Session ID folder
        |       ├── <session_id>.<ext>       # High-frequency waveform or annotation file(s) 
        |       └── <session_id>n.csv        # Low-frequency "numerics" file  
-       └── eeg                              # Folder for EEG waveforms
+       └── EEG                              # Folder for EEG waveforms
            └── <session_id>                 # Session ID folder
                ├── <session_id>.<ext>       # High-frequency waveform or annotation file(s) 
                └── <session_id>n.csv        # Low-frequency "numerics" file 
@@ -33,19 +36,24 @@ All waveform data must adhere to the following directory structure to facilitate
 
 ### 2.2. Explanation of File Structure
 
-- `OMOP` 
-  - Root directory for your OMOP tables.
-- `waveform_visit_links.csv` 
-  - This file links each waveform recording / session to a visit occurrence. Submit this file under your `/OMOP/` folder. See the section on Linking Waveform Sessions to Visits below for details about this file.
+- `Metadata`
+  - Root directory for metadata files.
+- `READINESS.md` 
+  - Checklist to indicate that SOP requirements have been met. Submit this file directly under the `Metadata` folder.
 - `SUBMISSION.md` 
-  - File outlining the details of your submission, as described elsewhere in this SOP. Submit this file at the same level as your `/OMOP/` and `<person_id>` folders.
+  - File outlining the details of your submission, as described elsewhere in this SOP. Submit this file directly under the `Metadata` folder.
+- `Telemetry_mapping.csv`
+  - Mapping file for telemetry waveforms, as described elsewhere in this SOP. Submit this file directly under the `Metadata` folder.
+- `EEG_mapping.csv`
+  - Mapping file for EEG waveforms, as described elsewhere in this SOP. Submit this file directly under the `Metadata` folder. Only required if you are submitting EEG waveforms.
+
 - `<person_id>/`:
   - Root directory for all patient data. Each patient should have a unique identifier (e.g., `10001`).
-- `waveforms/`:
-  - Patients may have multiple types of data. The `waveforms` folder is intended for waveform data.
-- `telemetry/`:
-  - All telemetry waveforms should be submitted under the telemetry folder. High-frequency waveform signal files and annotation files should be named `<session_id>` followed by the appropriate extension for a signal file or annotation file in the submitted format. Low-frequency "numerics" signals should be submitted in a CSV file with a "n" before the extension.
-- `eeg/`:
+- `Waveforms/`:
+  - Patients may have multiple types of data. The `Waveforms` folder is intended for waveform data.
+- `Telemetry/`:
+  - All telemetry waveforms should be submitted under the Telemetry folder. High-frequency waveform signal files and annotation files should be named `<session_id>` followed by the appropriate extension for a signal file or annotation file in the submitted format. Low-frequency "numerics" signals should be submitted in a CSV file with a "n" before the extension.
+- `EEG/`:
   - All EEG waveforms should be submitted under the EEG folder. EEG waveform signal files and annotation files should be named `<session_id>` followed by the appropriate extension for a signal file or annotation file in the submitted format. Low-frequency "numerics" signals should be submitted in a CSV file with a "n" before the extension.
 - `<session_id>/`:
   - Session ID indicates a unique recording for the patient. A single patient (i.e. a single `<person_id>`) may have multiple sessions.
@@ -71,21 +79,21 @@ When reviewing a waveform signal you may notice the following issues:
 - Points where the timestamps of the data appear to jump forward or backward in time despite the data itself being continuous
 - Jitter in the timestamps in cases where they were not recorded by the original device
 
-The goal in handling these issues is to maintain integrity of the waveform in order to enable machine analysis. CHoRUS central will attempt to correct for these issues if provided the necessary information as outlined in this SOP. If you have already manipulated your waveform data to handle gaps and overlaps (this is not recommended), please indicate the following in your `SUBMISSION.md` (template available [here](https://raw.githubusercontent.com/chorus-ai/chorus_waveform_conversion/refs/heads/main/submission/templates/SUBMISSION_template.md)):
+The goal in handling these issues is to maintain integrity of the waveform in order to enable machine analysis. CHoRUS central will attempt to correct for these issues if provided the necessary information as outlined in this SOP. If you have already manipulated your waveform data to handle gaps and overlaps (this is not recommended), please indicate the following in your `SUBMISSION.md` (template available [here](https://raw.githubusercontent.com/chorus-ai/chorus_waveform_resources/refs/heads/main/submission/templates/SUBMISSION_template.md)):
 - Whether you were able to differentiate between gaps due to missing data and other types of gaps (e.g. a gap due to a clock resync)
 - How you modified your data for each gap type 
 
 ### 3.4. Standardized Channel Naming
 
 We expect the signal labels for each channel to follow the ISO/IEEE 11073 standards. The signal labels for the requested waveforms can be found here:
-- [Telemetry Signal Labels](https://github.com/chorus-ai/chorus_waveform_conversion/wiki/Waveform-Conversion#telemetry-signals)
-- [EEG Signal Labels](https://github.com/chorus-ai/chorus_waveform_conversion/wiki/Waveform-Conversion#electroencephalogram-signals)
+- [Telemetry Signal Labels](https://github.com/chorus-ai/chorus_waveform_resources/wiki/Waveform-Conversion#telemetry-signals)
+- [EEG Signal Labels](https://github.com/chorus-ai/chorus_waveform_resources/wiki/Waveform-Conversion#electroencephalogram-signals)
 
 As requested below you will need to map each signal from your submitted waveforms to the appropriate **signal label** provided in the links above. If you have multiple channels in your data which correspond to a single standardized signal label, simply map them as such. For example, if you have two arterial blood pressure signals `ART1`, and `ART3`, you can map both of them to `MDC_PRESS_BLD_ART`. The addition of numeric suffixes to the standardized labels will be handled centrally.
 
 ### 3.5. Waveform Quality
 
-For the waveforms to be useful in research, they have to meet some basic quality standards. In particular, the samples need to be collected often enough and the resolution needs to be precise enough to capture relevant physiological events. The [waveform conversion page](https://github.com/chorus-ai/chorus_waveform_conversion/wiki/Waveform-Conversion), with the standardized signal labels mentioned above, also provides a minimum sample rate and resolution for each signal type. This indicates the required sampling rate and resolution when the signal was originally recorded. Do not upsample in an effort to meet the minimum requirements, as that will not produce a higher quality waveform.
+For the waveforms to be useful in research, they have to meet some basic quality standards. In particular, the samples need to be collected often enough and the resolution needs to be precise enough to capture relevant physiological events. The [waveform conversion page](https://github.com/chorus-ai/chorus_waveform_resources/wiki/Waveform-Conversion), with the standardized signal labels mentioned above, also provides a minimum sample rate and resolution for each signal type. This indicates the required sampling rate and resolution when the signal was originally recorded. Do not upsample in an effort to meet the minimum requirements, as that will not produce a higher quality waveform.
 
 ### 3.6. Low Frequency Signals ("Numerics")
 
@@ -118,7 +126,7 @@ message stream)
 
 #### 4.1.1. Mapping File 
 
-Please submit mapping file(s) which will allow us to convert the site specific information from your waveform data into WFDB format. Please submit the file as `<site_name>_wf_<telemetry_or_eeg>_mapping.csv`. If your site is submitting EEG waveforms in addition to telemetry waveforms, please provide a separate mapping file for the EEG waveforms.
+Please submit mapping file(s) which will allow us to convert the site specific information from your waveform data into WFDB format. Please submit the file as `<telemetry_or_eeg>_mapping.csv`. If your site is submitting EEG waveforms in addition to telemetry waveforms, please provide a separate mapping file for the EEG waveforms.
 
 The mapping file should have the following columns. For each signal in your data (e.g. ECG lead II, PPG, EEG lead FP1, etc.) add a row which supplies this information:
 - `signal_id`: the (integer, or string) variable that indicates signal name in your submitted format
@@ -133,13 +141,13 @@ Stream-based submissions should also have:
 - `start_time`: the (integer, or string) variable that identifies the start of the data stream for each row. Please remember to indicate (in your `SUBMISSION.md`) whether the timestamp corresponds to the start or end of the first sample in the stream.
 - `end_time`: the (integer, or string) variable that identifies the end of the data stream for each row. Please remember to indicate (in your `SUBMISSION.md`) whether the timestamp corresponds to the start or end of the last sample in the stream.
 
-Submit your mapping file(s) to [CHoRUS to WFDB converter repo](https://github.com/chorus-ai/chorus_waveform_conversion). Provide the mapping file(s) under `mappings/<site>/` 
+Submit your mapping file(s) under the `Metadata` folder as depicted above.
 
 ---
 
 ## 5. Linking Waveform Sessions to Visits
 
-A table named `waveform_visit_links.csv` should be provided under the `/OMOP/` folder. This table should have a column for `visit_occurrence_id`, `visit_detail_id`, and `session_id`. If the data collection system does not provide a direct linkage between `session_id` and `visit_occurrence_id`, it may be necessary to infer this linkage based on the start and end time of the session but this should only be done as a last resort. Keep in mind that the session start and end may not exactly match the admission, discharge, or transfer time in the EHR. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
+A table named `waveform_visit_links.csv` should be provided under the `Metadata` folder. This table should have a column for `visit_occurrence_id`, `visit_detail_id`, and `session_id`. If the data collection system does not provide a direct linkage between `session_id` and `visit_occurrence_id`, it may be necessary to infer this linkage based on the start and end time of the session but this should only be done as a last resort. Keep in mind that the session start and end may not exactly match the admission, discharge, or transfer time in the EHR. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
 
 Please outline the process you used for linking `session_id` to `visit_detail_id` in your `SUBMISSION.md` file.
 
@@ -150,7 +158,8 @@ Please outline the process you used for linking `session_id` to `visit_detail_id
 | Version | Date       | Description                                |
 |---------|------------|--------------------------------------------|
 | 1.0     | 2024-11-21 | Initial version                            |
-| 2.0     | 2025-02-10 | Clarified that waveforms should be submitted in preferred format. Updated file structure.                            |
+| 2.0     | 2025-02-10 | Clarified that waveforms should be submitted in preferred format. Updated file structure |
+| 2.1     | 2025-09-17 | Updated links and clearly outlined how metadata should be submitted |
 
 ---
 
