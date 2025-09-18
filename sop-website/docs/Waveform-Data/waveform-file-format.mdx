@@ -19,16 +19,16 @@ All waveform data must adhere to the following directory structure to facilitate
 ├── Metadata
 |  ├── READINESS.md                         # Checklist to indicate that SOP requirements have been met
 |  ├── SUBMISSION.md                        # File outlining details of your submission
-|  ├── telemetry_mapping.csv                # Mapping file for telemetry waveforms
-|  ├── eeg_mapping.csv                      # Mapping file for EEG waveforms (if applicable)
+|  ├── Telemetry_mapping.csv                # Mapping file for telemetry waveforms
+|  ├── EEG_mapping.csv                      # Mapping file for EEG waveforms (if applicable)
 |  └── waveform_visit_links.csv             # File linking visit occurrence and waveform session (optional duplicate)
 └── <person_id>                             # Patient-specific subdirectory
-   └── waveforms                            # "waveforms" folder
-       ├── telemetry                        # Folder for telemetry waveforms
+   └── Waveforms                            # "Waveforms" folder
+       ├── Telemetry                        # Folder for telemetry waveforms
        |   └── <session_id>                 # Session ID folder
        |       ├── <session_id>.<ext>       # High-frequency waveform or annotation file(s) 
        |       └── <session_id>n.csv        # Low-frequency "numerics" file  
-       └── eeg                              # Folder for EEG waveforms
+       └── EEG                              # Folder for EEG waveforms
            └── <session_id>                 # Session ID folder
                ├── <session_id>.<ext>       # High-frequency waveform or annotation file(s) 
                └── <session_id>n.csv        # Low-frequency "numerics" file 
@@ -42,18 +42,18 @@ All waveform data must adhere to the following directory structure to facilitate
   - Checklist to indicate that SOP requirements have been met. Submit this file directly under the `Metadata` folder.
 - `SUBMISSION.md` 
   - File outlining the details of your submission, as described elsewhere in this SOP. Submit this file directly under the `Metadata` folder.
-- `telemetry_mapping.csv`
+- `Telemetry_mapping.csv`
   - Mapping file for telemetry waveforms, as described elsewhere in this SOP. Submit this file directly under the `Metadata` folder.
-- `eeg_mapping.csv`
+- `EEG_mapping.csv`
   - Mapping file for EEG waveforms, as described elsewhere in this SOP. Submit this file directly under the `Metadata` folder. Only required if you are submitting EEG waveforms.
 
 - `<person_id>/`:
   - Root directory for all patient data. Each patient should have a unique identifier (e.g., `10001`).
-- `waveforms/`:
-  - Patients may have multiple types of data. The `waveforms` folder is intended for waveform data.
-- `telemetry/`:
-  - All telemetry waveforms should be submitted under the telemetry folder. High-frequency waveform signal files and annotation files should be named `<session_id>` followed by the appropriate extension for a signal file or annotation file in the submitted format. Low-frequency "numerics" signals should be submitted in a CSV file with a "n" before the extension.
-- `eeg/`:
+- `Waveforms/`:
+  - Patients may have multiple types of data. The `Waveforms` folder is intended for waveform data.
+- `Telemetry/`:
+  - All telemetry waveforms should be submitted under the Telemetry folder. High-frequency waveform signal files and annotation files should be named `<session_id>` followed by the appropriate extension for a signal file or annotation file in the submitted format. Low-frequency "numerics" signals should be submitted in a CSV file with a "n" before the extension.
+- `EEG/`:
   - All EEG waveforms should be submitted under the EEG folder. EEG waveform signal files and annotation files should be named `<session_id>` followed by the appropriate extension for a signal file or annotation file in the submitted format. Low-frequency "numerics" signals should be submitted in a CSV file with a "n" before the extension.
 - `<session_id>/`:
   - Session ID indicates a unique recording for the patient. A single patient (i.e. a single `<person_id>`) may have multiple sessions.
@@ -147,7 +147,7 @@ Submit your mapping file(s) under the `Metadata` folder as depicted above.
 
 ## 5. Linking Waveform Sessions to Visits
 
-A table named `waveform_visit_links.csv` should be provided under the `/OMOP/` folder. This table should have a column for `visit_occurrence_id`, `visit_detail_id`, and `session_id`. If the data collection system does not provide a direct linkage between `session_id` and `visit_occurrence_id`, it may be necessary to infer this linkage based on the start and end time of the session but this should only be done as a last resort. Keep in mind that the session start and end may not exactly match the admission, discharge, or transfer time in the EHR. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
+A table named `waveform_visit_links.csv` should be provided under the `Metadata` folder. This table should have a column for `visit_occurrence_id`, `visit_detail_id`, and `session_id`. If the data collection system does not provide a direct linkage between `session_id` and `visit_occurrence_id`, it may be necessary to infer this linkage based on the start and end time of the session but this should only be done as a last resort. Keep in mind that the session start and end may not exactly match the admission, discharge, or transfer time in the EHR. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
 
 Please outline the process you used for linking `session_id` to `visit_detail_id` in your `SUBMISSION.md` file.
 
@@ -158,8 +158,8 @@ Please outline the process you used for linking `session_id` to `visit_detail_id
 | Version | Date       | Description                                |
 |---------|------------|--------------------------------------------|
 | 1.0     | 2024-11-21 | Initial version                            |
-| 2.0     | 2025-02-10 | Clarified that waveforms should be submitted in preferred format. Updated file structure|
-| 2.1     | 2025-09-17 | Updated links and clearly outlined how metadata should be submitted|
+| 2.0     | 2025-02-10 | Clarified that waveforms should be submitted in preferred format. Updated file structure |
+| 2.1     | 2025-09-17 | Updated links and clearly outlined how metadata should be submitted |
 
 ---
 
