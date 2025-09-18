@@ -20,8 +20,7 @@ All waveform data must adhere to the following directory structure to facilitate
 |  ├── READINESS.md                         # Checklist to indicate that SOP requirements have been met
 |  ├── SUBMISSION.md                        # File outlining details of your submission
 |  ├── Telemetry_mapping.csv                # Mapping file for telemetry waveforms
-|  ├── EEG_mapping.csv                      # Mapping file for EEG waveforms (if applicable)
-|  └── waveform_visit_links.csv             # File linking visit occurrence and waveform session (optional duplicate)
+|  └── EEG_mapping.csv                      # Mapping file for EEG waveforms (if applicable)
 └── <person_id>                             # Patient-specific subdirectory
    └── Waveforms                            # "Waveforms" folder
        ├── Telemetry                        # Folder for telemetry waveforms
@@ -147,9 +146,7 @@ Submit your mapping file(s) under the `Metadata` folder as depicted above.
 
 ## 5. Linking Waveform Sessions to Visits
 
-A table named `waveform_visit_links.csv` should be provided under the `Metadata` folder. This table should have a column for `visit_occurrence_id`, `visit_detail_id`, and `session_id`. If the data collection system does not provide a direct linkage between `session_id` and `visit_occurrence_id`, it may be necessary to infer this linkage based on the start and end time of the session but this should only be done as a last resort. Keep in mind that the session start and end may not exactly match the admission, discharge, or transfer time in the EHR. See [Multimodal-Linkage](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for more detail.
-
-Please outline the process you used for linking `session_id` to `visit_detail_id` in your `SUBMISSION.md` file.
+The [Multimodal-Linkage SOP](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) provides details on linking waveform sessions to visits. Please outline the process you used for linking waveform data to visits in your `SUBMISSION.md` file.
 
 ---
 
