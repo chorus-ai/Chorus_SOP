@@ -1,5 +1,149 @@
 ---
 title: Flowsheet Data
 id: Flowsheet Data
-description:  An SOP for handling data from flowsheet orders
+description: An SOP for processing and mapping flowsheet data from EHR systems
 ---
+# Awaiting Approval
+
+## 1. Purpose
+
+This SOP provides guidelines for the extraction, mapping, and processing of flowsheet data within CHoRUS. It ensures standardized handling of flowsheet descriptions and values while maintaining consistency with OMOP CDM requirements.
+
+---
+
+## 2. Scope
+
+This SOP applies to data engineers, data scientists, and analysts responsible for processing flowsheet data from EHR systems. It defines procedures for mapping flowsheet descriptions to standardized concepts and handling both quantitative and qualitative flowsheet values.
+
+---
+
+## 3. Definitions
+
+- **Flowsheet**: Electronic health record data containing clinical measurements, observations, and assessments captured at the bedside or during clinical encounters.
+- **Exact Match**: Direct string matching between flowsheet descriptions and concept synonym names in the CHoRUS vocabulary tables.
+- **Concept Synonym Table**: Delta table containing validated mappings between flowsheet descriptions and CHoRUS-assigned concept IDs.
+- **Value Mapping**: The process of mapping categorical flowsheet values to standardized SNOMED-CT Meas Value domain concepts.
+- **Maps To Relationship**: OMOP relationship used to link non-standard concepts to their standard equivalents.
+
+---
+
+## 4. Roles and Responsibilities
+
+- **Data Engineer**: Implements flowsheet extraction queries and ensures correct OMOP CDM formatting.
+- **Data Analyst**: Validates mapped outputs and reviews coverage statistics for flowsheet mappings.
+- **Quality Control (QC) Analyst**: Reviews processed flowsheet data for completeness and accuracy.
+
+---
+
+## 5. Materials Needed
+
+- Access to EHR flowsheet data tables (typically containing item IDs, descriptions, values, and units).
+- CHoRUS vocabulary delta tables loaded into your database environment.
+- Flowsheet mapping validation query (available in office hours materials).
+- Database access with ability to create temporary tables and perform joins.
+
+---
+
+## 6. Procedures
+
+### 6.1. **Initial Data Assessment**
+
+1. Extract distinct flowsheet descriptions from your EHR system
+2. Assess the format and structure of flowsheet data including:
+   - Description field formatting
+   - Quantitative vs. qualitative values
+   - Unit specifications
+   - Site-specific prefixes or suffixes
+
+### 6.2. **Vocabulary Table Setup**
+
+1. Load CHoRUS vocabulary delta tables into your database environment:
+   - concept_synonym (contains flowsheet description mappings)
+   - concept (contains standard concept definitions)
+   - concept_relationship (contains maps_to relationships)
+
+2. Ensure proper table indexing for efficient join operations
+
+### 6.3. **Exact Match Implementation**
+
+1. **String Cleaning**: Remove site-specific prefixes (e.g., "R ", "TMC ", "Duke ") from flowsheet descriptions
+2. **Case Normalization**: Apply consistent case handling (typically lowercase with trimming)
+3. **Join Implementation**:
+   ```sql
+   -- Example exact match query structure
+   SELECT DISTINCT flowsheet_description
+   FROM source_flowsheets s
+   JOIN concept_synonym cs ON LOWER(TRIM(s.description)) = LOWER(TRIM(cs.concept_synonym_name))
+   ```
+
+### 6.4. **Mapping Table Construction**
+
+1. Create mapping table joining exact matches with concept and concept_relationship tables
+2. Use "Maps_to" relationship to identify target standard concepts
+3. Include domain information to determine appropriate OMOP table placement
+4. Expected domains include:
+   - Measurement (majority of flowsheets)
+   - Observation
+   - Procedure
+   - Device
+
+### 6.5. **Value Mapping for Categorical Responses**
+
+1. **Qualitative Value Extraction**: Identify categorical flowsheet values (e.g., "thin", "thick", "improved")
+2. **Meas Value Domain Mapping**:
+   - Query SNOMED-CT concepts in the Meas Value domain
+   - Perform exact string matching on categorical values
+   - Handle duplicate concept scenarios by selecting appropriate standard concepts
+3. **Implementation**: Create value mapping subquery joining flowsheet values to Meas Value concepts
+
+### 6.6. **Unit Mapping (Optional)**
+
+1. Extract unit values from flowsheet data
+2. Map to Unit domain concepts using concept_code field
+3. Handle bracket notation and formatting inconsistencies
+4. Review mappings carefully due to unit concept code complexity
+
+### 6.7. **Final ETL Assembly**
+
+1. Combine flowsheet description mappings with value mappings using left joins
+2. Generate measurement table entries with:
+   - measurement_concept_id (from flowsheet description mapping)
+   - value_as_concept_id (from categorical value mapping)
+   - value_as_number (for quantitative values)
+   - unit_concept_id (if units are mapped)
+
+---
+
+## 7. Quality Control (QC) Procedures
+
+- **Coverage Assessment**: Calculate percentage of flowsheet descriptions successfully mapped via exact matches
+- **Domain Distribution**: Review distribution across OMOP domains (expect ~70% measurements)
+- **Value Mapping Validation**: Verify categorical value mappings make clinical sense
+- **Missing Data Review**: Document flowsheets that could not be mapped for potential future validation
+- **Context Validation**: For site-specific prefixes, confirm removal doesn't eliminate critical semantic information
+
+---
+
+## 8. Documentation and Storage
+
+- Maintain logs of mapping coverage statistics by site
+- Document any string cleaning transformations applied
+- Store intermediate mapping tables for review and validation
+- Version control mapping queries and configurations
+- Report mapping coverage metrics during office hours progress updates
+
+---
+
+## 9. Deviations from the SOP
+
+- Any deviations from exact matching (e.g., fuzzy matching implementations) must be documented and validated
+- Custom concept creation requests must be submitted through CHoRUS validation process
+- Site-specific string cleaning rules should be documented and reviewed for semantic preservation
+
+---
+
+## 10. Revision History
+
+| Version | Date       | Description                                |
+|---------|------------|--------------------------------------------|
+| 1.0     | 2025-09-26 | Initial version based on office hours transcripts |
