@@ -1,0 +1,154 @@
+---
+title: GIS Exposure Data
+id: GIS Exposure Data
+description:  An SOP for handling data related to environmental exposures
+---
+# Awaiting Approval
+
+## 1. Purpose
+
+### Instructions for sites to:
+
+1.	Prepare input files
+2.	Run the UF geocoding tool (DeGAUSS-based) locally
+3.	Link geocodes to geospatial indices with the postgis-sdoh tool
+4.	Optionally date-shift outputs
+5.	Upload for centralized de-identification
+
+All steps are performed locally at each site to preserve PHI privacy.
+
+### Prerequisites
+
+- Docker installed (Mac: Docker Desktop; Windows: Docker Desktop + WSL is recommended).
+- Repositories cloned locally:
+  - Geocoding tool (DeGAUSS-based)
+  - Dateset Linkage (postgis).
+- Sample input files available
+  - ADDRESS/OMOP (contains address information)
+  - `LOCATION` (contains geocoded information)
+  - `LOCATION_HISTORY`
+  - `DATA_SRC_SIMPLE` (data source codes – centrally managed)
+  - `VRBL_SRC_SIMPLE` (variable source codes - centrally managed)
+- Basic familiarity with Terminal (Mac) or WSL/Command Prompt (Windows) or bash/sh prompt (Linux)
+- **Important**: Do not date-shift your LOCATION/LOCATION_HISTORY files before linkage. Date shifting (if used) should occur following Step 3.
+
+### Expected Outputs
+- Geocoding: zipped geocode outputs, e.g.
+  - output_coordinates_from_address_[timestamp].zip
+  - output_geocoded_fips_codes_[timestamp].zip. More details here
+- GIS linkage: `EXTERNAL_EXPOSURE.csv` containing linked indices (ADI, SVI, AHRQ metrics, etc.).
+
+### Workflow
+
+**Step 1** - Prepare input data (Address / Coordinates / OMOP)
+
+1.1 Choose one supported input option per run:
+  - Address file
+  - Coordinates file
+  - OMOP CDM export
+  - (Only one location element per encounter is required.)
+
+1.2 For demos, use a CSV with:
+  - Encounter year
+  - Address fields (street, city, state, ZIP) or latitude/longitude
+  - (Sample files available in repo)
+
+1.3 After geocoding (Step 2), update the site’s `LOCATION` file with lat/lon or FIPS.
+
+1.4 Ensure `LOCATION_HISTORY` date fields are not shifted before Step 3.
+
+**Step 2** - Geocoding Tool (run locally in Docker)
+
+[Link to GitHub Repository](https://github.com/bihorac-LAB/Exposome)
+
+What it does. Converts addresses into precise latitude/longitude and 11-digit Census Tract FIPS for later linkage. Runs in DeGAUSS Docker containers; no PHI leaves your machine.
+
+2.1	Clone or pull the UF geocoder repo. Review UserManual.md.
+
+2.2	Place your address files in the input directory
+
+2.3	Run the geocoding container exactly as stated in UserManual.md
+
+2.4	Retrieve outputs from your mounted folder:
+  - output_coordinates_from_address_[timestamp].zip
+  - output_geocoded_fips_codes_[timestamp].zip
+  - Verify: Outputs include latitude, longitude and 11-digit Census tract FIPS.
+
+**Step 3** - GIS linkage with postgis-exposure (run locally in Docker)
+
+What it does. Spatially joins the lat/lon (and FIPS) from Step 2 with geospatial indices (ADI, SVI, AHRQ) and produces `EXTERNAL_EXPOSURE.csv`.
+
+Before you run
+
+- Update your `LOCATION` files to include the geocoded lat/lon and FIPS from Step 2
+- Prepare the site’s `LOCATION_HISTORY`
+- Ensure DATA_SRC_SIMPLE and VRBL_SRC_SIMPLE.CSV files are available for mapping required DATA_SOURCES and VARIABLES  (centrally managed; no edits required).
+
+_Example Run_
+
+3.1	Start Postgres/PostGIS container following the instructions [here]()
+  - Container sequence: start/load database -> ingest location tables -> runs the produce script.
+
+3.2	For the first docker command (prepares the database),
+
+```bash
+docker run --rm --name postgis-chorus \
+  --env POSTGRES_PASSWORD=dummy \
+  --env VARIABLES=134,135,136 \
+  --env DATA_SOURCES=1234,5150,9999 \
+  -v $(pwd)/test/source:/source \
+  -d ghcr.io/chorus-ai/chorus-postgis-sdoh:main
+ ```
+
+- Replace VARIABLES with the comma-separated list of variable IDs you need from VRBL_SRC_SIMPLE.CSV.
+- Replace DATA_SOURCES with the relevant data source IDs (from DATA_SRC_SIMPLE.CSV).
+
+3.3	Run the second docker command to generate the external exposure file
+
+```bash
+docker exec postgis-chorus /app/produce_external_exposure.sh
+```
+
+4.	Output: `EXTERNAL_EXPOSURE.csv` in your mounted directory (e.g., ./test/source).
+
+_Notes & Tips_
+
+- Run these commands in Terminal (Mac) or WSL/PowerShell/Command Prompt on Windows; WSL is usually more robust for Docker on Windows.
+- If your site needs more variables, expand VARIABLES accordingly.
+
+**Step 4** - Validate & inspect outputs
+
+- Open `EXTERNAL_EXPOSURE.csv`. Confirm:
+  - Patient ID, lat, lon, FIPS
+  - ADI, SVI, AHRQ, and VRBL-coded fields
+- Spot-check a few records for accuracy.
+- If errors:
+  - Ensure `LOCATION` has valid lat/lon/FIPS
+  - Confirm `VARIABLES` and `DATA_SOURCES` are correct
+  - Check mount paths
+
+**Step 5** - Optional: Site-level date shifting (do after linkage). See [Date Shifting SOP for More Details]
+
+Purpose. Anonymize temporal data while preserving relative timelines
+Guidelines
+
+- Apply date shifts locally before upload — do not date-shift prior to Step 3.
+Input/Output
+- Input: EXTERNAL_EXPOSURE.csv (from Step 3)
+- Output: EXTERNAL_EXPOSURE_date_shifted.csv
+
+**Step 6** - Upload & centralized de-identification
+
+1.	Upload the (optionally date-shifted) `EXTERNAL_EXPOSURE.csv` to the central repository
+
+2.	The central team will apply further de-identification
+
+References & sample files
+- Geocoding:
+- Instructions
+- Sample Files
+- GIS Linkage:
+- Instructions
+- Sample input files
+  - Site-specific -> `LOCATION`, `LOCATION_HISTORY`
+  - Centrally managed -> `DATA_SRC_SIMPLE`, `VRBL_SRC_SIMPLE`
