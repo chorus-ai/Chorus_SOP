@@ -24,14 +24,16 @@ description:  An SOP for Header De-Identification
 
 Run the de-identification script:
 
-
-              python pydicom_deid.py --map_table_dir <lookup_table_dir> --input_dir
-              <DICOM_input_root_dir> --output_dir <DICOM_output_root_dir> 2>&1 | tee logs.txt
+```bash
+python pydicom_deid.py --map_table_dir <lookup_table_dir> --input_dir
+<DICOM_input_root_dir> --output_dir <DICOM_output_root_dir> 2>&1 | tee logs.txt
+```
 
 **Input Parameters**
-- <lookup_table_dir>: Path to lookup CSVs
-- <DICOM_input_root_dir>: Input DICOM directory, organized by patient
-- <DICOM_output_root_dir>: Output directory for processed files
+
+- `<lookup_table_dir>`: Path to lookup CSVs
+- `<DICOM_input_root_dir>`: Input DICOM directory, organized by patient
+- `<DICOM_output_root_dir>`: Output directory for processed files
 
 **Output Subfolders:**
 - dicom_processed/: De-identified files
@@ -46,9 +48,9 @@ Refer to the manual for the complete list of DICOM data tags that will be shifte
 
 **Installation**
 
-      Launch the installer to Install RSNA CTP in the desired directory.
+Launch the installer to Install RSNA CTP in the desired directory.
 
-              CTP-installer.jar
+ `CTP-installer.jar`
 
 **Configuration**
 
