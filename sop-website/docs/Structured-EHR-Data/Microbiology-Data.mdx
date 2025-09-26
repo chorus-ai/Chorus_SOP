@@ -1,0 +1,172 @@
+---
+title: Microbiology Data
+id: Microbiology Data
+description: An SOP for processing microbiology data including specimens, organisms, and antimicrobial susceptibility testing
+---
+# Awaiting Approval
+
+## 1. Purpose
+
+This SOP provides guidelines for the extraction, processing, and representation of microbiology data within CHoRUS using OMOP CDM structures. It addresses the complex challenge of linking specimens to their associated analyses, identified organisms, and subsequent testing results (including antimicrobial resistance profiles) in a person-centric data model. The approach utilizes OMOP episode and episode_event tables to create hierarchical linkages that preserve the analytical context and enable downstream research on microbial infections, drug resistance, and related clinical outcomes.
+
+---
+
+## 2. Scope
+
+This SOP applies to data engineers, microbiologists, and analysts responsible for processing microbiological testing data from laboratory information systems. It covers the complete workflow from specimen collection through organism identification, susceptibility testing, and final data representation in OMOP CDM format.
+
+---
+
+## 3. Definitions
+
+- **Specimen Episode**: Top-level episode representing the biological sample that serves as the anchor for all subsequent analyses and findings.
+- **Episode Hierarchy**: Nested structure using episode parent-child relationships to link specimen ’ analysis ’ organism ’ susceptibility testing.
+- **Two-Part Foreign Key**: OMOP mechanism using domain_event_id and domain_event_field_concept_id to link records across different domain tables.
+- **Sample Analysis**: Laboratory procedures performed on specimens to identify microorganisms (e.g., bacterial culture, PCR, gram stain).
+- **Antimicrobial Susceptibility Testing (AST)**: Laboratory methods to determine organism resistance or susceptibility to specific antimicrobial agents.
+- **Episode Event Table**: Bridge table that groups related domain events under a common episode for analytical purposes.
+
+---
+
+## 4. Roles and Responsibilities
+
+- **Data Engineer**: Implements complex ETL logic for episode hierarchy creation and two-part foreign key linkages across microbiology data.
+- **Laboratory Data Analyst**: Validates organism identification mappings and ensures clinical accuracy of susceptibility testing results.
+- **Microbiologist**: Reviews concept mappings for organisms, testing methods, and resistance profiles to ensure clinical validity.
+- **Quality Control Analyst**: Performs comprehensive validation of hierarchical linkages and ensures data completeness across the episode structure.
+
+---
+
+## 5. Materials Needed
+
+- Access to laboratory information system (LIS) data containing specimen and microbiology results.
+- OMOP CDM database with episode and episode_event tables implemented.
+- CHoRUS vocabulary extensions for microbiology-specific concepts.
+- Mapping tables for organism taxonomy, laboratory methods, and antimicrobial agents.
+- Custom concept assignments for specimen episodes and analysis types.
+
+---
+
+## 6. Procedures
+
+### 6.1. **Specimen Registration and Episode Creation**
+
+1. **Specimen Table Population**: Create entries in the SPECIMEN table for all biological samples
+   - Note: Specimen table lacks visit_occurrence_id linkage due to processing workflow separation
+   - Capture specimen type, anatomical source, and collection metadata
+   - Record source specimen identifiers for traceability
+
+2. **Parent Episode Creation**: Generate top-level episodes for each specimen
+   - episode_concept_id: Custom concept for "specimen episode for microbiology"
+   - episode_object_concept_id: Specific specimen type (e.g., blood, urine, sputum)
+   - Establish temporal boundaries for entire analysis workflow
+   - Maintain implicit linkage between episode and specimen table entries
+
+### 6.2. **Sample Analysis Processing**
+
+1. **Analysis Identification**: Process all laboratory procedures performed on specimens
+   - Map analysis types to appropriate OMOP domains (measurement, observation, procedure)
+   - Examples: bacterial culture, C. diff assay, gram stain, PCR testing
+
+2. **Child Episode Creation**: Generate analysis-specific episodes
+   - episode_parent_id: Links to parent specimen episode
+   - episode_concept_id: Analysis type concept (may require custom concepts)
+   - Create corresponding domain table entries (measurement/observation/procedure)
+
+3. **Episode Event Registration**: Link analysis events to their episodes
+   - episode_id: Reference to analysis episode
+   - event_table_concept_id: Domain table identifier
+   - event_id: Primary key from domain table
+
+### 6.3. **Organism Identification and Mapping**
+
+1. **Species Detection Results**: Process organism identification from analyses
+   - Create observation entries for each identified organism
+   - observation_concept_id: General organism category (bacteria, virus, fungi)
+   - value_as_concept_id: Specific species identification
+   - Link to parent sample analysis using two-part foreign key
+
+2. **Laboratory Method Documentation**: Record identification methods
+   - Create measurement entries for confirmatory tests
+   - Link measurements to specific organisms using two-part foreign key
+   - Maintain one-to-one relationship between organism and confirmatory method
+
+### 6.4. **Antimicrobial Susceptibility Testing**
+
+1. **Resistance Profile Mapping**: Process AST results for each organism
+   - Create observation entries for resistance/susceptibility attributes
+   - observation_concept_id: Resistance type (resistant bacteria, susceptible organism)
+   - value_as_concept_id: Specific antimicrobial agent
+   - Establish N-to-1 relationship with parent organisms
+
+2. **Testing Method Documentation**: Record AST methodologies
+   - Create measurement entries for each susceptibility determination
+   - Link measurements to resistance attributes using two-part foreign key
+   - Document testing standards and interpretation criteria
+
+### 6.5. **Hierarchical Linkage Implementation**
+
+1. **Two-Part Foreign Key Usage**: Implement cross-domain linkages
+   - Available in: MEASUREMENT, OBSERVATION tables
+   - observation_event_id + observation_event_field_concept_id
+   - measurement_event_id + measurement_event_field_concept_id
+   - Enable bidirectional tracing through analytical hierarchy
+
+2. **Episode Event Population**: Group all related events
+   - Link all domain entries back to their respective analysis episodes
+   - Maintain comprehensive event clustering for analytical queries
+   - Handle procedures separately due to lack of two-part foreign key support
+
+### 6.6. **Complex Analytical Scenarios**
+
+1. **Multi-Organism Specimens**: Handle specimens with multiple identified organisms
+   - Scale hierarchical structure to accommodate N organisms per analysis
+   - Maintain separate resistance profiles for each organism
+   - Preserve analytical context for each organism pathway
+
+2. **Policy-Level Analysis**: Link specimens to institutional policies
+   - Create policy episodes as super-parent level
+   - Enable analysis of antibiotic stewardship impact
+   - Support longitudinal policy effectiveness studies
+
+3. **Negative Culture Handling**: Process specimens with no organism growth
+   - Create analysis episodes with negative measurement results
+   - Maintain episode structure without organism-level events
+   - Document negative results for surveillance purposes
+
+---
+
+## 7. Quality Control (QC) Procedures
+
+- **Hierarchical Integrity**: Validate parent-child episode relationships and ensure proper linkage chains
+- **Foreign Key Validation**: Verify all two-part foreign key references resolve to valid target records
+- **Organism Mapping**: Review species concept assignments for taxonomic accuracy and clinical relevance
+- **Completeness Assessment**: Ensure all identified organisms have corresponding analytical methods and results
+- **Temporal Consistency**: Validate timestamp progression through specimen ’ analysis ’ organism ’ testing workflow
+- **Custom Concept Tracking**: Monitor usage of temporary concept assignments and coordinate vocabulary updates
+
+---
+
+## 8. Documentation and Storage
+
+- **Episode Lineage**: Maintain comprehensive documentation of hierarchical relationships and analytical pathways
+- **Concept Mapping Logs**: Record all custom concept assignments for organism species, testing methods, and resistance profiles
+- **ETL Complexity Documentation**: Document advanced logic for episode creation and two-part foreign key implementation
+- **Clinical Validation Records**: Store microbiologist review results and clinical accuracy assessments
+- **Performance Metrics**: Track processing times, linkage success rates, and data completeness across hierarchical levels
+
+---
+
+## 9. Deviations from the SOP
+
+- **Episode Hierarchy Modifications**: Any changes to the specimen ’ analysis ’ organism ’ testing hierarchy must be validated for analytical impact
+- **Custom Domain Usage**: Non-standard use of measurement vs. observation domains requires clinical review and documentation
+- **Simplified Linkage**: Bypassing episode structure for simple cases must be justified and documented with impact assessment
+
+---
+
+## 10. Revision History
+
+| Version | Date       | Description                                |
+|---------|------------|--------------------------------------------|
+| 1.0     | 2025-09-26 | Initial version based on microbiology office hours transcript |
