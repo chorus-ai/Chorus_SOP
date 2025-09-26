@@ -1,5 +1,287 @@
 ---
 title: Structured EHR Data
 id: Structured EHR Data
-description:  An SOP for handling relational EHR data
+description: An SOP for extracting, transforming, and loading structured EHR data into the OMOP Common Data Model
 ---
+
+## 1. Purpose
+
+This SOP provides comprehensive guidelines for the extraction, transformation, and loading (ETL) of structured Electronic Health Record (EHR) data into the OMOP Common Data Model (CDM). It ensures consistent, standardized processing of clinical data while maintaining data quality, integrity, and compliance with CHoRUS data standards and OHDSI best practices.
+
+---
+
+## 2. Scope
+
+This SOP applies to data engineers, data scientists, and analysts responsible for transforming structured clinical data from source EHR systems into the OMOP CDM format. It covers the complete ETL lifecycle from initial data assessment through final quality validation.
+
+---
+
+## 3. Definitions
+
+- **OMOP CDM**: The Observational Medical Outcomes Partnership Common Data Model - a standardized data model for observational health data.
+- **ETL Process**: Extract, Transform, Load - the process of extracting data from source systems, transforming it to meet target requirements, and loading it into the destination system.
+- **Standard Concepts**: Concepts designated as the primary representation for a clinical entity within the OMOP vocabulary.
+- **Source Concepts**: Original codes and terminologies from the source EHR system.
+- **White Rabbit**: OHDSI tool for scanning source data and generating detailed reports about data structure and content.
+- **Usagi**: OHDSI tool for manually mapping source codes to standard vocabulary concepts.
+- **Person-centric Model**: Data organization approach where all clinical events are linked to individual patients through person_id.
+
+---
+
+## 4. Roles and Responsibilities
+
+- **Data Engineer**: Implements the ETL pipeline, performs technical data transformations, and ensures data quality.
+- **Clinical Domain Expert**: Provides clinical context for data mapping decisions and validates clinical accuracy of transformations.
+- **Data Analyst**: Validates transformed outputs and ensures compliance with OMOP CDM requirements.
+- **Quality Control (QC) Analyst**: Reviews processed data to confirm completeness, accuracy, and adherence to standards.
+- **Vocabulary Specialist**: Manages concept mapping and maintains vocabulary mappings.
+
+---
+
+## 5. Materials Needed
+
+- Access to source EHR system data
+- OHDSI ETL tools (White Rabbit, Usagi)
+- Access to ATHENA vocabulary browser (https://athena.ohdsi.org/)
+- OMOP CDM documentation and conventions
+- Institutional data governance approvals
+- Computing resources for data processing
+- Secure data storage infrastructure
+
+---
+
+## 6. Procedures
+
+### 6.1. **Pre-ETL Assessment and Planning**
+
+1. **Data Discovery and Profiling**
+   - Use White Rabbit to scan source data and generate comprehensive data profiling reports
+   - Document data structure, table relationships, and data quality issues
+   - Identify high-frequency codes and values for priority mapping
+   - Assess data completeness and identify missing or inconsistent data patterns
+
+2. **ETL Design Collaboration**
+   - Assemble cross-functional team including clinical domain experts, data engineers, and analysts
+   - Review source data profiling results collaboratively
+   - Define transformation rules and business logic
+   - Document ETL design decisions and rationale
+   - Create detailed ETL specification document
+
+3. **Infrastructure Preparation**
+   - Set up secure data processing environment
+   - Configure OMOP CDM database schema
+   - Establish data backup and recovery procedures
+   - Implement version control for ETL code and configurations
+
+### 6.2. **Vocabulary Mapping and Code Translation**
+
+1. **Source Code Inventory**
+   - Extract all unique source codes from each clinical domain (diagnoses, procedures, medications, etc.)
+   - Prioritize mapping based on code frequency and clinical importance
+   - Document source code context and usage patterns
+
+2. **Standard Concept Mapping**
+   - Use Usagi tool for semi-automated concept mapping
+   - Map source codes to Standard Concepts in OMOP vocabulary
+   - For high-frequency codes, ensure manual review and validation by clinical experts
+   - Document mapping decisions and create mapping tables for reuse
+
+3. **Vocabulary Maintenance**
+   - Establish procedures for updating vocabulary mappings
+   - Monitor vocabulary releases and incorporate updates
+   - Maintain mapping documentation and version control
+   - Create custom concepts for unmappable source values when necessary
+
+### 6.3. **Core Table Population**
+
+#### 6.3.1. Person and Demographics
+1. **PERSON Table**
+   - Generate unique person_id for each patient
+   - Map birth dates, gender, race, and ethnicity to standard concepts
+   - Handle missing or invalid demographic data according to CDM conventions
+   - Ensure person records are deduplicated
+
+2. **OBSERVATION_PERIOD Table**
+   - Define observation periods based on patient enrollment or data availability
+   - Ensure observation periods cover all clinical events for each person
+   - Handle gaps in data coverage appropriately
+
+#### 6.3.2. Healthcare Encounters
+1. **VISIT_OCCURRENCE Table**
+   - Map visit types to standard concepts (inpatient, outpatient, emergency, etc.)
+   - Ensure visit start and end dates are consistent and logical
+   - Link visits to appropriate care sites and providers
+   - Handle overlapping visits and visit merging logic
+
+2. **VISIT_DETAIL Table** (if applicable)
+   - Populate for more granular visit information (ward transfers, room changes)
+   - Maintain hierarchical relationship with visit_occurrence
+
+#### 6.3.3. Clinical Events
+1. **CONDITION_OCCURRENCE Table**
+   - Map diagnosis codes (ICD-9/10) to Standard Concepts
+   - Preserve condition start and end dates when available
+   - Map condition types (primary, secondary, etc.)
+   - Handle condition status (active, resolved, etc.)
+
+2. **DRUG_EXPOSURE Table**
+   - Map medication codes to Standard Concepts (RxNorm preferred)
+   - Convert doses, frequencies, and routes to standard units
+   - Calculate drug exposure start and end dates
+   - Handle medication reconciliation and duplicate prescriptions
+
+3. **PROCEDURE_OCCURRENCE Table**
+   - Map procedure codes (CPT, HCPCS, ICD) to Standard Concepts
+   - Preserve procedure dates and modifiers
+   - Link procedures to appropriate visits and providers
+
+4. **MEASUREMENT Table**
+   - Map laboratory tests and vital signs to Standard Concepts (LOINC preferred)
+   - Standardize units of measurement
+   - Handle numeric values, ranges, and categorical results
+   - Preserve reference ranges when available
+
+5. **OBSERVATION Table**
+   - Capture clinical facts that don't fit other domains
+   - Map social history, family history, and other observations
+   - Handle structured data elements and coded observations
+
+### 6.4. **Data Transformation Rules**
+
+1. **Date and Time Handling**
+   - Standardize all dates to YYYY-MM-DD format
+   - Handle partial dates and date imputation consistently
+   - Ensure chronological consistency across related events
+   - Document date imputation methods and assumptions
+
+2. **Concept Mapping Implementation**
+   - Apply Standard Concept mappings consistently across all tables
+   - Preserve source values in appropriate _source_value fields
+   - Handle unmapped codes with appropriate default concepts
+   - Implement concept hierarchy relationships where applicable
+
+3. **Data Quality Rules**
+   - Implement data validation checks during transformation
+   - Handle missing, invalid, or out-of-range values
+   - Apply business rules for data cleaning and standardization
+   - Document all data quality decisions and transformations
+
+### 6.5. **Quality Control and Validation**
+
+1. **Technical Validation**
+   - Verify data type constraints and foreign key relationships
+   - Check for required field completeness
+   - Validate date ranges and logical consistency
+   - Perform referential integrity checks
+
+2. **Clinical Validation**
+   - Review sample patient records for clinical accuracy
+   - Validate concept mappings with clinical domain experts
+   - Check for clinically implausible combinations or values
+   - Verify care episode continuity and logical sequence
+
+3. **Statistical Validation**
+   - Compare record counts between source and target systems
+   - Analyze data distributions and identify outliers
+   - Validate aggregate statistics against expected patterns
+   - Create automated data quality reports
+
+4. **Reproducibility Testing**
+   - Implement unit tests for ETL logic
+   - Test ETL process with known data sets
+   - Validate ability to reproduce existing study results
+   - Document ETL performance benchmarks
+
+---
+
+## 7. Quality Control (QC) Procedures
+
+### 7.1. **Mandatory QC Checks**
+
+- **Completeness Validation**: Verify that all expected source records are transformed and loaded
+- **Accuracy Verification**: Manual review of sample patient records (minimum 10 patients per major clinical domain)
+- **Consistency Analysis**: Check for consistent application of transformation rules across all records
+- **Vocabulary Compliance**: Verify that all Standard Concepts are properly applied and current
+- **CDM Compliance**: Ensure all mandatory fields are populated and conform to CDM specifications
+
+### 7.2. **Ongoing Quality Monitoring**
+
+- **Data Quality Dashboards**: Implement automated monitoring of key quality metrics
+- **Outlier Detection**: Regular analysis of statistical outliers and data anomalies
+- **Vocabulary Updates**: Monitor and incorporate vocabulary updates on established schedule
+- **Performance Monitoring**: Track ETL processing times and system performance metrics
+
+---
+
+## 8. Documentation and Storage
+
+### 8.1. **Required Documentation**
+
+- ETL design specification document
+- Vocabulary mapping tables and documentation
+- Data transformation rules and business logic documentation
+- Quality control procedures and validation results
+- ETL processing logs and audit trails
+- Data lineage documentation
+
+### 8.2. **Data Storage Requirements**
+
+- Secure storage of all transformed data in compliance with institutional policies
+- Version control for ETL code, configurations, and mapping tables
+- Backup and disaster recovery procedures
+- Data retention policies aligned with regulatory requirements
+- Access controls and audit logging
+
+---
+
+## 9. Deviations from the SOP
+
+- Any deviations from standard ETL procedures must be documented with clear justification
+- Deviations require approval from CHoRUS Data Acquisition and Standards governance
+- Alternative approaches must demonstrate equivalent or superior data quality outcomes
+- All deviations must be tracked and reported in ETL documentation
+
+---
+
+## 10. Maintenance and Updates
+
+### 10.1. **Regular Maintenance**
+
+- **Quarterly vocabulary updates** from OHDSI ATHENA
+- **Annual review** of ETL procedures and mapping accuracy
+- **Ongoing monitoring** of source system changes that may impact ETL
+- **Continuous improvement** based on user feedback and quality metrics
+
+### 10.2. **Change Management**
+
+- All ETL changes must follow established change control procedures
+- Impact assessment required for any modifications to core transformation logic
+- Testing and validation required before implementing changes in production
+- Communication plan for notifying downstream data users of changes
+
+---
+
+## 11. Revision History
+
+| Version | Date       | Description                                |
+|---------|------------|--------------------------------------------|
+| 1.0     | 2025-01-26 | Initial version incorporating OHDSI best practices |
+
+---
+
+## 12. References
+
+- [OHDSI Book of OHDSI - ETL Chapter](https://ohdsi.github.io/TheBookOfOhdsi/ExtractTransformLoad.html)
+- [OHDSI Book of OHDSI - Common Data Model](https://ohdsi.github.io/TheBookOfOhdsi/CommonDataModel.html)
+- [OHDSI Book of OHDSI - Standardized Vocabularies](https://ohdsi.github.io/TheBookOfOhdsi/StandardizedVocabularies.html)
+- [OMOP CDM Documentation](http://ohdsi.github.io/CommonDataModel/)
+- [ATHENA Vocabulary Browser](https://athena.ohdsi.org/)
+- [White Rabbit Tool Documentation](https://github.com/OHDSI/WhiteRabbit)
+- [Usagi Tool Documentation](https://github.com/OHDSI/Usagi)
+
+---
+
+## 13. Contact Information
+
+- Email: Jared Houghtaling `<jared.houghtaling@tuftsmedicine.org>`
+- Email: Polina Talapova  `<ptalapova@tuftsmedicine.org>`
