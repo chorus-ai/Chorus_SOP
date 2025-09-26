@@ -31,7 +31,7 @@ b)	Procedure number = OMOP: procedure_occurrence_id
 
 6. Ensure accession numbers for specific image tests are part of the encounters of interest. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on the patient identifiers. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
 
-7. Map header metadata relevant to your local site with header metadata selected by CHORUS (list of metadata fields below; see ).  RSNA LOINC codes specifying the type of study would be useful to include. Imaging studies should have a corresponding entry in the PROCEDURE_OCCURENCE OMOP table. Thus, imaging studies can be linked to the rest of the data using the procedure_occurence_id field. Refer to multimodal linkage SOP on specifics about linking images to the other data: https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/ . For date shifting, please refer to the  Date Shifting SOP.
+7. Map header metadata relevant to your local site with header metadata selected by CHORUS (list of metadata fields below). Refer to points 12 and 13 for look up tale specifics for the deidentification tool. Having the RSNA LOINC codes specifying the type of study would be useful to include. Imaging studies should have a corresponding entry in the PROCEDURE_OCCURENCE OMOP table. Thus, imaging studies can be linked to the rest of the data using the procedure_occurence_id field. Refer to multimodal linkage SOP on specifics about linking images to the other data: https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/ . For date shifting, please refer to the  Date Shifting SOP.
 
 Study Level:
 AccessionNumber
@@ -66,9 +66,7 @@ N/A
 
 9. Pursue local data quality review (e.g., data missingness). 
 
-> DICOM Metadata de-identification deliverables
-
-10. Identifiable cross-walk table creation (stays local): maps all original DICOM metadata fields to the deidentification procedure (e.g., replacement, erase, etc) and the new field in the deidentified DICOM, so this can be used as a crosswalk (crosswalk table stays local at the site and is not shared).
+10. Identifiable cross-walk table creation (stays local): maps all original DICOM metadata fields to the deidentification procedure (e.g., replacement, erase, etc) and the new field in the deidentified DICOM, so this can be used as a crosswalk (crosswalk table stays local at the site and is not shared). Refer to points 12 and 13 below based on DICOM deidentification status in your site.
 
 11. Deidentified DICOM metadata tables (for sharing): to enable imaging data querying without loading DICOM data.
 
