@@ -25,7 +25,7 @@ The following SOPs are under development on GitHub:
 | Multimodal Data Linkage | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/28 | ✅ COMPLETE |
 | Cataloging Unmapped Terms | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/33| ✅ COMPLETE |
 | Concept set creation  | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/64   | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/72)                | 
-| Microbiology Methods  | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/74   | UNDER REVIEW                 | 
+| Microbiology Methods  | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/74   | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/76)                 | 
 | Waveform Extension | @jshoughtaling  | https://github.com/chorus-ai/Chorus_SOP/issues/75  | ✅ COMPLETE              |
 | Exposure Data | @jshoughtaling  | https://github.com/chorus-ai/Chorus_SOP/issues/73  | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/70)                |
 
