@@ -2,7 +2,11 @@
 
 This repository provides documentation on the processes for contributing data to the CHoRUS consortium. Content is written in Markdown, which is then converted to HTML with [Docusaurus](https://docusaurus.io/).
 
-[**Online documentation SOP site**](https://chorus-ai.github.io/Chorus_SOP/). 
+[**Online documentation SOP site**](https://chorus-ai.github.io/Chorus_SOP/).
+
+## Interactive Workflow Diagram
+
+View the [**Interactive CHoRUS Workflow Flowchart**](https://chorus-ai.github.io/Chorus_SOP/flowchart) to navigate the complete data processing pipeline with clickable links to relevant SOPs. 
 
 ## SOP Development
 
