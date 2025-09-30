@@ -1,0 +1,129 @@
+---
+title: Date Shifting
+id: Date Shifting
+description: An SOP for date shifting across source systems to preserve temporal integrity
+---
+# Awaiting Approval
+
+## 1. Purpose
+
+This SOP provides guidelines for date shifting across datasets from multiple source systems, ensuring that temporal relationships are preserved within individual patients and across different source systems to maintain data integrity.
+
+---
+
+## 2. Scope
+
+This SOP applies to data engineers, data scientists, and analysts who work with datasets combining patient information from multiple sources, where the integrity of temporal relationships must be maintained after date shifting.
+
+---
+
+## 3. Definitions
+
+- **Date Shifting**: The process of adjusting dates in datasets to anonymize patient information while preserving intervals and time relationships.
+- **Temporal Integrity**: Ensuring that the relative time sequence between events within the same patient and across datasets remains consistent after date shifting.
+- **Source System**: A system that provides patient data (Electronic Health Records (EHR), Waveforms, PACS for Images, etc.). There may be several datasets within a source system. Less likely, a source system may overlap source systems.
+
+---
+
+## 4. Roles and Responsibilities
+
+Although the distribution of work will vary across sites, the following expertise is required to properly execute this SOP:
+
+- **Data Engineer**: Executes the date-shifting process under this SOP.
+- **Data Analyst**: Validates the date-shifted data to ensure temporal relationships are intact.
+- **Quality Control (QC) Analyst**: Reviews the final shifted data to confirm SOP compliance.
+
+---
+
+## 5. Materials Needed
+
+- Access to datasets from multiple source systems.
+- Documentation of each source system's date format, time zone, and whether events are timed using absolute datetimes or relative time units to a base time.
+
+---
+
+## 6. Procedures
+
+### 6.1. **Initial Data Review and Preparation**
+
+1. **Collect and Document Source Data**: Gather all datasets from each source system and document date formats, time zones, and any pre-existing date transformations.
+
+2. **Identify Time Relationships in Individual Sources**: Identify anchor dates for the same patient across files within each source. It may be that, for a given source (such as waveforms), there will be time-disjointed datasets. For example, the dataset is divided in 24-hour blocks. Typically, this anchoring datetime will be the time of the earliest entry in the dataset.
+
+3. **Determine Shifting Needs**:
+   - Decide on the need for date shifting for anonymization or pseudonymization.
+   - Define the maximum allowable shift range (e.g., +/- X days).
+
+### 6.2. **Date Shifting Execution**
+
+1. **Ensure Consistency Across Source Systems**:
+   - For datasets with events that overlap across source systems, apply the same date shift using the same method for each patient across all datasets.
+   - Example: Shift all EHR and lab results for Patient A by the same date offset, so that the relative relationships are maintained.
+
+2. **Representing Dates**:
+   - We will adopt the ISO 8061, 2022 version, datetime representation: YYYY-MM-DDThh:mm:ss+00:00, where the datetime is local time and time zone is represented as a delta from UTC. So, noon on 1/1/2024 in Eastern Standard Time is represented as 2024-01-01T12:00:00-05:00. If a source system outputs UTC time only, please transform to local time first rather than adding the suffix Z to indicate UTC time. It is allowable to use 24:00:00 to represent the last time in a given day, according to the latest iteration of ISO 8061. Decimals are allowed for seconds to any precision. Use a period as separator.
+   - If your datetime does not include time zone information, impute UTC offset based on the actual local date.
+     - For some systems, the absence of time zone information creates a potential datetime ambiguity for the hour when time is dialed back. Sites have the discretion to apply a systematic local rule to attribute a datetime for this hour if there are no disambiguation methods applicable.
+     - There is no ambiguity when the time is moved forward an hour.
+   - When only a date is available, please enter the local date as YYYY-MM-DD without further specifications.
+   - The final deliverable format for all datetimes is that shifted datetimes are represented in UTC0 time, as if all sites were geographically co-located. So, all datetimes will then be +00 for standards time and +01 for DST. The actual time zone offset will be communicated as metadata.
+     - For example, a site on UTC+05 (Pittsburgh, Boston) on standard time and thus UTC+04 on DST will create shifted datetimes that preserve local time, but include UTC offset indicators or either +00 or +01.
+
+3. **Establish Date Shift Parameters**:
+   - Dates will be shifted by a random offset of [1,-730] days in the past, with time of day intact.
+   - Each subject is attributed a subject-specific uniform shift across all data domains.
+   - Some sites are using an immutable time shifting strategy. In such situations, the following shift code will need to be included with site metadata: time is unshifted (code 0), the shift preserves day-of-the-week (code 1), preserves seasonality (code 2), preserves both day-of-the-week and seasonality (code 3) or neither (code 4). The only minimal requirement is that local time is preserved.
+   - Each site preserves a list of subject-specific shifts in a lookup table subject to site-specific privacy rules.
+
+4. **Apply Within-Patient Date Offsets**:
+   - After representing dates as YYYY-MM-DDThh:mm:ss+00:00, apply a uniform date shift to all YYYY-MM-DD portions of all records within a single patient's data, ensuring that intervals between dates are consistent. This assures that local times are consistent for all offsets and enforced date shifting within UTC offsets.
+     - Example: If Patient A's events span a period of 10 days, all dates for Patient A should be shifted by the same amount to maintain this interval.
+     - Example: UTC offset of -04:00 will be date shifted to a date [1,730] days in the past still at offset of -04:00.
+   - Depending on your process, the shifted date could be unrealistic, for example Feb 29, 2021. As 2021 is not a leap year, repeat the shifting procedure.
+   - If the time zone of the shifted date becomes inconsistent with the local time as the shift is applied, modify the time zone such that local time is consistent with the time zone of the geographical location of a site. This is important as some sources may only have a UTC time and not an explicit local time.
+     - Example: In the first step, time is shifted from 2023-12-01T05:00:00-05:00 to 2023-04-01T05:00:00-05:00. The shifted date is inconsistent with the original local time at this site because, on April 1 at 5 am, this site UTC offset is -04:00 and not -05:00. In this case, also modify the UTC offset to -04:00 to be compatible with local time. This situation will arise each time the shift involves crossing a time change date.
+   - **NOTE**: Issues around leap year and daylight savings change-over outlined in the previous 2 bullets are unlikely to surface when using standard datetime datatype and operations in Python, SQL, examples of which are shown in Section 11. Operations with these built-in datatypes should ensure validity and consistency of the resulting date-time stamps, including a) preserving the geographic time zone (e.g. Eastern remains Eastern), b) preserving standard and daylight savings times change overs dates, and c) preserving leap year dates. As always, verify (see section 6.3) that the relative timing between events from different sources is preserved.
+
+### 6.3. **Post-Shift Verification**
+
+1. **Check Temporal Integrity**:
+   - **Intra-Source Verification**: Confirm that the shifted dates preserve each subject's record's original sequence and intervals.
+     - Confirm that all relevant date and datetime fields have been shifted.
+     - Verify that the duration of records has been preserved (admission to discharge datetime, first to last waveform data, first to last image)
+   - **Cross-Source Verification**: Ensure that the temporal alignment across source systems are consistent. (e.g., if waveform data starts 17 hours after admission in the original data, the same should be true in the date-shifted data) This is absolutely essential if time representations are different across sources. You may realize that date shifting across a daylight savings boundary results in a +1 hour difference across sources if you are not careful with procedure 6.2.3 above.
+   - This is best done by manual verification of the post-shift data for a small number of patients (1 or 2) with all data sources, including across a daylight savings boundary.
+
+2. **Audit and Documentation**:
+   - Document the shift parameters used, including any randomization seeds or fixed offset values for reproducibility.
+   - Log validation checks performed and retain records for review.
+
+---
+
+## 7. Quality Control (QC) Procedures
+
+- **QC Analyst Review**: Independently verify that temporal relationships are maintained within and across source systems after shifting. This is accomplished as follows:
+- **Sample Validation**: Randomly sample patients to verify interval consistency before and after shifting.
+
+---
+
+## 8. Documentation and Storage
+
+- Store the date-shifted datasets securely, ensuring appropriate access control.
+- Retain documentation of the date shift process, validation results, and QC review for audit purposes.
+
+---
+
+## 9. Deviations from the SOP
+
+- Any deviations from this SOP must be documented, justified, and approved by CHoRUS Data Acquisition and Standards governance.
+- Any deviation from the SOP must also be included in the readme metadata document included at the time of first data upload, and then whenever there is a site change in the data shifting process.
+
+---
+
+## 10. Revision History
+
+| Version | Date       | Description                                |
+|---------|------------|--------------------------------------------|
+| 1.0     | 2024-12-01 | Initial version                              |
+| 1.1     | 2025-05-01 | Clarification on shifts across DST boundaries and leap year accommodations; Requirement that specific site practices preserving season, day of the week, etc. be specifically coded in metadata at time of submission |
+| 1.2     | 2025-06-01 | Example codes implementing data shifting in python, MySQL and SQL server removed |
