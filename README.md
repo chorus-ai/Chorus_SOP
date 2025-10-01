@@ -15,23 +15,27 @@ This repository is also used to track the development of SOP documentation throu
 The following SOPs are under development on GitHub:
 | SOP Title | Lead | Issue Link | Status |
 | :--- | :--- | :--- | :--- |
-| Structured EHR data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/2 | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/68) |
-| Flowsheet data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/3 | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/69) |
+| Structured EHR data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/2 | ✅ COMPLETE |
+| Flowsheet data | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/3 | ✅ COMPLETE |
 | Waveform data | @briangow | https://github.com/chorus-ai/Chorus_SOP/issues/4 | ✅ COMPLETE |
-| Imaging data | @edilbertoamorim | https://github.com/chorus-ai/Chorus_SOP/issues/5 | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/71) |
+| Imaging data | @edilbertoamorim | https://github.com/chorus-ai/Chorus_SOP/issues/5 | ✅ COMPLETE |
 | Free-Text data | @hol7001 | https://github.com/chorus-ai/Chorus_SOP/issues/7 | ✅ COMPLETE |
 | Data update | @tcpan | https://github.com/chorus-ai/Chorus_SOP/issues/9 | ✅ COMPLETE |
 | Data quality | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/10 | ✅ COMPLETE |
-| Central Processing | @rkamaleswaran | https://github.com/chorus-ai/Chorus_SOP/issues/11 | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/70) |
+| Central Processing | @rkamaleswaran | https://github.com/chorus-ai/Chorus_SOP/issues/11 | ✅ COMPLETE |
 | Privacy | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/12 | ✅ COMPLETE |
 | Safe Harboring Approach | @anotherkaizhang | https://github.com/chorus-ai/Chorus_SOP/issues/14 | ✅ COMPLETE |
 | Clinical Validation of Mappings | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/17 | ✅ COMPLETE |
 | Multimodal Data Linkage | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/28 | ✅ COMPLETE |
 | Cataloging Unmapped Terms | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/33| ✅ COMPLETE |
 | Concept set creation  | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/64   | ✅ COMPLETE | 
-| Microbiology Methods  | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/74   | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/76)                 | 
+| Microbiology Methods  | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/74   | ✅ COMPLETE  | 
 | Waveform Extension | @jshoughtaling  | https://github.com/chorus-ai/Chorus_SOP/issues/75  | ✅ COMPLETE              |
-| Exposure Data | @jshoughtaling  | https://github.com/chorus-ai/Chorus_SOP/issues/73  | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/70)                |
+| Exposure Data | @jshoughtaling  | https://github.com/chorus-ai/Chorus_SOP/issues/73  | ✅ COMPLETE |
+| 2nd Data Request/re-upload |  @clermontg  |  | ✅ COMPLETE |
+| Date Shifting SOP | @clermontg  |  | ✅ COMPLETE |
+| Tier-1 Data Elements | @clermontg  |  | ✅ COMPLETE |
+
 
 ## How to contribute to the SOP documentation
 
@@ -58,10 +62,8 @@ The following SOPs are still under development outside of GitHub:
 
 | SOP Title                                                             | Lead                                | Status      | Provisional Created | Publish Due Date                      | Notes |
 |:----------------------------------------------------------------------|:------------------------------------|:------------|:--------------------|:--------------------------------------|:------|
-| 2nd Data Request/re-upload                                            | @clermontg                          | In Progress | 🔴 Unknown          | 1 October 2025                        |       |
 | Azure Roles                                                           | Pending (Sara helping create)       | In Progress | 🔴 Unknown          | 1 October 2025                        |       |
 | Common data elements                                                  | Eric (need GitHub handle)           | In Progress | Yes                 | 1 October 2025                        |       |
-| Date Shifting SOP                                                     | @clermontg (Should this be Gilles?) | In Progress | 🔴 Unknown          | 1 October 2025                        |       |
 | Annotations/Chart Review                                              | Joo (need GitHub handle)            | In Progress | 🔴 Unknown          | 1 October 2025                        |       |
 | Data provenance & institution specific data generation                | Standards Team                      | To do       | No                  | TBD                                   |       |
 | Amendment to Linkage SOP                                              | Standards Team                      | In Progress | Yes                 | TBD                                   |       | 
