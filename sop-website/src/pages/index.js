@@ -3,10 +3,6 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import HomepageIcons from '@site/src/components/HomepageComponents';
-import EmbedGenialFlowChart from '@site/src/components/Homeflowchart';
-
 import styles from './index.module.css';
 import InteractiveFlowchart from "../components/InteractiveFlowchart/InteractiveFlowchart";
 
