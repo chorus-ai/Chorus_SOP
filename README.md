@@ -28,7 +28,7 @@ The following SOPs are under development on GitHub:
 | Clinical Validation of Mappings | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/17 | ✅ COMPLETE |
 | Multimodal Data Linkage | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/28 | ✅ COMPLETE |
 | Cataloging Unmapped Terms | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/33| ✅ COMPLETE |
-| Concept set creation  | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/64   | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/72)                | 
+| Concept set creation  | @p-talapova | https://github.com/chorus-ai/Chorus_SOP/issues/64   | ✅ COMPLETE | 
 | Microbiology Methods  | @jshoughtaling | https://github.com/chorus-ai/Chorus_SOP/issues/74   | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/76)                 | 
 | Waveform Extension | @jshoughtaling  | https://github.com/chorus-ai/Chorus_SOP/issues/75  | ✅ COMPLETE              |
 | Exposure Data | @jshoughtaling  | https://github.com/chorus-ai/Chorus_SOP/issues/73  | [UNDER REVIEW](https://github.com/chorus-ai/Chorus_SOP/pull/70)                |
@@ -52,7 +52,8 @@ Practically, this means you will need to:
 1. Navigate to the relevant page of online documentation site, and click `Edit this page` button at the bottom.
 2. A GitHub editing page will pop up for you to edit the contents in the `review` branch; make your own edition and commit your changes to that branch.
 3. Submit the pull request to merge those changes into the main branch
-=======
+
+-------
 The following SOPs are still under development outside of GitHub:
 
 | SOP Title                                                             | Lead                                | Status      | Provisional Created | Publish Due Date                      | Notes |
