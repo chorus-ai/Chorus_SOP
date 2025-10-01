@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import InteractiveFlowchart from '../components/InteractiveFlowchart';
+import InteractiveFlowchart from '../components/InteractiveFlowchart/InteractiveFlowchart';
 
 export default function FlowchartPage() {
   return (

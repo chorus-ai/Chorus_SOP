@@ -8,6 +8,7 @@ import HomepageIcons from '@site/src/components/HomepageComponents';
 import EmbedGenialFlowChart from '@site/src/components/Homeflowchart';
 
 import styles from './index.module.css';
+import InteractiveFlowchart from "../components/InteractiveFlowchart/InteractiveFlowchart";
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -39,7 +40,7 @@ export default function Home() {
         <HomepageHeader />
       </main>
       <div style={{width:'100%'}}>
-        <EmbedGenialFlowChart />
+        <InteractiveFlowchart />
       </div>
       
     </Layout>
