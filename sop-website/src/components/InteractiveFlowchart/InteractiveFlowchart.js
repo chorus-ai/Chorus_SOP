@@ -32,19 +32,19 @@ const InteractiveFlowchart = () => {
 
   const supportingSOPs = [
     { title: 'Clinical Validation of Mappings', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CVoM', category: 'mapping' },
-    { title: 'Cataloging Unmapped Terms', link: '/Chorus_SOP/docs/SOP-for-Cataloging-Unmapped-Terms', category: 'mapping' },
-    { title: 'Concept Set Creation', link: '/Chorus_SOP/docs/Concept-Set-Creation', category: 'mapping' },
-    { title: 'OMOP Domain Definition', link: '/Chorus_SOP/docs/OMOP-Domain-Definition', category: 'mapping' },
+    { title: 'Cataloging Unmapped Terms', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CUT', category: 'mapping' },
+    { title: 'Concept Set Creation', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CSC', category: 'mapping' },
+    { title: 'OMOP Domain Definition', link: '/Chorus_SOP/docs/OMOP-Mapping/OMOP-Domain-Definition', category: 'mapping' },
     { title: 'Common Data Elements', link: '/Chorus_SOP/docs/Common-Data-Elements', category: 'elements' },
-    { title: 'Tier 1 Elements', link: '/Chorus_SOP/docs/Tier1-Elements', category: 'elements' },
-    { title: 'Safe Harbor Approach', link: '/Chorus_SOP/docs/Safe-Harboring-Approach', category: 'privacy' },
+    { title: 'Tier 1 Elements', link: '/Chorus_SOP/docs/Common-Data-Elements/Tier%201%20Elements', category: 'elements' },
+    { title: 'Safe Harbor Approach', link: '/Chorus_SOP/docs/Privacy/Safe%20Harboring', category: 'privacy' },
     { title: 'Privacy Guidelines', link: '/Chorus_SOP/docs/Privacy', category: 'privacy' },
-    { title: 'Date Shifting', link: '/Chorus_SOP/docs/Date-Shifting', category: 'privacy' },
+    { title: 'Date Shifting', link: '/Chorus_SOP/docs/Privacy/Date%20Shifting', category: 'privacy' },
     { title: 'Multimodal Data Linkage', link: '/Chorus_SOP/docs/Multimodal-Linkage', category: 'linkage' },
-    { title: 'Data Request 2', link: '/Chorus_SOP/docs/Data-Request-2', category: 'upload' },
-    { title: 'Data Uploads', link: '/Chorus_SOP/docs/Data-Uploads', category: 'upload' },
-    { title: 'Quality at Sites', link: '/Chorus_SOP/docs/Evaluating-Quality-At-Sites', category: 'quality' },
-    { title: 'Quality Centrally', link: '/Chorus_SOP/docs/Evaluating-Quality-Centrally', category: 'quality' }
+    { title: 'Data Request 2', link: '/Chorus_SOP/docs/Data-Requests/Data%20Request%202', category: 'upload' },
+    { title: 'Data Uploads', link: '/Chorus_SOP/docs/Data-Upload-Update/Uploading%20to%20Central%20Staging%20Data%20Warehouse', category: 'upload' },
+    { title: 'Quality at Sites', link: '/Chorus_SOP/docs/Data-Quality/Local%20Data%20Quality', category: 'quality' },
+    { title: 'Quality Centrally', link: '/Chorus_SOP/docs/Data-Quality/Central%20Data%20Quality%20Reports', category: 'quality' }
   ];
 
   return (
@@ -215,13 +215,13 @@ const InteractiveFlowchart = () => {
         <h4>Process Flow</h4>
         <div className={styles.legendItems}>
           <div className={styles.legendItem}>
-            <span className={styles.discussionsIcon}>💬</span> Discussions - Standards team meetings
+            <span className={styles.discussionsIcon}>💬</span> <a href="https://github.com/chorus-ai/StandardsModule/discussions"> Discussions - Standards team meetings </a>
           </div>
           <div className={styles.legendItem}>
-            <span className={styles.officeHoursIcon}>🏢</span> Office Hours - Regular support sessions
+            <span className={styles.officeHoursIcon}>🏢</span> <a href="https://drive.google.com/drive/folders/1ZIeB4blopefJEKp5_m1Y0hHIl4NrEr8g?usp=share_link"> Office Hours - Regular support sessions </a>
           </div>
           <div className={styles.legendItem}>
-            <span className={styles.progressIcon}>📈</span> Progress - Ongoing implementation updates
+            <span className={styles.progressIcon}>📈</span> <a href="https://github.com/orgs/chorus-ai/projects/11"> Progress - Ongoing implementation updates </a>
           </div>
         </div>
       </div>
