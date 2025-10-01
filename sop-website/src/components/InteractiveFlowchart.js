@@ -3,37 +3,37 @@ import styles from './InteractiveFlowchart.module.css';
 
 const InteractiveFlowchart = () => {
   const dataSourceSOPs = [
-    { id: 'D1', title: 'Get Data', description: 'Data request and collection procedures', link: '/CHoRUS_SOP/docs/category/data-requests' },
-    { id: 'D2', title: 'Standardize Data', description: 'Converting to OMOP CDM format', link: '/CHoRUS_SOP/docs/category/structured-ehr-data' },
-    { id: 'D3', title: 'Link Data', description: 'Multimodal data linkage procedures', link: '/CHoRUS_SOP/docs/category/multimodal-linkage' },
-    { id: 'D4', title: 'De-identify & QC Data', description: 'Privacy protection and quality control', link: '/CHoRUS_SOP/docs/category/privacy' },
-    { id: 'D5', title: 'Create Extract', description: 'Data extraction and preparation', link: '/CHoRUS_SOP/docs/category/data-uploading' },
-    { id: 'D6', title: 'Improve Data', description: 'Iterative quality improvements', link: '/CHoRUS_SOP/docs/category/data-quality' }
+    { id: 'D1', title: 'Get Data', description: 'Data request and collection procedures', link: '/Chorus_SOP/docs/category/data-requests' },
+    { id: 'D2', title: 'Standardize Data', description: 'Converting to OMOP CDM format', link: '/Chorus_SOP/docs/category/structured-ehr-data' },
+    { id: 'D3', title: 'Link Data', description: 'Multimodal data linkage procedures', link: '/Chorus_SOP/docs/category/multimodal-linkage' },
+    { id: 'D4', title: 'De-identify & QC Data', description: 'Privacy protection and quality control', link: '/Chorus_SOP/docs/category/privacy' },
+    { id: 'D5', title: 'Create Extract', description: 'Data extraction and preparation', link: '/Chorus_SOP/docs/category/data-uploading' },
+    { id: 'D6', title: 'Improve Data', description: 'Iterative quality improvements', link: '/Chorus_SOP/docs/category/data-quality' }
   ];
 
   const centralCloudSOPs = [
-    { id: 'C1', title: 'Ingest Data', description: 'Central data ingestion procedures', link: '/CHoRUS_SOP/docs/category/central-processing' },
-    { id: 'C2', title: 'Assess Data', description: 'Central quality assessment', link: '/CHoRUS_SOP/docs/category/data-quality' },
-    { id: 'C3', title: 'Approve & Merge', description: 'Data approval and merging processes', link: '/CHoRUS_SOP/docs/category/central-processing' }
+    { id: 'C1', title: 'Ingest Data', description: 'Central data ingestion procedures', link: '/Chorus_SOP/docs/category/central-processing' },
+    { id: 'C2', title: 'Assess Data', description: 'Central quality assessment', link: '/Chorus_SOP/docs/category/data-quality' },
+    { id: 'C3', title: 'Approve & Merge', description: 'Data approval and merging processes', link: '/Chorus_SOP/docs/category/central-processing' }
   ];
 
   const dataTypeSOPs = [
-    { title: 'Structured EHR', link: '/CHoRUS_SOP/docs/category/structured-ehr-data', category: 'structured' },
-    { title: 'Flowsheet Data', link: '/CHoRUS_SOP/docs/category/flowsheet-data', category: 'structured' },
-    { title: 'Microbiology Data', link: '/CHoRUS_SOP/docs/category/structured-ehr-data', category: 'structured' },
-    { title: 'Freetext Data', link: '/CHoRUS_SOP/docs/category/freetext-data', category: 'freetext' },
-    { title: 'Imaging Data', link: '/CHoRUS_SOP/docs/category/imaging-data', category: 'imaging' },
-    { title: 'Header De-ID', link: '/CHoRUS_SOP/docs/category/imaging-data', category: 'imaging' },
-    { title: 'Waveform Data', link: '/CHoRUS_SOP/docs/category/waveform-data', category: 'waveform' },
-    { title: 'Waveform Extension', link: '/CHoRUS_SOP/docs/category/waveform-datae', category: 'waveform' },
-    { title: 'File Format', link: '/CHoRUS_SOP/docs/category/waveform-data', category: 'waveform' }
+    { title: 'Structured EHR', link: '/Chorus_SOP/docs/category/structured-ehr-data', category: 'structured' },
+    { title: 'Flowsheet Data', link: '/Chorus_SOP/docs/category/flowsheet-data', category: 'structured' },
+    { title: 'Microbiology Data', link: '/Chorus_SOP/docs/category/structured-ehr-data', category: 'structured' },
+    { title: 'Freetext Data', link: '/Chorus_SOP/docs/category/freetext-data', category: 'freetext' },
+    { title: 'Imaging Data', link: '/Chorus_SOP/docs/category/imaging-data', category: 'imaging' },
+    { title: 'Header De-ID', link: '/Chorus_SOP/docs/category/imaging-data', category: 'imaging' },
+    { title: 'Waveform Data', link: '/Chorus_SOP/docs/category/waveform-data', category: 'waveform' },
+    { title: 'Waveform Extension', link: '/Chorus_SOP/docs/category/waveform-datae', category: 'waveform' },
+    { title: 'File Format', link: '/Chorus_SOP/docs/category/waveform-data', category: 'waveform' }
   ];
 
   const supportingSOPs = [
-    { title: 'OMOP Mapping', link: '/CHoRUS_SOP/docs/category/omop-mapping' },
-    { title: 'Unmapped Terms', link: '/CHoRUS_SOP/docs/category/unmapped-terms' },
-    { title: 'Common Data Elements', link: '/CHoRUS_SOP/docs/category/common-data-elements' },
-    { title: 'Safe Harbor Approach', link: '/CHoRUS_SOP/docs/category/safe-harboring-approach' }
+    { title: 'OMOP Mapping', link: '/Chorus_SOP/docs/category/omop-mapping' },
+    { title: 'Unmapped Terms', link: '/Chorus_SOP/docs/category/unmapped-terms' },
+    { title: 'Common Data Elements', link: '/Chorus_SOP/docs/category/common-data-elements' },
+    { title: 'Safe Harbor Approach', link: '/Chorus_SOP/docs/category/safe-harboring-approach' }
   ];
 
   return (
