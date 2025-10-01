@@ -18,22 +18,33 @@ const InteractiveFlowchart = () => {
   ];
 
   const dataTypeSOPs = [
-    { title: 'Structured EHR', link: '/Chorus_SOP/docs/category/structured-ehr-data', category: 'structured' },
-    { title: 'Flowsheet Data', link: '/Chorus_SOP/docs/category/flowsheet-data', category: 'structured' },
-    { title: 'Microbiology Data', link: '/Chorus_SOP/docs/category/structured-ehr-data', category: 'structured' },
-    { title: 'Freetext Data', link: '/Chorus_SOP/docs/category/freetext-data', category: 'freetext' },
-    { title: 'Imaging Data', link: '/Chorus_SOP/docs/category/imaging-data', category: 'imaging' },
-    { title: 'Header De-ID', link: '/Chorus_SOP/docs/category/imaging-data', category: 'imaging' },
-    { title: 'Waveform Data', link: '/Chorus_SOP/docs/category/waveform-data', category: 'waveform' },
-    { title: 'Waveform Extension', link: '/Chorus_SOP/docs/category/waveform-datae', category: 'waveform' },
-    { title: 'File Format', link: '/Chorus_SOP/docs/category/waveform-data', category: 'waveform' }
+    { title: 'Structured EHR Data', link: '/Chorus_SOP/docs/Structured-EHR-Data', category: 'structured' },
+    { title: 'Flowsheet Data', link: '/Chorus_SOP/docs/Flowsheet-Data', category: 'structured' },
+    { title: 'Microbiology Data', link: '/Chorus_SOP/docs/Microbiology-Data', category: 'structured' },
+    { title: 'Freetext Data', link: '/Chorus_SOP/docs/Freetext-Data', category: 'freetext' },
+    { title: 'Imaging Data', link: '/Chorus_SOP/docs/Imaging-Data', category: 'imaging' },
+    { title: 'Header De-ID', link: '/Chorus_SOP/docs/Header%20De-Identification', category: 'imaging' },
+    { title: 'Waveform Data', link: '/Chorus_SOP/docs/Waveform-Data', category: 'waveform' },
+    { title: 'Waveform Extension', link: '/Chorus_SOP/docs/Waveform-Extension', category: 'waveform' },
+    { title: 'Waveform File Format', link: '/Chorus_SOP/docs/waveform-file-format', category: 'waveform' },
+    { title: 'GIS Exposure Data', link: '/Chorus_SOP/docs/GIS-Exposure-Data', category: 'structured' }
   ];
 
   const supportingSOPs = [
-    { title: 'OMOP Mapping', link: '/Chorus_SOP/docs/category/omop-mapping' },
-    { title: 'Unmapped Terms', link: '/Chorus_SOP/docs/category/unmapped-terms' },
-    { title: 'Common Data Elements', link: '/Chorus_SOP/docs/category/common-data-elements' },
-    { title: 'Safe Harbor Approach', link: '/Chorus_SOP/docs/category/safe-harboring-approach' }
+    { title: 'Clinical Validation of Mappings', link: '/Chorus_SOP/docs/Mappings-Clinical-Validation', category: 'mapping' },
+    { title: 'Cataloging Unmapped Terms', link: '/Chorus_SOP/docs/SOP-for-Cataloging-Unmapped-Terms', category: 'mapping' },
+    { title: 'Concept Set Creation', link: '/Chorus_SOP/docs/Concept-Set-Creation', category: 'mapping' },
+    { title: 'OMOP Domain Definition', link: '/Chorus_SOP/docs/OMOP-Domain-Definition', category: 'mapping' },
+    { title: 'Common Data Elements', link: '/Chorus_SOP/docs/Common-Data-Elements', category: 'elements' },
+    { title: 'Tier 1 Elements', link: '/Chorus_SOP/docs/Tier1-Elements', category: 'elements' },
+    { title: 'Safe Harbor Approach', link: '/Chorus_SOP/docs/Safe-Harboring-Approach', category: 'privacy' },
+    { title: 'Privacy Guidelines', link: '/Chorus_SOP/docs/Privacy', category: 'privacy' },
+    { title: 'Date Shifting', link: '/Chorus_SOP/docs/Date-Shifting', category: 'privacy' },
+    { title: 'Multimodal Data Linkage', link: '/Chorus_SOP/docs/Multimodal-Linkage', category: 'linkage' },
+    { title: 'Data Request 2', link: '/Chorus_SOP/docs/Data-Request-2', category: 'upload' },
+    { title: 'Data Uploads', link: '/Chorus_SOP/docs/Data-Uploads', category: 'upload' },
+    { title: 'Quality at Sites', link: '/Chorus_SOP/docs/Evaluating-Quality-At-Sites', category: 'quality' },
+    { title: 'Quality Centrally', link: '/Chorus_SOP/docs/Evaluating-Quality-Centrally', category: 'quality' }
   ];
 
   return (
@@ -44,7 +55,7 @@ const InteractiveFlowchart = () => {
       </div>
 
       <div className={styles.flowchartMain}>
-        {/* Data Generating Sites Section */}
+        {/* Data Generating Sites Section - Two Columns */}
         <div className={styles.dataSourcesSection}>
           <h3 className={styles.sectionTitle}>Data Generating Sites</h3>
           <div className={styles.dataSourceIcons}>
@@ -55,19 +66,35 @@ const InteractiveFlowchart = () => {
             <div className={styles.dataTypeIcon}>〰️ Waveform</div>
           </div>
 
-          <div className={styles.dataSourceSteps}>
-            {dataSourceSOPs.map((sop, index) => (
-              <div key={sop.id} className={styles.stepCard}>
-                <div className={styles.stepNumber}>{sop.id}</div>
-                <div className={styles.stepContent}>
-                  <a href={sop.link} className={styles.stepLink}>
-                    <h4>{sop.title}</h4>
-                    <p>{sop.description}</p>
-                  </a>
+          <div className={styles.dataSourceColumns}>
+            <div className={styles.dataSourceColumn}>
+              {dataSourceSOPs.slice(0, 3).map((sop, index) => (
+                <div key={sop.id} className={styles.stepCard}>
+                  <div className={styles.stepNumber}>{sop.id}</div>
+                  <div className={styles.stepContent}>
+                    <a href={sop.link} className={styles.stepLink}>
+                      <h4>{sop.title}</h4>
+                      <p>{sop.description}</p>
+                    </a>
+                  </div>
+                  {index < 2 && <div className={styles.arrow}>↓</div>}
                 </div>
-                {index < dataSourceSOPs.length - 1 && <div className={styles.arrow}>↓</div>}
-              </div>
-            ))}
+              ))}
+            </div>
+            <div className={styles.dataSourceColumn}>
+              {dataSourceSOPs.slice(3).map((sop, index) => (
+                <div key={sop.id} className={styles.stepCard}>
+                  <div className={styles.stepNumber}>{sop.id}</div>
+                  <div className={styles.stepContent}>
+                    <a href={sop.link} className={styles.stepLink}>
+                      <h4>{sop.title}</h4>
+                      <p>{sop.description}</p>
+                    </a>
+                  </div>
+                  {index < dataSourceSOPs.slice(3).length - 1 && <div className={styles.arrow}>↓</div>}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -144,12 +171,42 @@ const InteractiveFlowchart = () => {
       {/* Supporting SOPs */}
       <div className={styles.supportingSOPs}>
         <h3>Supporting SOPs</h3>
-        <div className={styles.supportingGrid}>
-          {supportingSOPs.map(sop => (
-            <a key={sop.title} href={sop.link} className={styles.supportingLink}>
-              {sop.title}
-            </a>
-          ))}
+        <div className={styles.supportingCategories}>
+          <div className={styles.supportingCategory}>
+            <h4>OMOP Mapping & Concepts</h4>
+            {supportingSOPs.filter(sop => sop.category === 'mapping').map(sop => (
+              <a key={sop.title} href={sop.link} className={styles.supportingLink}>
+                {sop.title}
+              </a>
+            ))}
+          </div>
+
+          <div className={styles.supportingCategory}>
+            <h4>Data Elements</h4>
+            {supportingSOPs.filter(sop => sop.category === 'elements').map(sop => (
+              <a key={sop.title} href={sop.link} className={styles.supportingLink}>
+                {sop.title}
+              </a>
+            ))}
+          </div>
+
+          <div className={styles.supportingCategory}>
+            <h4>Privacy & Security</h4>
+            {supportingSOPs.filter(sop => sop.category === 'privacy').map(sop => (
+              <a key={sop.title} href={sop.link} className={styles.supportingLink}>
+                {sop.title}
+              </a>
+            ))}
+          </div>
+
+          <div className={styles.supportingCategory}>
+            <h4>Data Management</h4>
+            {supportingSOPs.filter(sop => sop.category === 'linkage' || sop.category === 'upload' || sop.category === 'quality').map(sop => (
+              <a key={sop.title} href={sop.link} className={styles.supportingLink}>
+                {sop.title}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
