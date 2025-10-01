@@ -20,18 +20,18 @@ const InteractiveFlowchart = () => {
   const dataTypeSOPs = [
     { title: 'Structured EHR Data', link: '/Chorus_SOP/docs/Structured-EHR-Data', category: 'structured' },
     { title: 'Flowsheet Data', link: '/Chorus_SOP/docs/Flowsheet-Data', category: 'structured' },
-    { title: 'Microbiology Data', link: '/Chorus_SOP/docs/Microbiology-Data', category: 'structured' },
+    { title: 'Microbiology Data', link: '/Chorus_SOP/docs/Structured-EHR-Data/Microbiology%20Data', category: 'structured' },
     { title: 'Freetext Data', link: '/Chorus_SOP/docs/Freetext-Data', category: 'freetext' },
     { title: 'Imaging Data', link: '/Chorus_SOP/docs/Imaging-Data', category: 'imaging' },
-    { title: 'Header De-ID', link: '/Chorus_SOP/docs/Header%20De-Identification', category: 'imaging' },
+    { title: 'Header De-ID', link: '/Chorus_SOP/docs/Imaging-Data/Header%20De-Identification', category: 'imaging' },
     { title: 'Waveform Data', link: '/Chorus_SOP/docs/Waveform-Data', category: 'waveform' },
-    { title: 'Waveform Extension', link: '/Chorus_SOP/docs/Waveform-Extension', category: 'waveform' },
-    { title: 'Waveform File Format', link: '/Chorus_SOP/docs/waveform-file-format', category: 'waveform' },
+    { title: 'Waveform Extension', link: '/Chorus_SOP/docs/Waveform-Data/Waveform-Extension', category: 'waveform' },
+    { title: 'Waveform File Format', link: '/Chorus_SOP/docs/Waveform-Data/Waveform-File-Format', category: 'waveform' },
     { title: 'GIS Exposure Data', link: '/Chorus_SOP/docs/GIS-Exposure-Data', category: 'structured' }
   ];
 
   const supportingSOPs = [
-    { title: 'Clinical Validation of Mappings', link: '/Chorus_SOP/docs/Mappings-Clinical-Validation', category: 'mapping' },
+    { title: 'Clinical Validation of Mappings', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CVoM', category: 'mapping' },
     { title: 'Cataloging Unmapped Terms', link: '/Chorus_SOP/docs/SOP-for-Cataloging-Unmapped-Terms', category: 'mapping' },
     { title: 'Concept Set Creation', link: '/Chorus_SOP/docs/Concept-Set-Creation', category: 'mapping' },
     { title: 'OMOP Domain Definition', link: '/Chorus_SOP/docs/OMOP-Domain-Definition', category: 'mapping' },

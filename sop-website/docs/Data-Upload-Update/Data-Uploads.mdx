@@ -60,7 +60,7 @@ This SOP and the `chorus-upload` tool scans a DGS's data folder structure to gen
 
 The DGS-local Folder Structure should be organized into the structure as shown below.  The Update tool expects the organizational structure below for identifying the changed file sets:
 
-![Local Data Organization](https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Local_Structure.png?raw=true)
+![Local Data Organization](./images/Local_Structure.png)
 
 
 Each DGS shall maintain data files in the folder structure shown above for either `full` or `append` mode storage. The root folder shall contain an `OMOP` folder, and patient folders named by DGS's de-identified patient IDs.  Each patient directory should contain an `Images` folder and a `Waveforms` folder. 
@@ -234,7 +234,7 @@ This virtual environment is hosted in an Azure platform. The containers structur
 ### Central Staging Folder Structure (INFORMATIONAL)
 The submitted data will be organized using the same folder structure as the DGS local file store, except that data for each submission will placed in a top level folder named with a timestamp of the format `YYYYMMDDhhmmss`.  The folder structure is shown here for context.  The timestamped folder will be created automatically by the `chorus-upload` tool.  
 
-![Central Data Organization](https://github.com/chorus-ai/Chorus_SOP/blob/review-data-upload-update/sop-website/docs/Data-Upload-Update/Central_Structure.png?raw=true)
+![Central Data Organization](./images/Central_Structure.png)
 
 In the diagram above, the gray directories were added, blue folder has modifications, and orange folder has been deleted.
 

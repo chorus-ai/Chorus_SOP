@@ -105,7 +105,7 @@ The ultimate UEHR data deliverable to CHoRUS is an OMOP NOTE\_NLP table, which, 
 
 **Overview**
 
-![](BROAD_sop.png)
+![](images/BROAD_sop.png)
 
 ***Figure 1. Generalized Device Data Acquisition Process***
 

@@ -40,7 +40,7 @@ Each DGS will be required to deposit data and metadata files in a dedicated cent
 
 **Folder Architecture Details**
 
-![Folder Architecture Details](./folderStructureDetail.png)
+![Folder Architecture Details](images/folderStructureDetail.png)
 
 ## Expectations as to file content
 
