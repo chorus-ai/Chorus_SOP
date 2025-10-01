@@ -20,7 +20,7 @@ This SOP applies to data engineers, microbiologists, and analysts responsible fo
 ## 3. Definitions
 
 - **Specimen Episode**: Top-level episode representing the biological sample that serves as the anchor for all subsequent analyses and findings.
-- **Episode Hierarchy**: Nested structure using episode parent-child relationships to link specimen ’ analysis ’ organism ’ susceptibility testing.
+- **Episode Hierarchy**: Nested structure using episode parent-child relationships to link specimen ï¿½ analysis ï¿½ organism ï¿½ susceptibility testing.
 - **Two-Part Foreign Key**: OMOP mechanism using domain_event_id and domain_event_field_concept_id to link records across different domain tables.
 - **Sample Analysis**: Laboratory procedures performed on specimens to identify microorganisms (e.g., bacterial culture, PCR, gram stain).
 - **Antimicrobial Susceptibility Testing (AST)**: Laboratory methods to determine organism resistance or susceptibility to specific antimicrobial agents.
@@ -142,7 +142,7 @@ This SOP applies to data engineers, microbiologists, and analysts responsible fo
 - **Foreign Key Validation**: Verify all two-part foreign key references resolve to valid target records
 - **Organism Mapping**: Review species concept assignments for taxonomic accuracy and clinical relevance
 - **Completeness Assessment**: Ensure all identified organisms have corresponding analytical methods and results
-- **Temporal Consistency**: Validate timestamp progression through specimen ’ analysis ’ organism ’ testing workflow
+- **Temporal Consistency**: Validate timestamp progression through specimen ï¿½ analysis ï¿½ organism ï¿½ testing workflow
 - **Custom Concept Tracking**: Monitor usage of temporary concept assignments and coordinate vocabulary updates
 
 ---
@@ -159,9 +159,19 @@ This SOP applies to data engineers, microbiologists, and analysts responsible fo
 
 ## 9. Deviations from the SOP
 
-- **Episode Hierarchy Modifications**: Any changes to the specimen ’ analysis ’ organism ’ testing hierarchy must be validated for analytical impact
+- **Episode Hierarchy Modifications**: Any changes to the specimen ï¿½ analysis ï¿½ organism ï¿½ testing hierarchy must be validated for analytical impact
 - **Custom Domain Usage**: Non-standard use of measurement vs. observation domains requires clinical review and documentation
 - **Simplified Linkage**: Bypassing episode structure for simple cases must be justified and documented with impact assessment
+
+---
+
+## Related Office Hours
+
+The following office hour sessions provide additional context and demonstrations related to this SOP:
+
+- **[07-10-25] Representing microbiology data in OMOP**
+  - [Video Recording](link-to-video) | [Transcript](link-to-transcript)
+  - Comprehensive session on microbiology data representation using episode hierarchies
 
 ---
 
