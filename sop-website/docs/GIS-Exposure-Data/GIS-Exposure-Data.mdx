@@ -83,9 +83,9 @@ Sample input files [here](https://github.com/bihorac-LAB/Exposome/tree/main/Tool
 
 Including the following optional files will help streamline the **end-to-end workflow** between geocoding and exposome linkage:
 - **Important**: Do not date-shift your LOCATION/LOCATION_HISTORY files before linkage. Date shifting (if used) should occur post linkage in Step 4.
-- 
-- [`LOCATION.csv`](https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/latlong_files/input/LOCATION.csv)  
-- [`LOCATION_HISTORY.csv`](https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/latlong_files/input/LOCATION_HISTORY.csv)
+
+- [`LOCATION.csv`](https://github.com/bihorac-LAB/Exposome/blob/main/Tools/demo/address_files/input/LOCATION.csv)  
+- [`LOCATION_HISTORY.csv`](https://github.com/bihorac-LAB/Exposome/blob/main/Tools/demo/address_files/input/LOCATION_HISTORY.csv)
 
 If these files are provided during **geocoding**, the output will automatically include the updated latitude and longitude information required for the **postgis linkage container**.  
 
@@ -284,7 +284,7 @@ Spatially joins the lat/lon (and FIPS) from geocoding with geospatial indices (A
 #### Prerequisites for GIS Linkage
 - Docker installed.
 - Clone [postgis-exposure repository](https://github.com/chorus-ai/chorus-container-apps/tree/main/postgis-exposure)
-- Updated `LOCATION`, `LOCATION_HISTORY` files to include the geocoded lat/lon from Step 2. Not needed if you included these during the geocoding step
+- Update `LOCATION`, `LOCATION_HISTORY` files to include the geocoded lat/lon from Step 2. Not needed if you included these during the geocoding step
 - Ensure `DATA_SRC_SIMPLE.csv` and `VRBL_SRC_SIMPLE.csv` files are available (centrally managed; no edits required).
 - **Important:** Do **not** date-shift your `LOCATION`/`LOCATION_HISTORY` files before linkage. Date shifting (if used) should occur following this step.
 
@@ -360,14 +360,15 @@ See [Date Shifting SOP for More Details](https://github.com/chorus-ai/Chorus_SOP
 ---
 
 ### References & sample files
-- Geocoding:
-  - Sample Files
-- GIS Linkage:
-  - Sample Files
-    - Site-specific -> `LOCATION`, `LOCATION_HISTORY`
-    - Centrally managed -> `DATA_SRC_SIMPLE`, `VRBL_SRC_SIMPLE`
----
+#### Geocoding
+- Sample files: [Geocoding Demo Files](https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo)
 
+#### GIS Linkage
+- Sample files: [PostGIS Exposure CSVs](https://github.com/chorus-ai/chorus-container-apps/tree/main/postgis-exposure/csv)
+  - **Site-specific:** `LOCATION`, `LOCATION_HISTORY`
+  - **Centrally managed:** `DATA_SRC_SIMPLE`, `VRBL_SRC_SIMPLE`
+
+---
 
 ## Related Office Hours
 
