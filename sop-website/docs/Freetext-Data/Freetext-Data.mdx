@@ -79,6 +79,8 @@ In your NLP pipeline configuration (make a copy first if desired):
 ### 6.4. Data Formatting for OMOP CDM
 1.	Convert extracted tokens into OMOP-compatible format.
 2.	Store structured outputs in the NOTE_NLP table of the OMOP 5.4 CDM.
+      -      The output of the OHNLP tool resembles, but does not exactly match, the CDM - update the NOTE_NLP table to match where necessary before submitting, including removing the matched_text and matched_sentence fields.
+      -      Leave the snippet and lexical_variant fields blank in the NOTE_NLP table.
 3.	Store linkage information, leaving the note_text field empty, in the NOTE table of the OMOP 5.4 CDM.
 4.	Validate data consistency against CHoRUS data standards. http://ohdsi.github.io/CommonDataModel/cdm54.html#NOTE_NLP, http://ohdsi.github.io/CommonDataModel/cdm54.html#NOTE.
 5.	There should be a single NOTE_NLP table per upload with data from all visit_occurrences.
