@@ -1,6 +1,6 @@
 {
   "label": "Imaging Data",
-  "position": 10,
+  "position": 11,
   "link": {
     "type": "generated-index",
     "description": "Learn how to handle imaging data properly"
