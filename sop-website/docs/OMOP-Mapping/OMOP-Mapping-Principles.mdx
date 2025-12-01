@@ -1,5 +1,268 @@
 ---
 title: OMOP Mapping Principles
 id: SOP-OMP
-description:  An SOP for general conventions related to OMOP Mapping Principles
+description: An SOP for general conventions related to OMOP Mapping Principles
 ---
+# Pending Approval
+# Standard Operating Protocol: OMOP Mapping Principles
+
+## Background
+The Observational Medical Outcomes Partnership (OMOP) Common Data Model (CDM) is a standardized schema for observational health data, maintained by the OHDSI (Observational Health Data Sciences and Informatics) community. A crucial step in converting source electronic health record (EHR), claims, or registry data into the OMOP CDM is mapping the source system’s codes (diagnosis codes, procedure codes, lab test codes, medications, etc.) to OMOP’s Standardized Vocabularies. OMOP’s vocabularies include standard terminologies like SNOMED CT for conditions, RxNorm for drugs, LOINC for measurements, among others. All clinical event tables in OMOP (e.g., CONDITION_OCCURRENCE, DRUG_EXPOSURE, MEASUREMENT) allow only standard concepts – meaning source codes must be translated to **standard concepts** before insertion. This mapping ensures that disparate source data speak a common language, enabling researchers and analysts to use consistent definitions and tools across all mapped datasets.
+
+### Applicable Roles and Responsibilities 
+This SOP is intended for researchers, data analysts, data engineers, clinical informaticists, and ETL developers responsible for transforming source healthcare data into the OMOP CDM. It provides guidance on mapping principles across all domains, with examples illustrating one-to-one mappings, one-to-many mappings, and mappings that span different domains.
+
+## Purpose
+The purpose of this Standard Operating Protocol (SOP) is to establish a clear and consistent process for mapping source data codes to OMOP standard concepts. Adhering to these mapping principles will ensure data quality, semantic consistency, and interoperability of the transformed data. This SOP covers the end-to-end mapping workflow – from initial code review and tool usage (SQL mapping, Athena, Usagi) through handling complex mappings – and provides a template checklist to verify that all standard conventions are met. By following this SOP, mapping teams will produce an OMOP-conformant dataset where each clinical fact is represented by the appropriate standard concept ID, allowing for reliable multi-database research and analytics.
+
+## Glossary
+| Term | Definition |
+|------|------------|
+| **Mapping** (a map) | A defined link between a concept (term) in one code system or dataset and a concept in another code system (sometimes the same one) that has the same or very similar meaning. In OMOP, mapping is the process of transforming a source concept into a standard concept using `Maps to` and `Maps to value` relationships. |
+| **Concept ID** | Integer key that uniquely identifies a concept in the OMOP vocabulary and is used in all *_concept_id fields. |
+| **Source Concept** | Concept that represents the original code from the source system (often non-standard) before mapping to a standard soncept. |
+| **Standard Concept** | Concept marked as standard in OMOP; used to store clinical facts in CDM tables after mapping from source concepts. |
+| **Custom Concept** | Standard concept created/maintained by users when no suitable external standard code exists. |
+| **Classification Concept** | Non-standard concept used only for grouping and hierarchy (roll-up), not for recording patient-level data. |
+| **Concept Synonym** | Alternative name (synonym, abbreviation, translation) linked to a concept_id to support flexible search and matching. |
+| **Invalid Reason** | Flag on a concept indicating why it is no longer valid (e.g., deprecated or updated and replaced). |
+| **Source Vocabulary** | Coding system in which the original data are recorded (e.g., ICD10CM, local lab codes). |
+| **Target Vocabulary** | Standard vocabulary to which source codes are mapped (e.g., SNOMED for conditions, RxNorm for drugs). |
+| **Vocabulary ID** | Short identifier of the vocabulary a concept belongs to (e.g., `ICD10CM`, `SNOMED`, `RxNorm`). |
+| **Domain ID** | High-level category (Condition, Drug, Procedure, Measurement, Observation, Device, etc.) that determines which CDM table should store the concept. |
+| **Concept Class ID** | Semantic subtype defined by the vocabulary (e.g., `Clinical Finding`, `Ingredient`, `Brand Name`) used to organize concepts. |
+| **Relationship ID** | Name of the relationship between two concepts (e.g., `Is a`, `Subsumes`, `Maps to`, `Maps to value`). |
+| **Maps to / Maps to value** | Special relationships used for mapping: `Maps to` links a source concept to its main standard concept; `Maps to value` links it to an additional value/detail concept (e.g., result, severity); it is primarily used for Measurement and Observation concepts, where the second concept populates value_as_concept_id. |
+| **One-to-one mapping** | An ideal mapping (also called an equivalent mapping) is when the target standard concept expresses exactly the same clinical meaning as the source term and fully preserves its intent. |
+| **One-to-many mapping** | Mapping where a single source code maps to multiple standard concepts (e.g., combined diagnosis that becomes two separate SNOMED conditions, multicomponent drugs that become several separate RxNorm/RxNorm Extension Ingredients). |
+| **Athena** | OHDSI web interface for browsing and downloading OMOP vocabularies and inspecting concepts, domains, and relationships. |
+| **Usagi** | OHDSI desktop tool that suggests candidate standard concepts for source terms using string similarity, used to build mapping tables. |
+
+## Prerequisites
+- Access to the [OHDSI Athena](https://athena.ohdsi.org/search-terms/terms) browser.
+- OHDSI Standardized Vocabularies loaded into an OMOP Vocabulary instance in database.
+- Familiarity with OMOP CDM, standard vocabulary structure, and domain-specific logic. 
+- Installed and configured [OHDSI Usagi](https://ohdsi.github.io/Usagi/) with the current OMOP vocabulary snapshot.
+
+## Procedures 
+
+### Step 1: Compile Source Codes and Metadata
+Begin by gathering a comprehensive list of all source codes that require mapping. This typically involves extracting distinct codes from the source data (e.g., diagnosis codes, procedure codes, lab test identifiers, medication codes) along with their descriptions and any relevant metadata (such as code type, frequency of occurrence, aggregated top 5 most frequent measurement values, expected units etc.). Ensure you understand each code’s context (e.g., which field or domain it comes from in the source). For example, you might list all ICD-10 diagnosis codes from a hospital EHR or all local laboratory test codes from a lab system. This compiled list will serve as the input for the mapping process.
+
+### Step 2:	Determine Source Vocabulary and Domain(s)
+For each source code, identify its vocabulary/system and intended [OMOP domain(s)](https://github.com/chorus-ai/Chorus_SOP/blob/review_omop_mapping_principles/sop-website/docs/OMOP-Mapping/OMOP-Domain-Definition.mdx). Common source vocabularies include ICD-10/ICD-9 (diagnoses), CPT/HCPCS (procedures), LOINC (labs/tests), RxNorm or NDC (drugs), etc. Knowing the source vocabulary helps decide the target standard vocabulary (since OMOP often has predefined mappings for many vocabularies). 
+
+| Expected Domain | Standard Vocabulary Priority |
+|-------------------------|-----------------------------|
+| Condition / Observation | SNOMED → OMOP Extension; for oncology → include ICDO3 |
+| Measurement | LOINC → SNOMED → OMOP Extension → CPT4/HCPCS → all others; for oncology → include Cancer Modifier; for genomics → include OMOP Genomic |
+| Procedure | SNOMED → LOINC → OMOP Extension → ICD10PCS/ICD9Proc/CPT4/HCPCS → all others |
+| Device | SNOMED → all others |
+| Drug | RxNorm (US) / RxNorm Extension (non-US) / for vaccines → CVX |
+| Unit | UCUM |
+| Gender | Gender (OMOP) |
+| Ethnicity | Ethnicity (OMOP) |
+| Race | Race (OMOP) |
+| Type Concept | Type Concept (OMOP) |
+| Route | SNOMED → OMOP Extension |
+| Regimen | HemOnc |
+| Meas Value | LOINC → SNOMED → NAACCR (for oncology) → all others |
+| Visit | NUCC/CMS Place of Service/Medicare Specialty/HES Specialty/UB04 Type of bill → Visit (OMOP) |
+| Episode | Episode (OMOP) |
+
+Also, form an initial assumption about the likely domain of the most frequent source codes in each table – i.e., what kind of information they seem to represent clinically, keeping in mind that the final domain will be determined by the target standard concepts).
+* Diagnoses (expected to map to a Condition/Observation domain concept).
+* Procedures (map to a Procedure/Measurement domain concept).
+* Medications (map to a Drug/Device domain concept).
+* Labs (map to a Measurement/Observation domain concept).
+* Devices (map to a Device domain concept)
+* Facts about a patient social history, "history of" condition (map to an Observation domain concept).
+> Example: An ICD-10-CM diagnosis code [I63 "Cerebral infarction"](https://athena.ohdsi.org/search-terms/terms/1569193) is a Condition domain source code and should map to a SNOMED concept for Cerebral infarction. A local lab code for "HbA1c" is a Measurement and should map to a LOINC concept for Hemoglobin A1c test ("Hemoglobin A1c/Hemoglobin.total in Blood"). If you are unsure of a code’s domain (some codes might be tricky, like certain ICD-10 Z-codes that represent social circumstances or history), consult clinicians, OHDSI domain guidelines or check in OHDSI Athena before mapping.
+
+> Tip: Identifying the domain guides you to the right target vocabulary; however in OMOP, some vocabularies map to unexpected domains (e.g., certain ICD-10-CM codes map to Measurement or Observation, some CPT4/HCPCS codes map to Drug or Device). Therefore, we do not recommend restricting your mapping by domain filters. Instead, **let the vocabulary determine the target domain, and then use that domain information to decide which CDM table should be populated**.
+
+### Step 3: Search for Existing Standard Mappings (Automated Lookup) 
+- Run SQL queries against the OHDSI Standardized Vocabularies to see if mappings already exist. The vocabularies often include many source codes as non-standard concepts with pre-defined "Maps to" relationships to standard concepts. 
+> Note: In some cases, however, your source system may already use OMOP-preferred standard vocabularies (e.g., RxNorm for drugs, LOINC for labs), so the source code itself may already be a standard concept (standard_concept = 'S') and require no additional "Maps to" mapping - only verification of domain and correctness.
+  - Using SQL (if you have the vocabulary tables in a database): You can join CONCEPT and CONCEPT_RELATIONSHIP to resolve "Maps to" and "Maps to value" relationships; optionally, include CONCEPT_SYNONYM if you need additional source text fields to support searching. 
+  - To map ICD-10-CM codes, find their concept_ids in the CONCEPT table (where vocabulary_id='ICD10CM'), then find records in the CONCEPT_RELATIONSHIP table where concept_id_1s are ICD-10-CM concept_ids and relationship_id IN ('Maps to','Maps to value'). Rows with relationship_id = 'Maps to' give the primary standard concept(s); rows with relationship_id = 'Maps to value' give additional value/detail concepts that typically populate value_as_concept_id (if exists). The concept_id_2 will be the standard concept(s). This automated join approach can quickly map known vocabularies. 
+```sql
+-- Query example:
+SELECT dx_id,
+       dx_id_dx_name,
+       r.relationship_id,
+       c.concept_id,
+       c.concept_code,
+       c.concept_name,
+       c.vocabulary_id,
+       c.domain_id,
+       c.concept_class_id
+FROM diagnoses a
+  JOIN concept b
+    ON b.concept_code = a.dx_id
+   AND b.vocabulary_id = 'ICD10CM'
+  JOIN concept_relationship r ON r.concept_id_1 = b.concept_id
+  JOIN concept c ON c.concept_id = r.concept_id_2
+   AND r.invalid_reason IS NULL
+   AND r.relationship_id IN ('Maps to', 'Maps to value')
+   AND c.standard_concept = 'S';
+```
+> Case 1: ICD-10-CM [E11.9 "Type 2 diabetes mellitus, without complications"](https://athena.ohdsi.org/search-terms/terms/35206882) has a "Maps to" SNOMED concept for "Type 2 diabetes mellitus". If a source code has multiple "Maps to" results (meaning one-to-many mapping), you will retrieve multiple target concept_ids. According to OMOP conventions, each source record should then produce multiple records – one per mapped concept – in the CDM. (Do not arbitrarily pick one concept and discard others; if the source code’s meaning truly encompasses multiple concepts, all should be represented to avoid loss of information.)
+> Case 2: 	ICD-10-CM [Z86.16 "Personal history of COVID-19"](https://athena.ohdsi.org/search-terms/terms/713860): Maps to → History of event (concept_id 1340204, vocabulary OMOP Extension, domain Observation) – this becomes the observation_concept_id. Maps to value → COVID-19 (concept_id 37311061, vocabulary SNOMED, domain Condition) – this becomes the value_as_concept_id. In the CDM, a single source record with Z86.16 should therefore produce one Observation record with observation_concept_id = 1340204 and value_as_concept_id = 37311061.
+
+### Step 4:	Utilize Mapping Tools and/or Athena Browser to Perform Manual Mapping
+For source codes that are not already mapped via step 3 (for example, local codes or less common vocabularies not in the standard tables, or cases where the automatic join found no result), use a tool like Usagi to accelerate the mapping and/or Athena browser:
+  - Usagi is an OHDSI tool that suggests mappings based on term similarity. Before using it, you first need to build the Usagi index by loading the OMOP vocabularies you downloaded from Athena (CSV files) into Usagi. After the vocabularies are imported, load your list of unmapped source codes (with their descriptions). Usagi will then run a term-matching algorithm against the imported OMOP vocabularies to propose candidate standard concepts that lexically or semantically resemble each source term.
+  - Review Usagi’s suggestions for each code. Set an appropriate similarity score threshold to filter out poor matches, and manually inspect high-scoring suggestions. At this stage, human judgment is critical – ensure the suggested concept truly matches the meaning of the source code (not just a partial text match). Usagi conveniently flags if a concept is standard and shows its domain and vocabulary. It will only propose standard concepts by design.
+  - Pick the best fitting concept(s) for each source code. In many cases, it will be a one-to-one match (one source code to one standard concept). If the tool suggests multiple concepts to cover one source term’s meaning, carefully consider if a one-to-many mapping is needed (see Step 6 and examples below). Document the chosen mapping for each code within Usagi’s interface or export the results.
+  - Using Athena: enter the unmapped source code or its description in Athena’s search. If the code/name is recognized, Athena will show a concept entry. Check the concept’s details to see if it is marked as standard or non-standard. If non-standard, look at its "Maps to" relationships ("Non-standard to Standard map") – Athena displays the target standard concept(s) it maps to. For instance, searching ICD-10-CM code [I26.0 "Pulmonary embolism with acute cor pulmonale"](https://athena.ohdsi.org/search-terms/terms/1569148) in Athena reveals it maps to two SNOMED concepts: one for `Pulmonary embolism` and one for `Acute cor pulmonale`. This indicates a one-to-many mapping: the ICD code’s meaning is split into two SNOMED condition concepts, so the source record must produce two rows in the CONDITION_OCCURRENCE table.
+
+### Step 5:	Clarify and Curate Ambiguous Codes
+- Even after automated and semi-automated steps, some source codes may remain uncertain. These often require subject matter expert's curation:
+  - Search Athena manually using keywords from the source code’s description. Sometimes tweaking the search terms or using synonyms helps. For instance, a source diagnosis "Heart attack" might not pull up results, but searching "myocardial infarction" in Athena would find the SNOMED concept for myocardial infarction.
+  - Consult clinicians or domain experts for codes that are clinically ambiguous or unclear. Understanding the exact meaning of a source code is crucial for finding the correct standard concept.
+  - Ensure standard concept and correct domain: When manually selecting a mapping, confirm that the target concept has standard_concept = 'S' (standard) in the OMOP vocabulary. Avoid mapping to classification concepts (standard_concept = 'C'), which are higher-level groupings not used for recording individual patient data.
+  - If no equivalent concept exists, follow the OHDSI convention of choosing a broader or closest standard concept rather than losing the data entirely. This is called an `uphill mapping`. For instance, a very specific local condition might be mapped to a more general SNOMED condition if a direct match is not available – make sure to note that a loss of granularity occurred (e.g., via [SSSOM mapping metadata](https://mapping-commons.github.io/sssom/spec-model/)). The opposite approach – mapping to a more specific (more granular) standard concept than the source term (`downhill mapping`) – is generally discouraged, as it adds clinical detail that is not explicitly present in the source; if applied at all, it should be clearly documented as an assumption rather than a fact. If a source code is truly unique (e.g., a custom lab assay with no standard counterpart), you may create a custom concept (with a concept_id > 2,000,000,000). Custom concepts can act as stand-ins for source codes. Use custom concepts sparingly and document them clearly (including creating entries in the concept and source_to_concept_map tables as needed).
+
+### Step 6:	Verify One-to-One vs One-to-Many Mappings
+- After determining the best mapping for each source code, prepare to implement these mappings in the ETL process. This typically involves creating a mapping reference table (or spreadsheet) that links each source code to its target concept(s):
+  - `One-to-One Mapping`: Most source codes will map to a single standard concept. In these cases, each source record will generate a single record in the corresponding OMOP CDM table. Example: ICD-10 code [E86.1	"Hypovolemia"](https://athena.ohdsi.org/search-terms/terms/45581387) maps one-to-one to the standard SNOMED concept. In the ETL, for every occurrence of E86.1 in the source, you would create one CONDITION_OCCURRENCE with the SNOMED concept_id for Hypovolemia.
+  - `One-to-Many Mapping`: Some source codes represent a combination of clinical ideas and thus map to multiple standard concepts. In these cases, a single source record must spawn multiple OMOP records (to capture all components). 
+>	Example 1: ICD-10 code [I26.0 "Pulmonary embolism with acute cor pulmonale"](https://athena.ohdsi.org/search-terms/terms/1569148) requires two condition concepts: one for Pulmonary embolism and one for Acute cor pulmonale, since no single SNOMED concept covers both aspects. Thus, a single diagnosis entry of I26.0 in the source would result in two records in the CONDITION_OCCURRENCE table – one with concept_id for pulmonary embolism and another with concept_id for acute cor pulmonale (both tied to the same patient and date).
+> Example 2: Multi-ingredient drug product `MORPH 2.5MG / DEXAMETH 2MG INH.SOL` can be mapped to two ingredient concepts: `morphine` (concept_id `1110410`) AND `dexamethasone` (concept_id `1518254`). In this case, one source order/administration should result in **two `DRUG_EXPOSURE` records** – one for morphine and one for dexamethasone – again linked by the same person, datetime, and source identifier.
+> Example 3: The compounded drug product `GABA 5% / Amitript 2% / Ketamin 5% ` can be mapped to **three** drug concepts representing each 	Clinical Drug Component (specific OMOP concept class for drugs with known ingredient and drug strength): `gabapentin 50 MG/ML` (concept_id `797436`) + `Amitriptyline 20 MG/ML` (concept_id `589159`) + `ketamine 50 MG/ML` (concept_id `19085322`). A single prescription/dispense of this compounded drug should therefore produce **three `DRUG_EXPOSURE` records**, all sharing the same dates and source identifiers but with different `drug_concept_id`s for each ingredient.
+  - When implementing, join to or lookup in the mapping table. If using a SQL-based ETL, joining source data to a mapping table will "duplicate" source rows for one-to-many mappings (because the mapping table will have multiple entries for that one source code). This is desired, as it yields multiple output records. Do not collapse or randomly choose one concept from a one-to-many map – all mapped concepts should be recorded. Each of the multiple records can carry the same source identifier and timestamp, differing only in the standard concept_id.
+  - **Preserve Source Values**: Always fill the OMOP _source_value fields with the original source code or term, and _source_concept_id with the concept_id of the source code (if it exists in the source data). This preserves lineage. In one-to-many scenarios, each of the multiple target records would have the same source_value and source_concept_id (representing the single originating entry).
+
+### Step 7:	Route Mapped Concepts to the Correct CDM Tables
+- Ensure the mapped concepts are stored in the correct CDM table/field according to their **domains**. OMOP’s design is that the domain of the standard concept dictates where the record goes:
+
+| Standard Concept Domain | CDM Event Table(s) and Field(s) to Populate |
+|------------|--------------------------------------|
+| Condition | CONDITION_OCCURRENCE.condition_concept_id, CONDITION_ERA.condition_concept_id |
+| Drug | DRUG_EXPOSURE.drug_concept_id, DRUG_ERA.drug_concept_id, DOSE_ERA.drug_concept_id |
+| Procedure | PROCEDURE_OCCURRENCE.procedure_concept_id |
+| Measurement| MEASUREMENT.measurement_concept_id |
+| Observation| OBSERVATION.observation_concept_id |
+| Device | DEVICE_EXPOSURE.device_concept_id |
+| Specimen | SPECIMEN.specimen_concept_id |
+| Visit | VISIT_OCCURRENCE.visit_concept_id, VISIT_DETAIL.visit_detail_concept_id |
+| Episode | EPISODE.episode_concept_id |
+| Unit | MEASUREMENT.unit_concept_id, OBSERVATION.unit_concept_id, DEVICE_EXPOSURE.unit_concept_id|
+| Meas Value | MEASUREMENT.value_as_concept_id, OBSERVATION.value_as_concept_id|
+| Gender | PERSON.gender_concept_id|
+| Race | PERSON.race_concept_id|
+| Ethnicity | PERSON.ethnicity_concept_id|
+| Regimen | EPISODE.episode_object_concept_id|
+| Route | DRUG_EXPOSURE.route_concept_id|
+| Type Concept | all _type_concept_ids |
+
+- **Special case: one-to-many across different domains:** Sometimes a single source code maps to multiple standard concepts **from different domains**. In this case, one source record must produce **multiple CDM records in different event tables**, each driven by the domain of the mapped concept.
+
+> Example: ICD-10-CM code [C7B "Secondary neuroendocrine tumors"](https://athena.ohdsi.org/search-terms/terms/1567613) has two "Maps to" relationships in the OMOP vocabulary: to 36769180 "Metastasis", which belongs to the Measurement domain (Cancer Modifier) and to 1244604  "Neuroendocrine neoplasm, malignant”, which belongs to the Condition domain (SNOMED). This means that each source record with C7B should produce two separate CDM records: one in the MEASUREMENT table (with measurement_concept_id = 36769180) and one in the CONDITION_OCCURRENCE table (with condition_concept_id = 1244604). These records will typically share the same person_id, date/time, and the same source identifiers, reflecting that they originate from the same underlying encounter.
+
+> The key rule is: do not try to force all mapped concepts into a single table just because they come from the same source field or vocabulary. Always let the domain of the mapped standard concept determine which CDM event table you populate – even if that means a single source code results in multiple rows across multiple tables.
+
+### Step 8:	Quality Assurance and Validation 
+- After applying the mappings in your ETL logic, perform thorough QA checks on the output:
+  - **Complete Mapping Coverage**: Verify that every source code has been handled. There should be no unmapped codes silently dropped. For any source code that could not be mapped to a standard concept, you have two main options: 1) Assign a concept_id of 0 ("No matching concept") for that record in the CDM and still carry over the source_value for transparency; and/or 2) create a custom concept (to be used as standard) as noted earlier. Whichever approach, document how unmapped codes are flagged. It is important that analysts know if some data was not standardized.
+  - **Standard Concepts Only**: Ensure that all concept_ids used in clinical event tables are standard. This means checking that each concept_id in your Condition, Procedure, Drug, etc. tables has standard_concept = 'S' in the vocabulary. No source or classification concept_ids should appear in those fields. This check can be done by joining your result concept_ids back to the concept table. It is a hard requirement that only standard concepts populate the primary concept_id.
+  - **Domain Consistency**: Cross-verify that the domain of each concept_id matches the table it is in. For example, no Drug domain concept_id should end up in CONDITION_OCCURRENCE, no Procedure in MEASUREMENT, etc. If mismatches are found, it indicates an error in mapping or in placing the record.
+  - **Clinical Sanity Checks**: Do some spot checks on high-frequency or clinically important mappings. For instance, if lab results are mapped, confirm the units and values make sense and unit_concept_ids are standard (e.g., ensure "mg/dL" unit mapped to correct UCUM concept).
+  - **Counts and Duplicates**: In one-to-many mappings, patients will have multiple records for one source event. Confirm that this inflation of record count is expected and documented. It is helpful to communicate in documentation that certain source codes split into multiple records. Also, use the source_value to ensure you can trace back if needed – multiple records with the same source reference should share the source_value for clarity.
+  - **Review with Stakeholders**: If possible, review the mapping outcomes with clinicians or data owners, especially for contentious mappings (e.g., where a code was mapped to a broader concept, or where a composite code was split). A quick review of a sample of patient data in the new CDM format against the original records can confirm that the mapping logic didn’t introduce anomalies.
+  - **Iterate Fixes**: If QA finds any issues (e.g., a code mapped incorrectly, or an unmapped code discovered later), update the mapping and re-run the ETL for those parts. It is common to have a few iterations to achieve a near-100% proper mapping.
+
+### Step 9:	Documentation and Maintenance
+- Finally, document the mapping work for future reference and maintain it over time:
+  - **Mapping Specification**: Create a document or spreadsheet that lists each source code, its description, and the chosen target standard concept(s) (with concept IDs and names). Also note any special handling (e.g., "this source code produces two records: concept A and concept B") or any custom concepts created. This serves as both a record for peer review and a reference for future ETL updates.
+  - **Versioning**: Record the version of the OMOP vocabulary used for mapping (e.g., vocabulary release date). The standard vocabularies update biannually; a concept you used might be deprecated in the future or new mappings might become available. Having the version noted helps when updating or troubleshooting later. It is good practice to periodically refresh your mappings when vocabularies update.
+  - **Ongoing Maintenance**: If new source codes appear (e.g., a new diagnosis code introduced in the source system), update the mapping table using the same process (do not forget to check for new codes regularly if the source system is dynamic). Also, if you find that analysts or data users are confused by certain mappings (for instance, the one-to-many cases or the domain shifts), consider adding explanatory notes in the documentation or even implementing flags.
+
+## Additional Considerations
+-	**Ambiguous Source Concepts** (Combination/Alternative meanings): Be cautious with source codes that represent an "either/or" clinical situation or a combination that is not strictly additive. For example, a source diagnosis might be labeled "Disease A or Disease B". If you were to map this to two separate concepts (A and B), it would falsely imply the patient had both conditions. In such cases, a better approach might be to map to a single, less-specific concept that covers the general category. For instance, if a source code means "Coronary heart disease OR Myocardial infarction", you might map it to a general "Coronary heart disease" concept alone, and preserve the original text in source_value to indicate the uncertainty. Document these decisions clearly. There is no perfect solution within OMOP for "either/or" ambiguity.
+-	**Use of Custom Concepts**: If you create custom concepts for unmappable source codes or novel clinical terms, follow the conventions: use concept_ids above 2,000,000,000, assign an appropriate concept_name, domain_id, vocabulary_id, and set standard_concept to "S" if you intend to use it as a standard (e.g., in ATLAS).
+-	**Standard Vocabulary Updates and Version Alignment**: The OHDSI Standardized Vocabularies are biannually updated. After an update, previously mapped concept_ids might become invalid or new preferred mappings might be introduced. Establish a routine to review and update mappings when vocabularies are updated. This could involve running a script to detect if any concept_id in your mapping spec now has invalid_reason <> NULL (indicating deprecation) and finding the replacement via concept_relationship ("Maps to" or "Concept replaced by" relationships). Keeping the mappings current will ensure your ETL remains valid and your data stays standardized over time.
+-	**Communication to Data Users**: Ensure that researchers and analysts using the transformed data are aware of the mapping approach and any nuances. Provide them with a data dictionary or mapping summary. This is especially important for one-to-many mappings (so they understand that counts of condition occurrences might increase for certain combined codes) and domain shifts (so they know to look in the Observation table for "history of" records, for example). It might be useful to hold office hours with the analysis team after a new ETL release to walk through how the source data was mapped.
+
+### Mapping Checklist for Mappers
+Before finalizing the ETL and considering the mapping complete, use the following checklist to ensure all principles have been met:
+  - ✅ **Mapped to Standard Concepts**: All source codes are mapped to concepts where standard_concept = 'S'. No non-standard or classification concept_ids appear in the clinical event tables. (If a source code couldn’t be mapped, it is documented and handled via concept_id = 0 or a custom concept, rather than using a wrong concept.)
+  - ✅ **One-to-Many Mappings Implemented**: For each source code that required multiple standard concepts to cover its meaning, the ETL creates multiple records (or uses multiple fields as appropriate) so that no semantic information is lost. All components of the source concept’s meaning are represented. Example verified: combined codes like "X with Y" produce two records with concept X and concept Y.
+  - ✅ **Domain Conformance**: The domain of each mapped concept matches the CDM table/field where the data is stored. Any intentional domain shifts are noted and correct.
+  - ✅ **Source Values Preserved**: The original source code and description are recorded in the _source_value fields for traceability. The _source_concept_id is filled for source codes that exist in the OMOP vocabulary (including custom concepts if created). This allows verification and back-mapping if needed.
+  - ✅ **Unmapped or Uncertain Codes Addressed**: No source code was ignored. For any code that did not have a clear mapping, an explicit decision is recorded (mapped to broader concept, set to 0 with note, or added as custom concept). These instances are documented in the mapping spec for transparency.
+  - ✅ **Clinical Review Completed**: A subject matter expert (e.g., clinician or terminology specialist) has reviewed the mappings for clinical validity, especially for ambiguous cases or custom mappings. Any feedback from this review has been incorporated (e.g., choosing a more appropriate concept, adjusting one-to-many logic, etc.).
+  - ✅ **Documentation and Sign-off**: The mapping documentation (specification spreadsheet or ETL documentation) is updated and complete. It includes mapping rationale where non-obvious. The mapping has been approved by relevant stakeholders or governance if required. A plan for maintenance (e.g., periodic review after vocabulary updates) is noted.
+
+
+## Related Office Hours
+
+The following office hour sessions provide additional context and demonstrations related to this SOP:
+
+- **[11-13-25] Revisiting OMOP Mapping Principles**
+  - [Video Recording](https://drive.google.com/file/d/1psMthesyWrBAbFx1Fyysu8YvzWsqOSVR/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1d4dAK55VRTxn6zQCGV9I-gpYOu0uFYQe/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1oi5w6_7ewPxj-0IkwvjbvUKpq4XKiFxN6wO9jfqWWE0/edit?usp=drive_link)
+
+- **[09-11-25] OMOP specific domains: Measurements & Devices**
+  - [Video Recording](https://drive.google.com/file/d/1UAL1kixEFXH_fGhzAbuP3p0EUpsphMPA/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1yq7yO42A6Y32omGWXXRjOQsPv38xV3io/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/15enAidKTwVuYnaHhs0kSz9KH6aC4-con/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[07-31-25] Harmonizing transfusion data to OMOP CDM v5.4**
+  - [Video Recording](https://drive.google.com/file/d/1t2r6cFDlSDGaNNWtyH_pLoMA9WkQjcb3/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1jm2KWYhK1VcGnmPDv0ykeoRqzX10huqq/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1p4nh81s0vXCDUPNJ-7aiDWrfHRj-S41gg89MwsyP9Nk/edit?usp=drive_link)
+
+- **[12-19-24] - Next steps for contributing unmapped codes**
+  - [Video Recording](https://drive.google.com/file/d/1rbj0l76oa-aOj7bjjjRER5oMVlHLcbOP/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1MLRdPw5lKx3Z0iz5qnI7KYSAyc4Yldqy/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[11-14-24] - Unit Harmonization related to recent data submissions**
+  - [Video Recording](https://drive.google.com/file/d/1wS8rRqpAbItgv2tDDAISeXL6VReVXTDR/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1hfmBEkBTfMAnt8i91B3fsS857oimb7Fd/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[10-31-24] - Measurement domain & Labs**
+  - [Video Recording](https://drive.google.com/file/d/1l7EXeGqJ0fclOR1TH-oN5s-v8UG3S5Zk/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1nYC1Yc9c4pclrrxV4LXlMaSFtzqHUquC/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[10-10-24] - Challenges, mapping, and transforming drug events to OMOP (updated)**
+  - [Video Recording](https://drive.google.com/file/d/1H-9cEfnqHNOuPQ-tiwLi1NySJN8nNWYS/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1Wokem7gxP-9xydejSpHqLRm-uKWc-ODG/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[09-26-24] - SOP for cataloging unmapped terms**
+  - [Video Recording](https://drive.google.com/file/d/1g4x99rBrF6p2SodzXXxThWY-v0nZgJKi/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1urGHDo_-LSVFVYW1zeUSfpxDP8f1TapV/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[08-29-24] - Core Principles of Value Mapping for Clinical Observations and Measurements in OMOP**
+  - [Video Recording](https://drive.google.com/file/d/179Th-kDBPQGKp3wmH39z6JDMGmeO_smi/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/132X8RqC5YaAkRmMuZ3ZlUIoJ7BsyyhKV/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/17Tjc5Y5GbPcAo06lisMz2WbNMrA3aZonDkiJ3ZclOvI/edit?usp=drive_link)
+
+- **[08-22-24] - Demo on using synonyms to expand an exact match mapping approach**
+  - [Video Recording](https://drive.google.com/file/d/1-MZQ1NNBTc79l5Ofb_VxK2U1ePdDFfaB/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1DckNrS2Vv63SP1UlmK28e2ylpZPjHP90/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[07-25-24] - Mapping validation and implementation**
+  - [Video Recording 1](https://drive.google.com/file/d/1HPaWX9kGLQuK6kphFEW3DsGlpQbFCnpx/view?usp=drive_link) | [Video Recording 2](https://drive.google.com/file/d/1yny5EeeOj_wbvPRaRAaRKCGJuUu7oCcr/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1XaTnf6hDi0_C7rz4af-eYsNFCUw6AIAy/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[04-04-24] - Mapping challenges related to the procedure domain**
+  - [Video Recording](https://drive.google.com/file/d/1t2r6cFDlSDGaNNWtyH_pLoMA9WkQjcb3/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1jm2KWYhK1VcGnmPDv0ykeoRqzX10huqq/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1p4nh81s0vXCDUPNJ-7aiDWrfHRj-S41gg89MwsyP9Nk/edit?usp=drive_link)
+
+- **[12-14-23] - Demo of Clinical Validation Process for Proposed Flowsheet Mappings**
+  - [Video Recording](https://drive.google.com/file/d/150k5fM-ggsayzjwy4VetyOuYHiHaYjKx/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1o-PsSmdwudZK85NjwRFYLb2a8pjMxaAf/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1PPX99qbq1g-7awLePp0BrkkZK1FgC7-CZxSAWS6RNwo/edit?usp=drive_link)
+
+- **[11-30-23] - Unit Harmonization**
+  - [Video Recording](https://drive.google.com/file/d/1eYySfG_vyJz5cL6Ljb_s2IZMMZ3iBBOc/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1oC7t9vfHj0quBUSpNd_m6NWcxT3AeDKP/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[11-09-23] - Usagi & STCM Demo**
+  - [Video Recording](https://drive.google.com/file/d/1Us5ebwon6norV7fUvizPE0r903_jjw6w/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1UvA5HyirfGOjkmdrSV4mF4FJxme2hV_G/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1ni5PLPfF1iDObbgYnbj-OwhypZO0mkXiZCkHwrsBXrg/edit?usp=drive_link)
+
+- **[11-02-23] - Principles of Mapping and Vocab Gaps Identification**
+  - [Video Recording](https://drive.google.com/file/d/1k6yJXOaslEHETEAs_X98QkovcbeE3lLG/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1QrcTlklC86EQxHxnlGe5C29LocJ3BqH8/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/12hKctOTcuFTyu1JjsOXjU-0XtacN0gMo6uqbBnOhoso/edit?usp=drive_link)
+
+- **[08-17-23] - OMOP Standardized Vocabularies - Part 2**
+  - [Video Recording](https://drive.google.com/file/d/102YDgbVBUX8LQjYX6dB0RiGXCFHW_NYS/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/16PmWz-DNWKJ894vR_YEaDqAiaq4k6xpI/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1MSxejdE-VaNmLPpRfljNR3LZ-tQiOFPY/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[08-03-23] - OMOP Standardized Vocabularies - Part 1**
+  - [Video Recording](https://drive.google.com/file/d/1v9kpBiZrhfpQDKO436wcwrRJwhwlkgYS/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1vclTNNCyBy8e9al0tN8J2LvUjaocRJnr/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1IWYZCW8KONfDyRPiH8Snnxua2A-kuoAf/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true)
+
+- **[05-18-23] - Mapping of Critical Care EHR Flowsheet data to OMOP CDM via SSSOM (Pt 2)**
+  - [Video Recording](https://drive.google.com/file/d/1BFntFvqAky073zSoJzxSIhrZLTvA1D7I/view?usp=drive_link) | [Presentation](https://docs.google.com/presentation/d/10c1juB_FDXPlFY-Qhgi0Ho5rZl8S76QyyiFRAEp2K-k/edit?usp=drive_link)
+
+- **[05-25-23] - Mapping of Critical Care EHR Flowsheet data to OMOP CDM via SSSOM (Pt 1)**
+  - [Video Recording](https://drive.google.com/file/d/1afcAMCSlmaaYQlXFE70LYLv2Jf9JZiJV/view?usp=drive_link) | [Presentation](https://docs.google.com/presentation/d/1zzNFSTCe9eYqEI6ees7S1kwZohYSNjZJRbNzSfEMRsI/edit?usp=drive_link)
+
+## Resources
+- [OHDSI Vocabulary Wiki Page](https://github.com/OHDSI/Vocabulary-v5.0/wiki)
+- [How the Vocabulary is Built. Mapping of Concepts](https://ohdsi.github.io/CommonDataModel/vocabulary.html)
+- [Book of OHDSI](https://ohdsi.github.io/TheBookOfOhdsi/)
+- [OHDSI Forums: Vocabulary Users](https://forums.ohdsi.org/c/vocabulary-users/14)
+- [OHDSI YouTube Channel](https://www.youtube.com/c/OHDSI)
