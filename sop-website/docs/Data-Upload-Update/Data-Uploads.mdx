@@ -73,7 +73,22 @@ Each DGS is required to organize the data files in this folder structure.  For D
 (Not applicable to Azure Data Share) In `full` mode, files removed from the folder structure will be considered `deleted`.  In `append` mode, a DGS user can manually supply a list of files to be marked as deleted.  
 
 ### OMOP EHR Folder
-This folder shall include structured and unstructured 13 OMOP clinical data files(exluding specimen table) as found here (https://ohdsi.github.io/CommonDataModel/cdm54.html#Clinical_Data_Tables). We are not requiring actual notes to be included in the "note_text" field of the NOTE table, but since working with the NOTE_NLP table would greatly benefit from access to foreign keys only present in the NOTE table. Thus the note table should at least contain core identifiers (note_id), descriptors (note_type_concept_id and note_class_concept_id) as well as there foreign keys to PERSON, VISIT_OCURRENCE, VISIT_DETAILS. Each of these table will be in the form of comma delimited files with header rows.
+This folder shall include structured and unstructured 13 OMOP clinical data files(exluding specimen table) as found here (https://ohdsi.github.io/CommonDataModel/cdm54.html#Clinical_Data_Tables). We are not requiring actual notes to be included in the "note_text" field of the NOTE table, but since working with the NOTE_NLP table would greatly benefit from access to foreign keys only present in the NOTE table. Thus the note table should at least contain core identifiers (note_id), descriptors (note_type_concept_id and note_class_concept_id) as well as there foreign keys to PERSON, VISIT_OCURRENCE, VISIT_DETAIL. Each of these table will be in the form of comma delimited files with header rows.
+
+Included clinical tables:
+* person
+* death
+* visit_occurrence
+* visit_detail
+* observation
+* observation_period
+* condition_occurrence
+* device_exposure
+* drug_exposure
+* measurement
+* procedure_occurrence
+* note
+* note_nlp
 
 Each OMOP file should contain records for ALL ACTIVE patients submitted to CHoRUS to date. The OMOP files are a complete snapshot of current DGS local CHoRUS OMOP tables.  
 
@@ -134,11 +149,11 @@ This example would represent a CT scan for patient 1000100020 with Accession Num
 
 The `Waveforms` folder should contain all waveforms for the patient organized into `session` folders, each session containing a set of files corresponding to a continuous recording session. 
 
-Waveform data refers to all data acquired from bedside monitors and devices, including alarms, numerics data obtained at regular or irregular intervals, and high-frequency (>1 Hz) waveform data such as digitized EKG tracings. The waveforms should be deidentified.   For Y1 submission, WFDB file format is recommended but not required. 
+Waveform data refers to all data acquired from bedside monitors and devices, including alarms, numerics data obtained at regular or irregular intervals, and high-frequency (>1 Hz) waveform data such as digitized EKG tracings. The waveforms should be deidentified.   
 
 See the [Waveform File Format SOP](https://chorus-ai.github.io/Chorus_SOP/docs/Waveform-Data/Waveform-File-Format/#2-file-structure) for the correct and up-to-date folder structure and naming convention.
 
-session_id is a unique identifier that can be chosen by sites to represent a single collection of waveforms.
+session_id is a unique identifier that can be chosen by sites to represent a single continuous recording.
 
 
 
@@ -176,25 +191,27 @@ Currently, the `chorus-upload` tool does not explicitly support placing the file
 Example folder and file structure for a single patient is shown below:
 ```
 root
-  ├── OMOP
-      ├── ...
-  ├── 10001001
-      ├── Images
-          ├── 1234
-              ├── 5678
-                  ├── 10001001_1234_5678_CT_000.dcm
-                  ├── 10001001_1234_5678_CT_001.dcm
-                  ├── 10001001_1234_5678_CT_002.dcm
-                  ...
-      ├── Waveforms
-          ├── 10001001_901234
-              ├── 10001001_901234.hea
-              ├── 10001001_901234_layout.hea
-              ├── 10001001_901234_0001.hea
-              ├── 10001001_901234_0001.dat
-              ├── 10001001_901234_0002.hea
-              ├── 10001001_901234_0002.dat
-              ...
+    ├── OMOP
+        ├── ...
+    ├── 10001001
+        ├── Images
+            ├── CT
+                ├── 1234
+                    ├── 5678
+                        ├── 000.dcm
+                        ├── 001.dcm
+                        ├── 002.dcm
+                        ...
+        ├── Waveforms
+            ├── Telemetry
+                ├── 901234
+                    ├── 901234.hea
+                    ├── 901234_layout.hea
+                    ├── 901234_0001.hea
+                    ├── 901234_0001.dat
+                    ├── 901234_0002.hea
+                    ├── 901234_0002.dat
+                    ...
 ```
 
 This structure shall be maintained for all submissions.  All additions, deletions, and modifications shall be made in this structure.  
@@ -204,14 +221,15 @@ A relaxation of the folder structure is that OMOP, images, and waveforms files m
 for example AWS S3 bucket:
 ```
 root
-  ├── /10001001
-      ├── Images
-          ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.1.1
-              ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.2.1
-                  ├── 10001001_20220401_113120_CT_01_0.dcm
-                  ├── 10001001_20220401_113120_CT_01_1.dcm
-                  ├── 10001001_20220401_113120_CT_01_2.dcm
-                  ...
+    ├── /10001001
+        ├── Images
+            ├── CT
+                ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.1.1
+                    ├── 1.2.840.113619.2.176.3596.6358730.30068.1592383800.2.1
+                        ├── 01_0.dcm
+                        ├── 01_1.dcm
+                        ├── 01_2.dcm
+                        ...
 ```
 
 
