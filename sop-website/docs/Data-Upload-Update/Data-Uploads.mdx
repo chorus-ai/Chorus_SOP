@@ -49,7 +49,7 @@ The difference between the upload methods are as follows:
 The `chorus-upload` tool has the following assumptions
 1. The DGS has a local on-prem or in-cloud storage.  A DGS may use different storage for each of the data modalities, e.g. images in AWS and waveform and OMOP files in on-prem file system.
 2. The DGS may choose to maintain all files in the local storage (`full` mode), or only the new and updated files since last submission (`append` mode) to reduce local space usage.  
-3. The DGS will organize the files using the folder structure as described in the [Local File Organization](#local_file_organization) section below.
+3. The DGS will organize the files using the folder structure as described in the [Local File Organization](#local-file-organization) section below.
 
 Please note that `full` mode is recommended as it supports tracking file deletion and can facilitate data QC.  File deletions are not tracked with Azure Data Share regardless of whether `full` or `append` mode is chosen.
 
@@ -216,7 +216,7 @@ root
 
 
 ## Central Staging File Organization
-This virtual environment is hosted in an Azure platform. The containers structure is setup such that each DGS has its own container (e.g. mgh).  The container name for each DGS is used in the `config.toml` files as `[DGS_container]` in the [Configuration](#configuration) section.
+This virtual environment is hosted in an Azure platform. The containers structure is setup such that each DGS has its own container (e.g. mgh).  The container name for each DGS is used in the `config.toml` files as `[DGS_container]` in the Configuration section.
 
 ![Central Data Organization](https://github.com/chorus-ai/data_acq_SOP/assets/2847495/d7d1d67a-2695-4b2d-92aa-2285b608a09d)
 
@@ -232,7 +232,7 @@ In the diagram above, the gray directories were added, blue folder has modificat
 
 ## For Azure Data Share Users
 
-1. The DGS local data shall be organized according to the [File Organization](#file-organization) section.
+1. The DGS local data shall be organized according to the [Local File Organization](#local-file-organization) section.
 2. The Azure Data Share shall be configured to copy data into a "staging" folder in the DGS container.
 3. (INFORMATIONAL) The staging data will be scanned to create/update a journal database (by `chorus-upload`) and copied to the a dated directory monthly.
 
@@ -244,7 +244,7 @@ The code is available in [chorus-extract-upload](https://github.com/chorus-ai/ch
 
 ### Installation and Usage
 
-> **MOVED** Please refer to [Readme.md](https://github.com/chorus-ai/chorus-extract-upload/edit/main/README.md) for installation and usage instructions.
+> **MOVED** Please refer to [Readme.md](https://github.com/chorus-ai/chorus-extract-upload/blob/main/README.md) for installation and usage instructions.
 
 
 ## Alternatives Considered
@@ -259,9 +259,9 @@ Alternative approaches to minimize data movement include
 1. azcopy, rsync:  these methods reduce data transmission to changed set, but do not track past history or deleted files.
 2. Azure Data Share:  current approach copies files to ensure CHoRUS maintains control over submitted data; moving changed set renders it similar to rsync and azcopy. 
 
-<!-- 
+{/*
 TODO: file organization verification
 TODO: DONE change "manifest" to "journal"
 illustration of the upload process and creation of the timestamp.
- -->
+*/}
 
