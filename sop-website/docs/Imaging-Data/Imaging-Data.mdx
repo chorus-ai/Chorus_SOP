@@ -116,6 +116,63 @@ root
                   ...
 This example would represent a CT scan for patient 1000100020 with Study Id 1234 and Series Id 5678. This image is the first in that series. Please Make sure that these fields match the dicom metadata tags.
 
+**DICOM Tags Recommended to Keep**
+
+Image Identity & Structure
+- Modality: 0008, 0060
+- Manufacturer: 0008, 0070
+- Instance Number: 0020, 0013
+- Image Position (Patient): 0020, 0032
+- Image Orientation (Patient): 0020, 0037 
+- Slice Location: 0020, 1041 
+
+Image Geometry & Spatial Resolution
+- Rows: 0028, 0010
+- Columns: 0028, 0011
+- Pixel Spacing: 0028, 0030 
+- Slice Thickness: 0018, 0050
+- Spacing Between Slices:  0018, 0088
+- Photometric Interpretation: 0028, 0004 
+- Bits Allocated: 0028, 0100
+- Bits Stored: 0028, 0101
+- High Bit: 0028, 0102
+- Pixel Representation: 0028, 0103
+
+Pixel Data & Intensity Interpretation
+- Window Center: 0028, 1050
+- Window Width: 0028, 1051
+- Rescale Intercept: 0028, 1052
+- Rescale Slope: 0028, 1053
+- Rescale Type: 0028, 1054
+
+Modality-Specific Acquisition Parameters
+
+X-ray
+- KVP: 0018, 0060
+- X-Ray Tube Current: 0018, 1151
+- Exposure: 0018, 1152
+- Exposure in µAs: 0018, 1153
+- Exposure Time: 0018, 1150
+- Focal Spot(s): 0018, 1190
+- Filter Type: 0018, 7050
+- Filter Thickness Minimum: 0018, 7052
+- Filter Thickness Maximum: 0018, 7054
+
+CT
+- KVP: 0018, 0060 
+- X-Ray Tube Current: 0018, 1151
+- Exposure: 0018, 1152
+- Convolution Kernel: 0018, 1210
+
+MRI
+- Scanning Sequence: 0018, 0020
+- Sequence Variant: 0018, 0021
+- Scan Options: 0018, 0022
+- Repetition Time: 0018, 0080
+- Echo Time: 0018, 0081
+- Magnetic Field Strength: 0018, 0087
+- Flip Angle: 0018, 1314
+
 > DICOM Pixel de-identification
 
 - under development
