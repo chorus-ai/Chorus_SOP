@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([[5382],{5572:e=>{e.exports=JSON.parse('{"permalink":"/Chorus_SOP/blog/tags/hello","page":1,"postsPerPage":6,"totalPages":1,"totalCount":1,"blogDescription":"Innovative ideas and discovers","blogTitle":"Innovative Ideas!"}')}}]);

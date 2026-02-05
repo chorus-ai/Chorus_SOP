@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-GIS-Exposure-Data/GIS-Exposure-Data" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.1.1">
+<title data-rh="true">Exposome Geocoder – Input Preparation and Usage Guide | Chorus-SOP</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://chorus-ai.io/Chorus_SOP/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://chorus-ai.io/Chorus_SOP/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://chorus-ai.io/Chorus_SOP/docs/GIS-Exposure-Data/"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Exposome Geocoder – Input Preparation and Usage Guide | Chorus-SOP"><meta data-rh="true" name="description" content="Note: This toolkit does not require or share any Protected Health Information (PHI)."><meta data-rh="true" property="og:description" content="Note: This toolkit does not require or share any Protected Health Information (PHI)."><link data-rh="true" rel="icon" href="/Chorus_SOP/img/chorus-ai.png"><link data-rh="true" rel="canonical" href="https://chorus-ai.io/Chorus_SOP/docs/GIS-Exposure-Data/"><link data-rh="true" rel="alternate" href="https://chorus-ai.io/Chorus_SOP/docs/GIS-Exposure-Data/" hreflang="en"><link data-rh="true" rel="alternate" href="https://chorus-ai.io/Chorus_SOP/docs/GIS-Exposure-Data/" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/Chorus_SOP/blog/rss.xml" title="Chorus-SOP RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/Chorus_SOP/blog/atom.xml" title="Chorus-SOP Atom Feed"><link rel="stylesheet" href="/Chorus_SOP/assets/css/styles.b040b797.css">
+<script src="/Chorus_SOP/assets/js/runtime~main.df1a2575.js" defer="defer"></script>
+<script src="/Chorus_SOP/assets/js/main.55b28bee.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Chorus_SOP/"><div class="navbar__logo"><img src="/Chorus_SOP/img/chorus-ai.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/Chorus_SOP/img/chorus-ai.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Home</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/Chorus_SOP/docs/intro">SOPs</a><a class="navbar__item navbar__link" href="/Chorus_SOP/blog">Blog</a></div><div class="navbar__items navbar__items--right"><div class="navbarSearchContainer_Bca1"></div><a href="https://github.com/chorus-ai/Chorus_SOP" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Chorus_SOP/docs/intro">SOP Intro</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/central-processing">Central Processing</a><button aria-label="Expand sidebar category &#x27;Central Processing&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/chart-review">Chart Review</a><button aria-label="Expand sidebar category &#x27;Chart Review&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/common-data-elements">Common Data Elements</a><button aria-label="Expand sidebar category &#x27;Common Data Elements&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-quality">Data Quality</a><button aria-label="Expand sidebar category &#x27;Data Quality&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-requests">Data Requests</a><button aria-label="Expand sidebar category &#x27;Data Requests&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-uploading">Data Uploading</a><button aria-label="Expand sidebar category &#x27;Data Uploading&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/flowsheet-data">Flowsheet Data</a><button aria-label="Expand sidebar category &#x27;Flowsheet Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/freetext-data">Freetext Data</a><button aria-label="Expand sidebar category &#x27;Freetext Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" aria-expanded="true" href="/Chorus_SOP/docs/category/gis-exposure-data">GIS Exposure Data</a><button aria-label="Collapse sidebar category &#x27;GIS Exposure Data&#x27;" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/Chorus_SOP/docs/GIS-Exposure-Data/">Exposome Geocoder – Input Preparation and Usage Guide</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/imaging-data">Imaging Data</a><button aria-label="Expand sidebar category &#x27;Imaging Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/multimodal-linkage">Multimodal Linkage</a><button aria-label="Expand sidebar category &#x27;Multimodal Linkage&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/omop-mapping">OMOP Mapping</a><button aria-label="Expand sidebar category &#x27;OMOP Mapping&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/privacy">Privacy</a><button aria-label="Expand sidebar category &#x27;Privacy&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/structured-ehr-data">Structured EHR Data</a><button aria-label="Expand sidebar category &#x27;Structured EHR Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/waveform-data">Waveform Data</a><button aria-label="Expand sidebar category &#x27;Waveform Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/templates">Templates</a><button aria-label="Expand sidebar category &#x27;Templates&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/deprecated-documentation">Deprecated Documentation</a><button aria-label="Expand sidebar category &#x27;Deprecated Documentation&#x27;" type="button" class="clean-btn menu__caret"></button></div></li></ul></nav><button type="button" title="Collapse sidebar" aria-label="Collapse sidebar" class="button button--secondary button--outline collapseSidebarButton_PEFL"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_kv0_"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/Chorus_SOP/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/Chorus_SOP/docs/category/gis-exposure-data"><span itemprop="name">GIS Exposure Data</span></a><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Exposome Geocoder – Input Preparation and Usage Guide</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><h1>Exposome Geocoder – Input Preparation and Usage Guide</h1>
+<blockquote>
+<p><strong>Note:</strong> This toolkit does <strong>not</strong> require or share any Protected Health Information (PHI).</p>
+</blockquote>
+<p>This repository provides a <strong>reproducible workflow</strong> to geocode patient location data and link the resulting Census Tract (FIPS 11-digit) identifiers with Exposome datasets for environmental exposure analysis.</p>
+<p>This SOP describes the workflow for running codes to geocode patient location data and link latitude and longitude coordinates with exposome datasets. All code will be executed locally at each site. Only the exposure tables containing exposome data will be shared with the central server; no address-level data will be transmitted or stored centrally. Sites should use the most granular address information available to them or latitude/longitude coordinates.</p>
+<blockquote>
+<p><strong>Demo video</strong> <a href="https://drive.google.com/drive/folders/14FdY0lB3WRIiYrgCdeje6NAQI7Q_RB2w?usp=sharing" target="_blank" rel="noopener noreferrer">Watch here</a></p>
+</blockquote>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="-table-of-contents">📑 Table of Contents<a href="#-table-of-contents" class="hash-link" aria-label="Direct link to 📑 Table of Contents" title="Direct link to 📑 Table of Contents">​</a></h2>
+<ul>
+<li><a href="#geocoding-patient-data-for-exposome-linkage">Geocoding Patient Data for Exposome Linkage</a>
+<ul>
+<li><a href="#-table-of-contents">📑 Table of Contents</a></li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#input-options">Input Options</a>
+<ul>
+<li><a href="#option-1-address">Option 1: Address</a></li>
+<li><a href="#option-2-coordinates">Option 2: Coordinates</a></li>
+<li><a href="#option-3-omop-cdm">Option 3: OMOP CDM</a></li>
+</ul>
+</li>
+<li><a href="#UsageGuideForGeocoding">Usage Guide</a>
+<ul>
+<li><a href="#step-1-prepare-input-data">Step 1: Prepare Input Data</a></li>
+<li><a href="#step-2-generate-fips-codes">Step 2: Generate FIPS Codes</a>
+<ul>
+<li><a href="#for-csv-input-option-1--2">For CSV Input (Option 1 &amp; 2)</a></li>
+<li><a href="#for-omop-input-option-3">For OMOP Input (Option 3)</a></li>
+</ul>
+</li>
+<li><a href="#step-3-output-structure">Step 3: Output Structure</a>
+<ul>
+<li><a href="#csv-input-option-1--2">CSV Input (Option 1 &amp; 2)</a></li>
+<li><a href="#omop-input-option-3">OMOP Input (Option 3)</a></li>
+</ul>
+</li>
+<li><a href="#step-4-gis-linkage-with-postgis-exposure-tool">Step 4: GIS Linkage with PostGIS-Exposure Tool</a>
+<ul>
+<li><a href="#prerequisites-for-gis-linkage">Prerequisites for GIS Linkage</a></li>
+<li><a href="#expected-outputs">Expected Outputs</a></li>
+<li><a href="#gis-linkage-workflow">GIS Linkage Workflow</a></li>
+<li><a href="#notes--tips">Notes &amp; Tips</a></li>
+</ul>
+</li>
+<li><a href="#step-5-validate--inspect-outputs">Step 5: Validate &amp; Inspect Outputs</a></li>
+<li><a href="#step-6-optional---site-level-date-shifting">Step 6: Optional - Site-level Date Shifting</a></li>
+<li><a href="#step-7-upload--centralized-de-identification">Step 7: Upload &amp; Centralized De-identification</a></li>
+</ul>
+</li>
+<li><a href="#appendix">Appendix</a>
+<ul>
+<li><a href="#geocoding-workflow">Geocoding Workflow</a>
+<ul>
+<li><a href="#method-degauss-toolkit-docker-based">Method: DeGAUSS Toolkit (Docker-based)</a></li>
+<li><a href="#degauss-docker-commands-executed-internally">DeGAUSS Docker Commands (Executed Internally)</a></li>
+<li><a href="#script-highlights">Script Highlights</a>
+<ul>
+<li><a href="#address_to_fipspy-logic">Address_to_FIPS.py Logic</a></li>
+<li><a href="#omop_to_fipspy-logic">OMOP_to_FIPS.py Logic</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="overview">Overview<a href="#overview" class="hash-link" aria-label="Direct link to Overview" title="Direct link to Overview">​</a></h2>
+<p>This workflow uses <strong>two separate Docker containers</strong> to support end-to-end geocoding and data linkage:</p>
+<ol>
+<li>
+<p><strong>Exposome Geocoder Container (<code>prismaplab/exposome-geocoder:1.0.3</code>)</strong><br>
+<!-- -->Performs address or coordinate-based geocoding to generate Census Tract (FIPS 11-digit) codes using <a href="https://degauss.org" target="_blank" rel="noopener noreferrer">DeGAUSS</a> backend tools.</p>
+</li>
+<li>
+<p><strong>Exposome Linkage Container (<code>ghcr.io/chorus-ai/chorus-postgis-sdoh:main</code>)</strong><br>
+<!-- -->Integrates the geocoded outputs with relevant environmental and social determinant datasets to produce analysis-ready files.</p>
+</li>
+</ol>
+<p>Together, these containers enable:</p>
+<ul>
+<li>Address and latitude/longitude-based geocoding</li>
+<li>OMOP CDM geocoding extraction and processing</li>
+<li>GIS linkage with PostGIS-SDoH indices (ADI, SVI, AHRQ)</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="input-options">Input Options<a href="#input-options" class="hash-link" aria-label="Direct link to Input Options" title="Direct link to Input Options">​</a></h2>
+<p>You need to prepare <strong>only ONE</strong> of the following data elements per encounter.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="option-1-address">Option 1: Address<a href="#option-1-address" class="hash-link" aria-label="Direct link to Option 1: Address" title="Direct link to Option 1: Address">​</a></h3>
+<p>Sample input files <a href="https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/address_files/input" target="_blank" rel="noopener noreferrer">here</a></p>
+<ul>
+<li><strong>Format A: Multi-Column Address</strong></li>
+</ul>
+<table><thead><tr><th>street</th><th>city</th><th>state</th><th>zip</th><th>year</th><th>entity_id</th></tr></thead><tbody><tr><td>1250 W 16th St</td><td>Jacksonville</td><td>FL</td><td>32209</td><td>2019</td><td>1</td></tr><tr><td>2001 SW 16th St</td><td>Gainesville</td><td>FL</td><td>32608</td><td>2019</td><td>2</td></tr></tbody></table>
+<blockquote>
+<p><strong>Tip:</strong> Street <strong>and</strong> ZIP are required. Missing these fields may lead to <strong>imprecise geocoding</strong>.</p>
+</blockquote>
+<ul>
+<li><strong>Format B: Single Column Address</strong></li>
+</ul>
+<table><thead><tr><th>address</th><th>year</th><th>entity_id</th></tr></thead><tbody><tr><td>1250 W 16th St Jacksonville FL 32209</td><td>2019</td><td>1</td></tr><tr><td>2001 SW 16th St Gainesville FL 32608</td><td>2019</td><td>2</td></tr></tbody></table>
+<hr>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="optional-supporting-files">Optional Supporting Files<a href="#optional-supporting-files" class="hash-link" aria-label="Direct link to Optional Supporting Files" title="Direct link to Optional Supporting Files">​</a></h4>
+<p>Including the following optional files will help streamline the <strong>end-to-end workflow</strong> between geocoding and exposome linkage:</p>
+<ul>
+<li>
+<p><strong>Important</strong>: Do not date-shift your LOCATION/LOCATION_HISTORY files before linkage. Date shifting (if used) should occur post linkage in Step 4.</p>
+</li>
+<li>
+<p><a href="https://github.com/bihorac-LAB/Exposome/blob/main/Tools/demo/address_files/input/LOCATION.csv" target="_blank" rel="noopener noreferrer"><code>LOCATION.csv</code></a></p>
+</li>
+<li>
+<p><a href="https://github.com/bihorac-LAB/Exposome/blob/main/Tools/demo/address_files/input/LOCATION_HISTORY.csv" target="_blank" rel="noopener noreferrer"><code>LOCATION_HISTORY.csv</code></a></p>
+</li>
+</ul>
+<p>If these files are provided during <strong>geocoding</strong>, the output will automatically include the updated latitude and longitude information required for the <strong>postgis linkage container</strong>.</p>
+<p>If they are <strong>not provided</strong>, users will need to <strong>manually update their LOCATION files</strong> with the geocoded latitude/longitude before executing the commands for linkage.</p>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="locationcsv-follows-cdm-format">LOCATION.csv (Follows CDM format)<a href="#locationcsv-follows-cdm-format" class="hash-link" aria-label="Direct link to LOCATION.csv (Follows CDM format)" title="Direct link to LOCATION.csv (Follows CDM format)">​</a></h5>
+<table><thead><tr><th>location_id</th><th>address_1</th><th>address_2</th><th>city</th><th>state</th><th>zip</th><th>county</th><th>location_source_value</th><th>country_concept_id</th><th>country_source_value</th><th>latitude</th><th>longitude</th></tr></thead><tbody><tr><td>1</td><td>1248 N Blackstone Ave</td><td></td><td>FRESNO</td><td>CA</td><td>93703</td><td></td><td>UNITED STATES OF AMERICA</td><td></td><td>UNITED STATES OF AMERICA</td><td>36.75891146</td><td>-119.7902719</td></tr></tbody></table>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="location_historycsv-follows-cdm-format">LOCATION_HISTORY.csv (Follows CDM format)<a href="#location_historycsv-follows-cdm-format" class="hash-link" aria-label="Direct link to LOCATION_HISTORY.csv (Follows CDM format)" title="Direct link to LOCATION_HISTORY.csv (Follows CDM format)">​</a></h5>
+<table><thead><tr><th>location_id</th><th>relationship_type_concept_id</th><th>domain_id</th><th>entity_id</th><th>start_date</th><th>end_date</th></tr></thead><tbody><tr><td>1</td><td>32848</td><td>1147314</td><td>3763</td><td>1998-01-01</td><td>2020-01-01</td></tr></tbody></table>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="option-2-coordinates">Option 2: Coordinates<a href="#option-2-coordinates" class="hash-link" aria-label="Direct link to Option 2: Coordinates" title="Direct link to Option 2: Coordinates">​</a></h3>
+<p>Sample input files <a href="https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/latlong_files/input" target="_blank" rel="noopener noreferrer">here</a></p>
+<table><thead><tr><th>latitude</th><th>longitude</th><th>entity_id</th></tr></thead><tbody><tr><td>30.353463</td><td>-81.6749</td><td>1</td></tr><tr><td>29.634219</td><td>-82.3433</td><td>2</td></tr></tbody></table>
+<p>As with address-based input, including <code>LOCATION.csv</code> and <code>LOCATION_HISTORY.csv</code> enables seamless downstream processing with the linkage container.</p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="option-3-omop-cdm">Option 3: OMOP CDM<a href="#option-3-omop-cdm" class="hash-link" aria-label="Direct link to Option 3: OMOP CDM" title="Direct link to Option 3: OMOP CDM">​</a></h3>
+<table><thead><tr><th>Table</th><th>Required Columns</th></tr></thead><tbody><tr><td>person</td><td>person_id</td></tr><tr><td>visit_occurrence</td><td>visit_occurrence_id, visit_start_date, visit_end_date, person_id</td></tr><tr><td>location</td><td>location_id, address_1, address_2, city, state, zip, location_source_value, country_concept_id, country_source_value, latitude, longitude</td></tr><tr><td>location_history</td><td>location_id, relationship_type_concept_id, domain_id, entity_id, start_date, end_date</td></tr></tbody></table>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="usage-guide">Usage Guide<a href="#usage-guide" class="hash-link" aria-label="Direct link to Usage Guide" title="Direct link to Usage Guide">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-1-prepare-input-data">Step 1: Prepare Input Data<a href="#step-1-prepare-input-data" class="hash-link" aria-label="Direct link to Step 1: Prepare Input Data" title="Direct link to Step 1: Prepare Input Data">​</a></h3>
+<p>Prepare <strong>only ONE</strong> of the data elements as indicated under the <a href="#input-options">Input Options</a> per encounter.<br>
+<!-- -->For <strong>Option 1 (Address)</strong> or <strong>Option 2 (Coordinates)</strong>, your data must be in a <strong>CSV file</strong> format.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="folder-structure">Folder Structure<a href="#folder-structure" class="hash-link" aria-label="Direct link to Folder Structure" title="Direct link to Folder Structure">​</a></h4>
+<ul>
+<li>Place the CSV file(s) in a dedicated folder<!-- -->
+<ul>
+<li>📂 <code>input_address/</code>  <em>(for address-based data)</em></li>
+<li>📂 <code>input_coordinates/</code>  <em>(for coordinate-based data)</em></li>
+</ul>
+</li>
+<li>Optionally, include:<!-- -->
+<ul>
+<li><code>LOCATION.csv</code></li>
+<li><code>LOCATION_HISTORY.csv</code></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>⚠️ Only <code>.csv</code> files are supported. Convert <code>.xlsx</code> or other formats before running the tool.</p>
+</blockquote>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-2-generate-fips-codes">Step 2: Generate FIPS Codes<a href="#step-2-generate-fips-codes" class="hash-link" aria-label="Direct link to Step 2: Generate FIPS Codes" title="Direct link to Step 2: Generate FIPS Codes">​</a></h3>
+<p><strong>Container:</strong> <code>prismaplab/exposome-geocoder:1.0.3</code><br>
+<!-- -->Ensure <strong>Docker Desktop</strong> is running.</p>
+<p>This step uses the Exposome Geocoder container to:</p>
+<ul>
+<li>Convert addresses or coordinates into latitude/longitude</li>
+<li>Assign 11-digit Census Tract (FIPS) codes</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="for-csv-input-option-1--2">For CSV Input (Option 1 &amp; 2)<a href="#for-csv-input-option-1--2" class="hash-link" aria-label="Direct link to For CSV Input (Option 1 &amp; 2)" title="Direct link to For CSV Input (Option 1 &amp; 2)">​</a></h4>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="for-macos--linux--ubuntu">For macOS / Linux / Ubuntu<a href="#for-macos--linux--ubuntu" class="hash-link" aria-label="Direct link to For macOS / Linux / Ubuntu" title="Direct link to For macOS / Linux / Ubuntu">​</a></h5>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">docker run -it --rm \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -v &quot;$(pwd)&quot;:/workspace \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -e HOST_PWD=&quot;$(pwd)&quot; \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -w /workspace \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  prismaplab/exposome-geocoder:1.0.3 \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  /app/code/Address_to_FIPS.py -i &lt;input_folder_path&gt;</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="for-windows">For Windows<a href="#for-windows" class="hash-link" aria-label="Direct link to For Windows" title="Direct link to For Windows">​</a></h5>
+<ul>
+<li>Open Command Prompt or powershell</li>
+<li>Run command <code>wsl</code></li>
+<li>Execute the same command as above inside your WSL terminal.</li>
+</ul>
+<p>Example:</p>
+<p>If your file is named patients_address.csv inside 📂<code>input_address/</code>, run:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">docker run -it --rm   -v &quot;$(pwd)&quot;:/workspace   -v /var/run/docker.sock:/var/run/docker.sock   -e HOST_PWD=&quot;$(pwd)&quot;   -w /workspace   prismaplab/exposome-geocoder:1.0.3   /app/code/Address_to_FIPS.py -i input_address</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="for-omop-input-option-3">For OMOP Input (Option 3)<a href="#for-omop-input-option-3" class="hash-link" aria-label="Direct link to For OMOP Input (Option 3)" title="Direct link to For OMOP Input (Option 3)">​</a></h4>
+<p>To extract and geocode directly from an OMOP database:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">docker run -it --rm \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -v &quot;$(pwd)&quot;:/workspace \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -e HOST_PWD=&quot;$(pwd)&quot; \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -w /workspace \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  prismaplab/exposome-geocoder:1.0.3 \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  /app/code/OMOP_to_FIPS.py \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    --user &lt;your_username&gt; \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    --password &lt;your_password&gt; \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    --server &lt;server_address&gt; \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    --port &lt;port_number&gt; \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    --database &lt;database_name&gt;</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-3-output-structure">Step 3: Output Structure<a href="#step-3-output-structure" class="hash-link" aria-label="Direct link to Step 3: Output Structure" title="Direct link to Step 3: Output Structure">​</a></h3>
+<p>After running the geocoder container (for Option 1, 2, or 3), the tool generates output files in the <code>output/</code> folder.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="csv-input-option-1--2">CSV Input (Option 1 &amp; 2)<a href="#csv-input-option-1--2" class="hash-link" aria-label="Direct link to CSV Input (Option 1 &amp; 2)" title="Direct link to CSV Input (Option 1 &amp; 2)">​</a></h4>
+<p>Sample outputs <a href="https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/address_files/output" target="_blank" rel="noopener noreferrer">demo/address_files/output</a></p>
+<p><strong>Files Generated</strong>
+Each input file produces:</p>
+<ul>
+<li><code>&lt;filename&gt;_with_coordinates.csv</code> — input + latitude/longitude</li>
+<li><code>&lt;filename&gt;_with_fips.csv</code> — input + FIPS codes</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="output-folder-example"><strong>Output Folder Example</strong><a href="#output-folder-example" class="hash-link" aria-label="Direct link to output-folder-example" title="Direct link to output-folder-example">​</a></h4>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">output/</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── coordinates_from_address_&lt;timestamp&gt;.zip</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── geocoded_fips_codes_&lt;timestamp&gt;.zip</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<blockquote>
+<p><code>&lt;timestamp&gt;</code> indicates when the script was executed (e.g., 20250624_150230).</p>
+</blockquote>
+<p>If <code>LOCATION.csv</code> and <code>LOCATION_HISTORY.csv</code> were included, they are copied to <code>output/</code> but not zipped.</p>
+<p><strong>Zipped Output Columns Description</strong></p>
+<table><thead><tr><th>Column</th><th>Description</th></tr></thead><tbody><tr><td><code>Latitude</code></td><td>Latitude returned from the geocoder</td></tr><tr><td><code>Longitude</code></td><td>Longitude returned from the geocoder</td></tr><tr><td><code>geocode_result</code></td><td>Outcome of geocoding — <code>geocoded</code> for successful matches, <code>Imprecise Geocode</code> if not precise</td></tr><tr><td><code>reason</code></td><td>Failure reason if applicable (see <a href="#reason-column-values">Reason Column Values</a>)</td></tr></tbody></table>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="reason-column-values">Reason Column Values<a href="#reason-column-values" class="hash-link" aria-label="Direct link to Reason Column Values" title="Direct link to Reason Column Values">​</a></h5>
+<p>Used when geocoding fails or is imprecise. Possible values include:</p>
+<ul>
+<li><strong>Hospital address given</strong> – Detected from known hardcoded hospital addresses.</li>
+<li><strong>Street missing</strong> – No street info provided.</li>
+<li><strong>Blank/Incomplete address</strong> – Address is empty or has missing components.</li>
+<li><strong>Zip missing</strong> – ZIP code not provided.</li>
+</ul>
+<blockquote>
+<p>💡 <strong>Tip:</strong> You can expand hospital detection by adding known addresses to <code>HOSPITAL_ADDRESSES</code> in <a href="https://github.com/bihorac-LAB/Exposome/blob/main/Tools/code/Address_to_FIPS.py" target="_blank" rel="noopener noreferrer"><code>Address_to_FIPS.py</code></a>.</p>
+</blockquote>
+<p><strong>Formatting Note for <code>HOSPITAL_ADDRESSES</code>:</strong></p>
+<ul>
+<li>Single-line string</li>
+<li>Lowercase letters and numbers only</li>
+<li>No commas or special characters</li>
+<li>Fields separated by single spaces</li>
+</ul>
+<hr>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="omop-input-option-3">OMOP Input (Option 3)<a href="#omop-input-option-3" class="hash-link" aria-label="Direct link to OMOP Input (Option 3)" title="Direct link to OMOP Input (Option 3)">​</a></h4>
+<p><strong>Sample outputs:</strong> <a href="https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/OMOP/output" target="_blank" rel="noopener noreferrer">demo/OMOP/output</a></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="folder-structure-1"><strong>Folder Structure</strong><a href="#folder-structure-1" class="hash-link" aria-label="Direct link to folder-structure-1" title="Direct link to folder-structure-1">​</a></h4>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">OMOP_data/</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── valid_address/               # Records with address, no lat/lon</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── invalid_lat_lon_address/     # Records missing both address and lat/lon</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── valid_lat_long/              # Records with lat/lon</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">OMOP_FIPS_result/</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── address/</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">│   ├── address_with_coordinates.zip   # CSVs with lat/lon from address</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">│   └── address_with_fips.zip          # CSVs with FIPS codes</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── latlong/</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">│   └── latlong_with_fips.zip          # CSVs with FIPS from coordinates</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">├── invalid/                           # Usually empty; no usable location data</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">LOCATION.csv</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">LOCATION_HISTORY.csv</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-4-gis-linkage-with-postgis-exposure-tool">Step 4: GIS Linkage with PostGIS-Exposure Tool<a href="#step-4-gis-linkage-with-postgis-exposure-tool" class="hash-link" aria-label="Direct link to Step 4: GIS Linkage with PostGIS-Exposure Tool" title="Direct link to Step 4: GIS Linkage with PostGIS-Exposure Tool">​</a></h3>
+<p><strong>Purpose:</strong><br>
+<!-- -->Spatially joins the lat/lon (and FIPS) from geocoding with geospatial indices (ADI, SVI, AHRQ) and produces <code>EXTERNAL_EXPOSURE.csv</code>.</p>
+<hr>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="prerequisites-for-gis-linkage">Prerequisites for GIS Linkage<a href="#prerequisites-for-gis-linkage" class="hash-link" aria-label="Direct link to Prerequisites for GIS Linkage" title="Direct link to Prerequisites for GIS Linkage">​</a></h4>
+<ul>
+<li>Docker installed.</li>
+<li>Clone <a href="https://github.com/chorus-ai/chorus-container-apps/tree/main/postgis-exposure" target="_blank" rel="noopener noreferrer">postgis-exposure repository</a></li>
+<li>Update <code>LOCATION</code>, <code>LOCATION_HISTORY</code> files to include the geocoded lat/lon from Step 2. Not needed if you included these during the geocoding step</li>
+<li>Ensure <code>DATA_SRC_SIMPLE.csv</code> and <code>VRBL_SRC_SIMPLE.csv</code> files are available (centrally managed; no edits required).</li>
+<li><strong>Important:</strong> Do <strong>not</strong> date-shift your <code>LOCATION</code>/<code>LOCATION_HISTORY</code> files before linkage. Date shifting (if used) should occur following this step.</li>
+</ul>
+<p>Sample <code>DATA_SRC_SIMPLE.csv</code> and <code>VRBL_SRC_SIMPLE.csv</code>: <a href="https://github.com/chorus-ai/chorus-container-apps/tree/main/postgis-exposure/csv" target="_blank" rel="noopener noreferrer">here</a></p>
+<hr>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="expected-outputs">Expected Outputs<a href="#expected-outputs" class="hash-link" aria-label="Direct link to Expected Outputs" title="Direct link to Expected Outputs">​</a></h4>
+<ul>
+<li><code>EXTERNAL_EXPOSURE.csv</code> containing linked indices (ADI, SVI, AHRQ metrics).</li>
+</ul>
+<hr>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="gis-linkage-workflow">GIS Linkage Workflow<a href="#gis-linkage-workflow" class="hash-link" aria-label="Direct link to GIS Linkage Workflow" title="Direct link to GIS Linkage Workflow">​</a></h4>
+<ol>
+<li>
+<p><strong>Start Postgres/PostGIS container</strong> following the instructions in the <a href="https://github.com/chorus-ai/chorus-container-apps/tree/main/postgis-exposure" target="_blank" rel="noopener noreferrer">postgis-exposure repository</a>.
+Container sequence: start/load database → ingest location tables → run the produce script.
+<strong>First Docker command (prepares the database):</strong></p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">docker run --rm --name postgis-chorus \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  --env POSTGRES_PASSWORD=dummy \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  --env VARIABLES=134,135,136 \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  --env DATA_SOURCES=1234,5150,9999 \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -v $(pwd)/test/source:/source \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  -d ghcr.io/chorus-ai/chorus-postgis-sdoh:main</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<ul>
+<li>Replace <code>VARIABLES</code> with the comma-separated list of variable IDs you need from <code>VRBL_SRC_SIMPLE.csv</code>.</li>
+<li>Replace <code>DATA_SOURCES</code> with the relevant data source IDs (from <code>DATA_SRC_SIMPLE.csv</code>).</li>
+</ul>
+</li>
+<li>
+<p>** Generate the external exposure file:**</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">docker exec postgis-chorus /app/produce_external_exposure.sh</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+<li>
+<p><strong>Output:</strong> <code>EXTERNAL_EXPOSURE.csv</code> will appear in your mounted directory (e.g., <code>./test/source</code>).</p>
+</li>
+</ol>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="notes--tips">Notes &amp; Tips<a href="#notes--tips" class="hash-link" aria-label="Direct link to Notes &amp; Tips" title="Direct link to Notes &amp; Tips">​</a></h4>
+<ul>
+<li>Run these commands in Terminal (Mac) or WSL/PowerShell/Command Prompt on Windows; WSL is more robust for Docker on Windows.</li>
+<li>If your site needs more variables, expand <code>VARIABLES</code> accordingly.</li>
+<li><strong>Important</strong>: The container may only run successfully once. To rerun, you may need to delete the container and image, then pull the image again.</li>
+</ul>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-5-validate--inspect-outputs">Step 5: Validate &amp; Inspect Outputs<a href="#step-5-validate--inspect-outputs" class="hash-link" aria-label="Direct link to Step 5: Validate &amp; Inspect Outputs" title="Direct link to Step 5: Validate &amp; Inspect Outputs">​</a></h3>
+<ul>
+<li>Open <code>EXTERNAL_EXPOSURE.csv</code>. Confirm:<!-- -->
+<ul>
+<li>Patient ID, lat, lon, FIPS</li>
+<li>ADI, SVI, AHRQ, and VRBL-coded fields</li>
+</ul>
+</li>
+<li>Spot-check a few records for accuracy.</li>
+<li>If errors:<!-- -->
+<ul>
+<li>Ensure <code>LOCATION</code> has valid lat/lon/FIPS</li>
+<li>Confirm <code>VARIABLES</code> and <code>DATA_SOURCES</code> are correct</li>
+<li>Check mount paths</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-6-optional---site-level-date-shifting">Step 6: Optional - Site-level Date Shifting<a href="#step-6-optional---site-level-date-shifting" class="hash-link" aria-label="Direct link to Step 6: Optional - Site-level Date Shifting" title="Direct link to Step 6: Optional - Site-level Date Shifting">​</a></h3>
+<p><strong>Purpose:</strong> Anonymize temporal data while preserving relative timelines.</p>
+<p><strong>Guidelines:</strong></p>
+<ul>
+<li>Apply date shifts locally before upload — do not date-shift prior to GIS linkage.</li>
+<li>Input: <code>EXTERNAL_EXPOSURE.csv</code> (from Step 4)</li>
+<li>Output: <code>EXTERNAL_EXPOSURE_date_shifted.csv</code></li>
+</ul>
+<p>See <a href="https://github.com/chorus-ai/Chorus_SOP/blob/main/sop-website/docs/Privacy/Date-Shifting.mdx" target="_blank" rel="noopener noreferrer">Date Shifting SOP for More Details</a>.</p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-7-upload--centralized-de-identification">Step 7: Upload &amp; Centralized De-identification<a href="#step-7-upload--centralized-de-identification" class="hash-link" aria-label="Direct link to Step 7: Upload &amp; Centralized De-identification" title="Direct link to Step 7: Upload &amp; Centralized De-identification">​</a></h3>
+<ol>
+<li>Upload the (optionally date-shifted) <code>EXTERNAL_EXPOSURE.csv</code> to the central repository.</li>
+<li>The central team will apply further de-identification.</li>
+</ol>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="references--sample-files">References &amp; sample files<a href="#references--sample-files" class="hash-link" aria-label="Direct link to References &amp; sample files" title="Direct link to References &amp; sample files">​</a></h3>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="geocoding">Geocoding<a href="#geocoding" class="hash-link" aria-label="Direct link to Geocoding" title="Direct link to Geocoding">​</a></h4>
+<ul>
+<li>Sample files: <a href="https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo" target="_blank" rel="noopener noreferrer">Geocoding Demo Files</a></li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="gis-linkage">GIS Linkage<a href="#gis-linkage" class="hash-link" aria-label="Direct link to GIS Linkage" title="Direct link to GIS Linkage">​</a></h4>
+<ul>
+<li>Sample files: <a href="https://github.com/chorus-ai/chorus-container-apps/tree/main/postgis-exposure/csv" target="_blank" rel="noopener noreferrer">PostGIS Exposure CSVs</a>
+<ul>
+<li><strong>Site-specific:</strong> <code>LOCATION</code>, <code>LOCATION_HISTORY</code></li>
+<li><strong>Centrally managed:</strong> <code>DATA_SRC_SIMPLE</code>, <code>VRBL_SRC_SIMPLE</code></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="related-office-hours">Related Office Hours<a href="#related-office-hours" class="hash-link" aria-label="Direct link to Related Office Hours" title="Direct link to Related Office Hours">​</a></h2>
+<p>The following office hour sessions provide additional context and demonstrations related to this SOP:</p>
+<ul>
+<li>
+<p><strong>[08-07-25] Integration of GIS and SDoH data with OMOP</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1MHx7YWlWIVC2Dggjzw2uczT3MKyppWZ5/view?usp=share_link" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1v0C3COo1O-KOKpd7haVm5GGmD5gbVR0I/edit?usp=sharing&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Comprehensive session on integrating GIS and social determinants of health data</li>
+</ul>
+</li>
+<li>
+<p><strong>[09-18-25] Processing OMOP location_history table into external_exposure table</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1SWovm3vnf0PVbTC_qS6n3nBuf1dI169L/view?usp=share_link" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1VII2X_NQhM69ZzUDwB6m4hsqDk6E1VCx/edit?usp=share_link&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Technical implementation of location data processing for external exposures</li>
+</ul>
+</li>
+<li>
+<p><strong>[09-25-25] End-to-end demo for capturing GIS data with OMOP</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/118fGVQS0ES0SV4Yu6pxLc4SB0Z08Mq9I/view?usp=share_link" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1-rPcdQp-7TcEF9-Fgwqi12508Mx2seT9/edit?usp=share_link&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Complete workflow demonstration for GIS data capture and processing</li>
+</ul>
+</li>
+<li>
+<p><strong>[10-16-2025] End-to-end demo for capturing GIS data with OMOP or address/latlong</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1L5OdVWa0AsuLKy-o0Uub8JNb1Wojw7ZO/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://drive.google.com/file/d/1-P6edkHBfiAJKSG7ZKlkIj5Ej-u2EZ3G/view?usp=sharing" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Complete workflow demonstration for GIS data capture and processing based on updated documentation</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="appendix">Appendix<a href="#appendix" class="hash-link" aria-label="Direct link to Appendix" title="Direct link to Appendix">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="geocoding-workflow">Geocoding Workflow<a href="#geocoding-workflow" class="hash-link" aria-label="Direct link to Geocoding Workflow" title="Direct link to Geocoding Workflow">​</a></h3>
+<p>This guide outlines the scripts, workflows, and Docker-based DeGAUSS toolkit used for generating Census Tract (FIPS) information from patient data.
+To convert patient location data into Census Tract identifiers (<strong>FIPS11</strong>), we use a two-step geocoding process powered by <a href="https://degauss.org" target="_blank" rel="noopener noreferrer">DeGAUSS</a>, executed locally via Docker containers.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="method-degauss-toolkit-docker-based">Method: DeGAUSS Toolkit (Docker-based)<a href="#method-degauss-toolkit-docker-based" class="hash-link" aria-label="Direct link to Method: DeGAUSS Toolkit (Docker-based)" title="Direct link to Method: DeGAUSS Toolkit (Docker-based)">​</a></h4>
+<p>DeGAUSS consists of two Docker containers:</p>
+<ol>
+<li><strong>Geocoder (3.3.0)</strong> — Converts address to latitude/longitude</li>
+<li><strong>Census Block Group (0.6.0)</strong> — Converts latitude/longitude to Census Tract FIPS codes</li>
+</ol>
+<table><thead><tr><th>Step</th><th>Purpose</th><th>Docker Image</th></tr></thead><tbody><tr><td>1</td><td>Address → Coordinates</td><td><code>ghcr.io/degauss-org/geocoder:3.3.0</code></td></tr><tr><td>2</td><td>Coordinates → FIPS</td><td><code>ghcr.io/degauss-org/census_block_group:0.6.0</code></td></tr></tbody></table>
+<hr>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="degauss-docker-commands-executed-internally">DeGAUSS Docker Commands (Executed Internally)<a href="#degauss-docker-commands-executed-internally" class="hash-link" aria-label="Direct link to DeGAUSS Docker Commands (Executed Internally)" title="Direct link to DeGAUSS Docker Commands (Executed Internally)">​</a></h4>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain"># Step 1: Get Coordinates from Address</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">docker run --rm -v &quot;ABS_OUTPUT_FOLDER:/tmp&quot; \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  ghcr.io/degauss-org/geocoder:3.3.0 \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  /tmp/&lt;your_preprocessed_input.csv&gt; &lt;threshold&gt;</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain"># Step 2: Get FIPS from Coordinates</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">docker run --rm -v &quot;ABS_OUTPUT_FOLDER:/tmp&quot; \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  ghcr.io/degauss-org/census_block_group:0.6.0 \</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">  /tmp/&lt;your_coordinate_output.csv&gt; &lt;year&gt;</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p><strong>Replace values:</strong></p>
+<ul>
+<li><code>ABS_OUTPUT_FOLDER</code> → absolute path to your output directory</li>
+<li><code>&lt;threshold&gt;</code> → numeric value (e.g., <code>0.7</code>)</li>
+<li><code>&lt;year&gt;</code> → either <code>2010</code> or <code>2020</code></li>
+</ul>
+<hr>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="script-highlights">Script Highlights<a href="#script-highlights" class="hash-link" aria-label="Direct link to Script Highlights" title="Direct link to Script Highlights">​</a></h4>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="address_to_fipspy-logic">Address_to_FIPS.py Logic<a href="#address_to_fipspy-logic" class="hash-link" aria-label="Direct link to Address_to_FIPS.py Logic" title="Direct link to Address_to_FIPS.py Logic">​</a></h5>
+<p>This <a href="https://github.com/bihorac-LAB/Exposome/blob/main/Tools/code/Address_to_FIPS.py" target="_blank" rel="noopener noreferrer">script</a> handles CSV-based input:</p>
+<ul>
+<li>Reads CSV files</li>
+<li>Normalizes address or uses lat/lon</li>
+<li>Runs DeGAUSS Docker container to generate:<!-- -->
+<ul>
+<li>Latitude/Longitude (via <code>ghcr.io/degauss-org/geocoder</code>)</li>
+<li>FIPS codes(via <code>ghcr.io/degauss-org/census_block_group</code>)</li>
+</ul>
+</li>
+<li>Packages outputs into ZIP</li>
+</ul>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="omop_to_fipspy-logic">OMOP_to_FIPS.py Logic<a href="#omop_to_fipspy-logic" class="hash-link" aria-label="Direct link to OMOP_to_FIPS.py Logic" title="Direct link to OMOP_to_FIPS.py Logic">​</a></h5>
+<p>This <a href="https://github.com/bihorac-LAB/Exposome/blob/main/Tools/code/OMOP_to_FIPS.py" target="_blank" rel="noopener noreferrer">script</a> integrates directly with <strong>OMOP CDM</strong>:</p>
+<ul>
+<li>Extracts OMOP CDM data</li>
+<li>Categorizes into valid/invalid address or coordinates</li>
+<li>Executes FIPS generation (same as CSV workflow)</li>
+<li>Packages outputs into ZIP</li>
+</ul>
+<hr></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="theme-doc-footer-edit-meta-row row"><div class="col"><a href="https://github.com/chorus-ai/Chorus_SOP/edit/review/sop-website/docs/GIS-Exposure-Data/GIS-Exposure-Data.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_vwxv"><span class="theme-last-updated">Last updated<!-- --> on <b><time datetime="2026-02-05T12:53:03.000Z">Feb 5, 2026</time></b> by <b>Polina Talapova</b></span></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/Chorus_SOP/docs/category/gis-exposure-data"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">GIS Exposure Data</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/Chorus_SOP/docs/category/imaging-data"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Imaging Data</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#-table-of-contents" class="table-of-contents__link toc-highlight">📑 Table of Contents</a></li><li><a href="#overview" class="table-of-contents__link toc-highlight">Overview</a></li><li><a href="#input-options" class="table-of-contents__link toc-highlight">Input Options</a><ul><li><a href="#option-1-address" class="table-of-contents__link toc-highlight">Option 1: Address</a></li><li><a href="#option-2-coordinates" class="table-of-contents__link toc-highlight">Option 2: Coordinates</a></li><li><a href="#option-3-omop-cdm" class="table-of-contents__link toc-highlight">Option 3: OMOP CDM</a></li></ul></li><li><a href="#usage-guide" class="table-of-contents__link toc-highlight">Usage Guide</a><ul><li><a href="#step-1-prepare-input-data" class="table-of-contents__link toc-highlight">Step 1: Prepare Input Data</a></li><li><a href="#step-2-generate-fips-codes" class="table-of-contents__link toc-highlight">Step 2: Generate FIPS Codes</a></li><li><a href="#step-3-output-structure" class="table-of-contents__link toc-highlight">Step 3: Output Structure</a></li><li><a href="#step-4-gis-linkage-with-postgis-exposure-tool" class="table-of-contents__link toc-highlight">Step 4: GIS Linkage with PostGIS-Exposure Tool</a></li><li><a href="#step-5-validate--inspect-outputs" class="table-of-contents__link toc-highlight">Step 5: Validate &amp; Inspect Outputs</a></li><li><a href="#step-6-optional---site-level-date-shifting" class="table-of-contents__link toc-highlight">Step 6: Optional - Site-level Date Shifting</a></li><li><a href="#step-7-upload--centralized-de-identification" class="table-of-contents__link toc-highlight">Step 7: Upload &amp; Centralized De-identification</a></li><li><a href="#references--sample-files" class="table-of-contents__link toc-highlight">References &amp; sample files</a></li></ul></li><li><a href="#related-office-hours" class="table-of-contents__link toc-highlight">Related Office Hours</a></li><li><a href="#appendix" class="table-of-contents__link toc-highlight">Appendix</a><ul><li><a href="#geocoding-workflow" class="table-of-contents__link toc-highlight">Geocoding Workflow</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Chorus_SOP/docs/intro">Tutorial</a></li></ul></div><div class="col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://chorus4ai.org/" target="_blank" rel="noopener noreferrer" class="footer__link-item">Homesite<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://twitter.com/CHoRUS4AI" target="_blank" rel="noopener noreferrer" class="footer__link-item">Twitter<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Chorus_SOP/blog">Blog</a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Chorus-AI, Inc. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>Chorus-SOP Blog</title>
+        <link>https://chorus-ai.io/Chorus_SOP/blog</link>
+        <description>Chorus-SOP Blog</description>
+        <lastBuildDate>Mon, 22 Apr 2024 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>en</language>
+        <item>
+            <title><![CDATA[Welcome]]></title>
+            <link>https://chorus-ai.io/Chorus_SOP/blog/welcome</link>
+            <guid>https://chorus-ai.io/Chorus_SOP/blog/welcome</guid>
+            <pubDate>Mon, 22 Apr 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Hey - welcome to the new CHoRUS SOP site!]]></description>
+            <content:encoded><![CDATA[<p>Hey - welcome to the new CHoRUS SOP site!</p>
+<p>The purpose of this site is to aggregate all <em>validated</em> documentation related to Standards, Data Acquisition, and Tooling into a single location.</p>
+<p>If you have any comments, questions or concerns, please feel free to draft a blog post or create an issue in the <a href="https://github.com/chorus-ai/Chorus_SOP" target="_blank" rel="noopener noreferrer">GitHub repository</a>!</p>]]></content:encoded>
+            <category>hello</category>
+            <category>docusaurus</category>
+        </item>
+    </channel>
+</rss>

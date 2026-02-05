@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-Privacy/SOP-PSO" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.1.1">
+<title data-rh="true">Privacy Tool Operations | Chorus-SOP</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://chorus-ai.io/Chorus_SOP/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://chorus-ai.io/Chorus_SOP/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://chorus-ai.io/Chorus_SOP/docs/Privacy/"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Privacy Tool Operations | Chorus-SOP"><meta data-rh="true" name="description" content="A Standard Operating Protocol for managing the privacy scan tool within the CHORUS project."><meta data-rh="true" property="og:description" content="A Standard Operating Protocol for managing the privacy scan tool within the CHORUS project."><link data-rh="true" rel="icon" href="/Chorus_SOP/img/chorus-ai.png"><link data-rh="true" rel="canonical" href="https://chorus-ai.io/Chorus_SOP/docs/Privacy/"><link data-rh="true" rel="alternate" href="https://chorus-ai.io/Chorus_SOP/docs/Privacy/" hreflang="en"><link data-rh="true" rel="alternate" href="https://chorus-ai.io/Chorus_SOP/docs/Privacy/" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/Chorus_SOP/blog/rss.xml" title="Chorus-SOP RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/Chorus_SOP/blog/atom.xml" title="Chorus-SOP Atom Feed"><link rel="stylesheet" href="/Chorus_SOP/assets/css/styles.b040b797.css">
+<script src="/Chorus_SOP/assets/js/runtime~main.df1a2575.js" defer="defer"></script>
+<script src="/Chorus_SOP/assets/js/main.55b28bee.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Chorus_SOP/"><div class="navbar__logo"><img src="/Chorus_SOP/img/chorus-ai.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/Chorus_SOP/img/chorus-ai.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Home</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/Chorus_SOP/docs/intro">SOPs</a><a class="navbar__item navbar__link" href="/Chorus_SOP/blog">Blog</a></div><div class="navbar__items navbar__items--right"><div class="navbarSearchContainer_Bca1"></div><a href="https://github.com/chorus-ai/Chorus_SOP" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Chorus_SOP/docs/intro">SOP Intro</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/central-processing">Central Processing</a><button aria-label="Expand sidebar category &#x27;Central Processing&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/chart-review">Chart Review</a><button aria-label="Expand sidebar category &#x27;Chart Review&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/common-data-elements">Common Data Elements</a><button aria-label="Expand sidebar category &#x27;Common Data Elements&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-quality">Data Quality</a><button aria-label="Expand sidebar category &#x27;Data Quality&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-requests">Data Requests</a><button aria-label="Expand sidebar category &#x27;Data Requests&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-uploading">Data Uploading</a><button aria-label="Expand sidebar category &#x27;Data Uploading&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/flowsheet-data">Flowsheet Data</a><button aria-label="Expand sidebar category &#x27;Flowsheet Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/freetext-data">Freetext Data</a><button aria-label="Expand sidebar category &#x27;Freetext Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/gis-exposure-data">GIS Exposure Data</a><button aria-label="Expand sidebar category &#x27;GIS Exposure Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/imaging-data">Imaging Data</a><button aria-label="Expand sidebar category &#x27;Imaging Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/multimodal-linkage">Multimodal Linkage</a><button aria-label="Expand sidebar category &#x27;Multimodal Linkage&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/omop-mapping">OMOP Mapping</a><button aria-label="Expand sidebar category &#x27;OMOP Mapping&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" aria-expanded="true" href="/Chorus_SOP/docs/category/privacy">Privacy</a><button aria-label="Collapse sidebar category &#x27;Privacy&#x27;" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/Chorus_SOP/docs/Privacy/Date Shifting">Date Shifting</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/Chorus_SOP/docs/Privacy/">Privacy Tool Operations</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/Chorus_SOP/docs/Privacy/Safe Harboring">Safe Harboring</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/structured-ehr-data">Structured EHR Data</a><button aria-label="Expand sidebar category &#x27;Structured EHR Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/waveform-data">Waveform Data</a><button aria-label="Expand sidebar category &#x27;Waveform Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/templates">Templates</a><button aria-label="Expand sidebar category &#x27;Templates&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/deprecated-documentation">Deprecated Documentation</a><button aria-label="Expand sidebar category &#x27;Deprecated Documentation&#x27;" type="button" class="clean-btn menu__caret"></button></div></li></ul></nav><button type="button" title="Collapse sidebar" aria-label="Collapse sidebar" class="button button--secondary button--outline collapseSidebarButton_PEFL"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_kv0_"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/Chorus_SOP/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/Chorus_SOP/docs/category/privacy"><span itemprop="name">Privacy</span></a><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Privacy Tool Operations</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><h1>SOP for Privacy Scan Tool Operations</h1>
+<p>Version History</p>
+<h1>Purpose</h1>
+<p>This Standard Operating Protocol (SOP) outlines the procedures for using the privacy scan tool to identify and
+manage potential privacy risks in datasets used within the CHORUS project. It is intended for project team
+members who are responsible for data p
+rivacy assessments, risk mitigation, and compliance with privacy
+standards.</p>
+<h1>Procedures</h1>
+<p><strong>STEP 1: INSTALL PRIVACY SCAN TOOL</strong></p>
+<ul>
+<li>Ensure the necessary dependencies are installed:<!-- -->
+<ul>
+<li>Python 3.6 or higher.</li>
+<li>Required Python libraries from requirements.txt in the repository.</li>
+<li>Git for repository cloning.</li>
+</ul>
+</li>
+<li>Clone the Privacy Scan Tool repository from GitHub:<!-- -->
+<ul>
+<li>git clone <a href="https://github.com/chorus-ai/privacy_scan_tool.git" target="_blank" rel="noopener noreferrer">https://github.com/chorus-ai/privacy_scan_tool.git</a></li>
+<li>cd privacy_scan_tooL</li>
+</ul>
+</li>
+<li>install the dependencies by running:<!-- -->
+<ul>
+<li>pip install -r requirements.txt</li>
+</ul>
+</li>
+</ul>
+<p><strong>STEP 2:  PREPARE DATASETS FOR SCANNING</strong></p>
+<ul>
+<li>Ensure datasets are in a suitable format (CSV, JSON, or database connection).</li>
+<li>Anonymize or pseudonymize sensitive fields if necessary before scanning.</li>
+<li>Load the dataset into the Privacy Scan Tool’s input directory or configure a connection string for direct database access.</li>
+</ul>
+<p><strong>STEP 3: CONFIGURE THE SCAN TOOL</strong></p>
+<ul>
+<li>Adjust the tool’s configuration to match the dataset and privacy rules:<!-- -->
+<ul>
+<li>Modify the config.yaml file to set parameters such as:<!-- -->
+<ul>
+<li>Dataset path or database connection details.</li>
+<li>Privacy thresholds (e.g., k-anonymity, l-diversity levels).</li>
+<li>Fields to scan (specify sensitive fields to be evaluated).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Define custom privacy rules if needed by extending the rule set in rules.py.</li>
+</ul>
+<p><strong>STEP 4: EXECUTE THE PRIVACY SCAN</strong></p>
+<ul>
+<li>Run the tool with the following command<!-- -->
+<ul>
+<li>python privacy_scan.py --config config.yaml</li>
+</ul>
+</li>
+<li>Monitor the output for real-time feedback on privacy vulnerabilities. The tool generates a detailed report highlighting any potential risks, categorized based on severity (low, medium, high)</li>
+</ul>
+<p><strong>STEP 5: REVIEW AND INTERPRET RESULTS</strong></p>
+<ul>
+<li>Examine the generated privacy report, which includes:<!-- -->
+<ul>
+<li><strong>Field Name</strong>: Identifies the dataset field evaluated.</li>
+<li><strong>Risk Level</strong>: Severity of the privacy risk (low, medium, high).</li>
+<li><strong>Privacy Violation Type</strong>: Indicates the type of privacy violation (e.g., re-identification risk, insufficient anonymization).</li>
+<li><strong>Recommendation</strong>: Suggested actions to mitigate the risk</li>
+</ul>
+</li>
+</ul>
+<table><thead><tr><th>Field Name</th><th>Risk Level</th><th>Violation Type</th><th>Recommendation</th><th></th></tr></thead><tbody><tr><td>patient_id</td><td>High</td><td>Re-identification Risk</td><td>Apply pseudonymization or remove the field</td><td></td></tr><tr><td>zipcode</td><td>Medium</td><td>Granularity of Location Data</td><td>Aggregate data to 3-digit zip code</td><td></td></tr><tr><td>birthdate</td><td>High</td><td>Direct indentifier</td><td>Use age range instead of exact birthdate</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<p><strong>STEP 6: MITIGATE PRIVACY RISKS</strong></p>
+<ul>
+<li>Apply the recommended mitigations to reduce the identified privacy risks:<!-- -->
+<ul>
+<li>Aggregate, pseudonymize, or anonymize sensitive fields.</li>
+<li>Re-run the Privacy Scan Tool after applying mitigations to ensure risks have been addressed.</li>
+</ul>
+</li>
+</ul>
+<p><strong>STEP 7: DOCUMENT THE PROCESS AND RESULTS</strong></p>
+<ul>
+<li>Document each scan and the mitigations applied for future reference. Include:<!-- -->
+<ul>
+<li>Date of the scan.</li>
+<li>Dataset description.</li>
+<li>Privacy violations detected.</li>
+<li>Actions taken to resolve the violations.</li>
+</ul>
+</li>
+<li>Store the report and documentation securely in a version-controlled repository:<!-- -->
+<ul>
+<li>GitHub: Upload the report to the privacy-scan-reports folder, using a branch named scan-report-[dataset-name] for version control.</li>
+<li>Naming convention for the report should be PrivacyScanReport_DatasetName_MMDDYY</li>
+</ul>
+</li>
+</ul>
+<p><strong>STEP 8: SHARE THE PRIVACY REPORT WITH THE TEAM</strong></p>
+<ul>
+<li>Once the scan is complete and privacy risks have been mitigated, distribute the final privacy report to the designated team members for review:<!-- -->
+<ul>
+<li><strong>Email</strong>: Share the report with the Data Privacy Lead (e.g., Jane Doe at <a href="mailto:jane.doe@organization.org" target="_blank" rel="noopener noreferrer">jane.doe@organization.org</a>)</li>
+<li><strong>GitHub</strong>: Commit and push the report to the repository for broader team access.</li>
+</ul>
+</li>
+</ul>
+<p><strong>STEP 9: CONTINUOUS MONITORING AND RE-ASSESSMENT</strong></p>
+<ul>
+<li>Set a regular schedule for privacy scans based on data updates (e.g., monthly or quarterly).</li>
+<li>Periodically review the scan tool configuration and update the privacy rules to align with evolving privacy standards and regulatory requirements (e.g., GDPR, HIPAA).</li>
+</ul>
+<h1>Reference Materials</h1>
+<ol>
+<li><a href="https://github.com/chorus-ai/privacy_scan_tool" target="_blank" rel="noopener noreferrer">Privacy Scan Tool GitHub Repository</a></li>
+<li><a href="https://gdpr.eu/" target="_blank" rel="noopener noreferrer">GDPR Overview</a></li>
+<li><a href="https://www.hipaajournal.com/hipaa-compliance-checklist/" target="_blank" rel="noopener noreferrer">HIPPA Compliance Guide</a></li>
+<li><a href="https://en.wikipedia.org/wiki/K-anonymity" target="_blank" rel="noopener noreferrer">K-Anonymity</a></li>
+</ol>
+<h1>SOP for Privacy Scan Tool Operations</h1>
+<p><a href="https://github.com/chorus-ai/privacy_scan_tool/commits/main" target="_blank" rel="noopener noreferrer">Version History</a></p>
+<h1>Purpose</h1>
+<p>This Standard Operating Protocol (SOP) outlines the detailed procedures for utilizing the privacy scan tool to effectively identify, assess, and manage potential privacy risks in datasets used within the CHORUS project. It is intended for project team members responsible for conducting data privacy assessments, implementing risk mitigation strategies, and ensuring compliance with relevant privacy standards and regulations. By adhering to this SOP, team members will be able to systematically approach privacy risk management, thereby safeguarding sensitive information and maintaining the integrity of the project&#x27;s data handling processes.</p>
+<h1>Procedures Option 1 - Locally installed program</h1>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-1-install-privacy-scan-tool">Step 1: Install Privacy Scan Tool<a href="#step-1-install-privacy-scan-tool" class="hash-link" aria-label="Direct link to Step 1: Install Privacy Scan Tool" title="Direct link to Step 1: Install Privacy Scan Tool">​</a></h2>
+<ul>
+<li>Ensure the necessary dependencies are installed:<!-- -->
+<ul>
+<li>Python 3.8 or higher.</li>
+<li>Required Python libraries from <code>requirements.txt</code> in the repository.</li>
+<li>Git for repository cloning.</li>
+</ul>
+</li>
+<li>Running the program in a virtual environment is strongly recommended.</li>
+<li>Clone the Privacy Scan Tool repository from GitHub:<!-- -->
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">git clone https://github.com/chorus-ai/ChoRUS_Privacy_Scan.git</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">cd ChoRUS_Privacy_Scan</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+<li>Install the dependencies by running:<!-- -->
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">pip install -r requirements.txt</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-2-prepare-datasets-for-scanning">Step 2: Prepare Datasets for Scanning<a href="#step-2-prepare-datasets-for-scanning" class="hash-link" aria-label="Direct link to Step 2: Prepare Datasets for Scanning" title="Direct link to Step 2: Prepare Datasets for Scanning">​</a></h2>
+<ul>
+<li>Ensure datasets are in a suitable format (CSV, or database connection).</li>
+<li>Anonymize or pseudonymize sensitive fields if necessary before scanning.</li>
+<li>Load the dataset into the Privacy Scan Tool’s input directory or configure a connection string for direct database access.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-3-configure-the-scan-tool">Step 3: Configure the Scan Tool<a href="#step-3-configure-the-scan-tool" class="hash-link" aria-label="Direct link to Step 3: Configure the Scan Tool" title="Direct link to Step 3: Configure the Scan Tool">​</a></h2>
+<ul>
+<li>Adjust the tool’s configuration to match the dataset and privacy rules:<!-- -->
+<ul>
+<li>Modify the <code>config.py</code> file to set parameters such as:<!-- -->
+<ul>
+<li>Dataset path or database connection details.</li>
+<li>The Model location is there is a model update.</li>
+<li>Data Sample Size</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-4-execute-the-privacy-scan">Step 4: Execute the Privacy Scan<a href="#step-4-execute-the-privacy-scan" class="hash-link" aria-label="Direct link to Step 4: Execute the Privacy Scan" title="Direct link to Step 4: Execute the Privacy Scan">​</a></h2>
+<ul>
+<li>Run the tool with the following command:<!-- -->
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">python main.py</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+<li>Monitor the output for real-time feedback on privacy vulnerabilities. The tool generates a detailed report with a risk score highlighting any potential risk. As an additional recommendation, consider setting a privacy risk threshold, for example, 0.95. However, each site should determine the best threshold for their needs and circumstances.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-5-review-and-interpret-results">Step 5: Review and Interpret Results<a href="#step-5-review-and-interpret-results" class="hash-link" aria-label="Direct link to Step 5: Review and Interpret Results" title="Direct link to Step 5: Review and Interpret Results">​</a></h2>
+<ul>
+<li>Examine the generated privacy report, which includes:<!-- -->
+<ul>
+<li><strong>Column</strong>: Identifies the dataset field evaluated.</li>
+<li><strong>Predicted Result</strong>: Severity of the privacy risk (1 for High risk).</li>
+<li><strong>Unique Values</strong>: The total unique value of the sample data.</li>
+<li><strong>Unique Ratio</strong>: The ratio of unique values vs total values.</li>
+<li><strong>Value Counts</strong>: The top unique values and their counts, which is a preview of the detailed data.</li>
+</ul>
+</li>
+</ul>
+<table><thead><tr><th><strong>Column</strong></th><th><strong>Predicted Result</strong></th><th><strong>Unique Values</strong></th><th><strong>Unique Ratio</strong></th><th><strong>Value Counts</strong></th></tr></thead><tbody><tr><td><code>patient_id</code></td><td>1.0</td><td>500</td><td>1.0</td><td>MR001:1,MR002:2 ...</td></tr><tr><td><code>zipcode</code></td><td>1.0</td><td>100</td><td>0.2</td><td>233:20,772:15,</td></tr><tr><td><code>birthdate</code></td><td>1.0</td><td>100</td><td>0.1</td><td>Not Available</td></tr></tbody></table>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-6-mitigate-privacy-risks">Step 6: Mitigate Privacy Risks<a href="#step-6-mitigate-privacy-risks" class="hash-link" aria-label="Direct link to Step 6: Mitigate Privacy Risks" title="Direct link to Step 6: Mitigate Privacy Risks">​</a></h2>
+<ul>
+<li>Apply the recommended mitigations (decided locally by each site) to reduce the identified privacy risks:<!-- -->
+<ul>
+<li>Aggregate, pseudonymize, or anonymize sensitive fields.</li>
+<li>Re-run the Privacy Scan Tool after applying mitigations to ensure risks have been addressed.</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-7-document-the-process-and-results">Step 7: Document the Process and Results<a href="#step-7-document-the-process-and-results" class="hash-link" aria-label="Direct link to Step 7: Document the Process and Results" title="Direct link to Step 7: Document the Process and Results">​</a></h2>
+<ul>
+<li>Document each scan and the mitigations applied for future reference. Include:<!-- -->
+<ul>
+<li>Date of the scan.</li>
+<li>Dataset description.</li>
+<li>Privacy violations detected.</li>
+<li>Actions taken to resolve the violations.</li>
+</ul>
+</li>
+<li>Store the report and documentation securely in a version-controlled repository:<!-- -->
+<ul>
+<li><strong>GitHub</strong>: Upload the report to the <code>privacy-scan-reports</code> folder, using a branch named <code>scan-report-[dataset-name]</code> for version control.</li>
+<li>Naming convention for the report should be <code>PrivacyScanReport_DatasetName_MMDDYY</code>.</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-8-share-the-privacy-report-with-the-team">Step 8: Share the Privacy Report with the Team<a href="#step-8-share-the-privacy-report-with-the-team" class="hash-link" aria-label="Direct link to Step 8: Share the Privacy Report with the Team" title="Direct link to Step 8: Share the Privacy Report with the Team">​</a></h2>
+<ul>
+<li>Once the scan is complete and privacy risks have been mitigated, distribute the final privacy report to the designated team members for review:<!-- -->
+<ul>
+<li><strong>Email:</strong> Share the report with the Data Privacy Lead (e.g., Luyao Chen at <a href="mailto:luyao.chen@uth.tmc.edu" target="_blank" rel="noopener noreferrer">luyao.chen@uth.tmc.edu</a>).</li>
+<li><strong>GitHub:</strong> Commit and push the report to the repository for broader team access.</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-9-continuous-monitoring-and-re-assessment">Step 9: Continuous Monitoring and Re-Assessment<a href="#step-9-continuous-monitoring-and-re-assessment" class="hash-link" aria-label="Direct link to Step 9: Continuous Monitoring and Re-Assessment" title="Direct link to Step 9: Continuous Monitoring and Re-Assessment">​</a></h2>
+<ul>
+<li>Set a regular schedule for privacy scans based on data updates (e.g., monthly or quarterly).</li>
+<li>Periodically review the scan tool configuration and update the privacy rules to align with evolving privacy standards and regulatory requirements (e.g., GDPR, HIPAA).</li>
+</ul>
+<h1>Procedures Option 2  - Scan with a container</h1>
+<p>Another option is to run it via a docker container.</p>
+<p>The below portion explains how to run the Privacy Scan Tool using a Docker container, including details on setting up the configuration file <code>config.json</code> and specifying the necessary directories for volumes.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-1-prepare-the-data">Step 1: Prepare the data<a href="#step-1-prepare-the-data" class="hash-link" aria-label="Direct link to Step 1: Prepare the data" title="Direct link to Step 1: Prepare the data">​</a></h2>
+<ul>
+<li>Create a subfolder to hold input the csv files: <code>data_folder</code>for the below samples.</li>
+<li>Create a subfolder to hold the output: <code>output</code> for the samples below.</li>
+<li>Configuring the <code>config.json</code></li>
+</ul>
+<p>The <code>config.json</code> file contains various settings for the Privacy Scan Tool. Below is an example configuration file:</p>
+<div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">{</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;available_dbs&quot;: {</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">        &quot;PSQL_MIMIC&quot;: [&quot;postgresql://userid:password@192.168.0.100:5432/mimic&quot;, &quot;mimiciii&quot;],</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">        &quot;LOCAL_TEXT_FILES&quot;: &quot;LOCAL_TEXT_FILES&quot;</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    },</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;text_file_location&quot;: &quot;./data_folder&quot;, </span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;output_folder&quot;: &quot;./output&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;result_file&quot;: &quot;phi_scan_results.xls&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;selected_db&quot;: &quot;PSQL_MIMIC&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;tables_to_scan&quot; : [&quot;admissions&quot;,&quot;patients&quot;],</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;data_profile_sample_size&quot;: 1000,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;PHI_SCAN_MODEL&quot;: &quot;./phi_scan/XGBClassifier(V220240514).json&quot;</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">}</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="configuration-details">Configuration Details<a href="#configuration-details" class="hash-link" aria-label="Direct link to Configuration Details" title="Direct link to Configuration Details">​</a></h4>
+<ul>
+<li><strong>available_dbs</strong>: Lists the available databases.<!-- -->
+<ul>
+<li><code>PSQL_MIMIC</code>: PostgreSQL database connection details and the database name.</li>
+<li><code>LOCAL_TEXT_FILES</code>: Placeholder for using local text files.</li>
+</ul>
+</li>
+<li><strong>text_file_location</strong>: Directory location for local text files.</li>
+<li><strong>output_folder</strong>: Directory for the output results.</li>
+<li><strong>result_file</strong>: Name of the result file.</li>
+<li><strong>selected_db</strong>: Specifies the database to use (<code>PSQL_MIMIC</code> or <code>LOCAL_TEXT_FILES</code>).</li>
+<li><strong>tables_to_scan</strong>: Lists the tables or files to scan.</li>
+<li><strong>data_profile_sample_size</strong>: Specifies the sample size for data profiling.</li>
+<li><strong>PHI_SCAN_MODEL</strong>: Path to the PHI scan model.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="configurations-for-different-scenarios">Configurations for Different Scenarios<a href="#configurations-for-different-scenarios" class="hash-link" aria-label="Direct link to Configurations for Different Scenarios" title="Direct link to Configurations for Different Scenarios">​</a></h4>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="using-local-text-files">Using Local Text Files<a href="#using-local-text-files" class="hash-link" aria-label="Direct link to Using Local Text Files" title="Direct link to Using Local Text Files">​</a></h5>
+<p>If you want to use local text files, modify the <code>config.json</code> as follows:</p>
+<div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">{</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;available_dbs&quot;: {</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">        &quot;PSQL_MIMIC&quot;: [&quot;postgresql://userid:password@192.168.0.100:5432/mimic&quot;, &quot;mimiciii&quot;],</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">        &quot;LOCAL_TEXT_FILES&quot;: &quot;LOCAL_TEXT_FILES&quot;</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    },</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;text_file_location&quot;: &quot;./data_folder&quot;, </span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;output_folder&quot;: &quot;./output&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;result_file&quot;: &quot;phi_scan_results.xls&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;selected_db&quot;: &quot;LOCAL_TEXT_FILES&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;tables_to_scan&quot; : [&quot;noshow.csv&quot;],</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;data_profile_sample_size&quot;: 1000,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;PHI_SCAN_MODEL&quot;: &quot;./phi_scan/XGBClassifier(V220240514).json&quot;</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">}</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="using-postgresql-database">Using PostgreSQL Database<a href="#using-postgresql-database" class="hash-link" aria-label="Direct link to Using PostgreSQL Database" title="Direct link to Using PostgreSQL Database">​</a></h5>
+<p>If you want to use a PostgreSQL database, ensure the <code>config.json</code> is set as follows:</p>
+<div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">{</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;available_dbs&quot;: {</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">        &quot;PSQL_MIMIC&quot;: [&quot;postgresql://userid:password@192.168.0.100:5432/mimic&quot;, &quot;mimiciii&quot;],</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">        &quot;LOCAL_TEXT_FILES&quot;: &quot;LOCAL_TEXT_FILES&quot;</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    },</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;text_file_location&quot;: &quot;./data_folder&quot;, </span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;output_folder&quot;: &quot;./output&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;result_file&quot;: &quot;phi_scan_results.xls&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;selected_db&quot;: &quot;PSQL_MIMIC&quot;,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;tables_to_scan&quot; : [&quot;person&quot;,&quot;observation&quot;],</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;data_profile_sample_size&quot;: 1000,</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">    &quot;PHI_SCAN_MODEL&quot;: &quot;./phi_scan/XGBClassifier(V220240514).json&quot;</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">}</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p>Ensure you replace <code>postgresql://userid:password@192.168.0.100:5432/mimic</code> with your actual PostgreSQL connection details and the database name.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-2--command-to-run-the-docker-container">Step 2:  Command to Run the Docker Container<a href="#step-2--command-to-run-the-docker-container" class="hash-link" aria-label="Direct link to Step 2:  Command to Run the Docker Container" title="Direct link to Step 2:  Command to Run the Docker Container">​</a></h2>
+<p>To run the Privacy Scan Tool Docker container, use the following command:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">docker run --rm -v $(pwd)/output:/privacy_scan_tool/output -v $(pwd)/config.json:/privacy_scan_tool/config.json -v $(pwd)/data_folder:/privacy_scan_tool/data_folder ghcr.io/chorus-ai/chorus-privacy:main</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="explanation-of-the-docker-command">Explanation of the Docker Command<a href="#explanation-of-the-docker-command" class="hash-link" aria-label="Direct link to Explanation of the Docker Command" title="Direct link to Explanation of the Docker Command">​</a></h3>
+<ul>
+<li><code>docker run</code>: Runs the Docker container.</li>
+<li><code>-v $(pwd)/output:/privacy_scan_tool/output</code>: Maps the local <code>output</code> directory to the container&#x27;s <code>/privacy_scan_tool/output</code> directory.</li>
+<li><code>-v $(pwd)/config.json:/privacy_scan_tool/config.json</code>: Maps the local <code>config.json</code> file to the container&#x27;s <code>/privacy_scan_tool/config.json</code> file.</li>
+<li><code>--rm</code>: remove the container after finishing.</li>
+<li><code>-v $(pwd)/data_folder:/privacy_scan_tool/data_folder</code>: Maps the local <code>data_folder</code> directory to the container&#x27;s <code>/privacy_scan_tool/data_folder</code> directory.</li>
+<li><code>ghcr.io/chorus-ai/chorus-privacy:main</code>: Specifies the Docker image to use.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-3-running-the-tool">Step 3 Running the Tool<a href="#step-3-running-the-tool" class="hash-link" aria-label="Direct link to Step 3 Running the Tool" title="Direct link to Step 3 Running the Tool">​</a></h2>
+<ol>
+<li>Ensure Docker is installed and running on your machine.</li>
+<li>Place the <code>config.json</code> file in the current working directory.</li>
+<li>Place any required data files in the <code>data_folder</code> directory.</li>
+<li>Execute the Docker run command provided above.</li>
+<li>The tool will process the data according to the configuration and output the results to the specified <code>output</code> directory.</li>
+<li>If the table has no or less than 1000 records. A warning message will be put into the output folder as well.</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-4-review-the-result-and-follow-up-on-the-risks-found--same-as-step-6-onwards-of-option-1">Step 4 Review the result and follow up on the risks found ( same as step 6 onwards of option 1).<a href="#step-4-review-the-result-and-follow-up-on-the-risks-found--same-as-step-6-onwards-of-option-1" class="hash-link" aria-label="Direct link to Step 4 Review the result and follow up on the risks found ( same as step 6 onwards of option 1)." title="Direct link to Step 4 Review the result and follow up on the risks found ( same as step 6 onwards of option 1).">​</a></h2>
+<p>The result is output in the  <code>output</code> folder. The format is the same as step 5 of option 1.</p>
+<h1>Reference Materials</h1>
+<ol>
+<li><a href="https://github.com/chorus-ai/privacy_scan_tool" target="_blank" rel="noopener noreferrer">Privacy Scan Tool GitHub Repository</a></li>
+<li><a href="https://gdpr.eu/" target="_blank" rel="noopener noreferrer">GDPR Overview</a></li>
+<li><a href="https://www.hipaajournal.com/hipaa-compliance-guide/" target="_blank" rel="noopener noreferrer">HIPAA Compliance Guide</a></li>
+<li><a href="https://en.wikipedia.org/wiki/K-anonymity" target="_blank" rel="noopener noreferrer">K-Anonymity</a></li>
+</ol></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="theme-doc-footer-edit-meta-row row"><div class="col"><a href="https://github.com/chorus-ai/Chorus_SOP/edit/review/sop-website/docs/Privacy/Privacy.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_vwxv"><span class="theme-last-updated">Last updated<!-- --> on <b><time datetime="2026-02-05T12:53:03.000Z">Feb 5, 2026</time></b> by <b>Polina Talapova</b></span></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/Chorus_SOP/docs/Privacy/Date Shifting"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Date Shifting</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/Chorus_SOP/docs/Privacy/Safe Harboring"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Safe Harboring</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#step-1-install-privacy-scan-tool" class="table-of-contents__link toc-highlight">Step 1: Install Privacy Scan Tool</a></li><li><a href="#step-2-prepare-datasets-for-scanning" class="table-of-contents__link toc-highlight">Step 2: Prepare Datasets for Scanning</a></li><li><a href="#step-3-configure-the-scan-tool" class="table-of-contents__link toc-highlight">Step 3: Configure the Scan Tool</a></li><li><a href="#step-4-execute-the-privacy-scan" class="table-of-contents__link toc-highlight">Step 4: Execute the Privacy Scan</a></li><li><a href="#step-5-review-and-interpret-results" class="table-of-contents__link toc-highlight">Step 5: Review and Interpret Results</a></li><li><a href="#step-6-mitigate-privacy-risks" class="table-of-contents__link toc-highlight">Step 6: Mitigate Privacy Risks</a></li><li><a href="#step-7-document-the-process-and-results" class="table-of-contents__link toc-highlight">Step 7: Document the Process and Results</a></li><li><a href="#step-8-share-the-privacy-report-with-the-team" class="table-of-contents__link toc-highlight">Step 8: Share the Privacy Report with the Team</a></li><li><a href="#step-9-continuous-monitoring-and-re-assessment" class="table-of-contents__link toc-highlight">Step 9: Continuous Monitoring and Re-Assessment</a></li><li><a href="#step-1-prepare-the-data" class="table-of-contents__link toc-highlight">Step 1: Prepare the data</a></li><li><a href="#step-2--command-to-run-the-docker-container" class="table-of-contents__link toc-highlight">Step 2:  Command to Run the Docker Container</a><ul><li><a href="#explanation-of-the-docker-command" class="table-of-contents__link toc-highlight">Explanation of the Docker Command</a></li></ul></li><li><a href="#step-3-running-the-tool" class="table-of-contents__link toc-highlight">Step 3 Running the Tool</a></li><li><a href="#step-4-review-the-result-and-follow-up-on-the-risks-found--same-as-step-6-onwards-of-option-1" class="table-of-contents__link toc-highlight">Step 4 Review the result and follow up on the risks found ( same as step 6 onwards of option 1).</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Chorus_SOP/docs/intro">Tutorial</a></li></ul></div><div class="col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://chorus4ai.org/" target="_blank" rel="noopener noreferrer" class="footer__link-item">Homesite<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://twitter.com/CHoRUS4AI" target="_blank" rel="noopener noreferrer" class="footer__link-item">Twitter<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Chorus_SOP/blog">Blog</a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Chorus-AI, Inc. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

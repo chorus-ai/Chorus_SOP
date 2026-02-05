@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-Data-Quality/Local Data Quality" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.1.1">
+<title data-rh="true">Local Data Quality | Chorus-SOP</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://chorus-ai.io/Chorus_SOP/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://chorus-ai.io/Chorus_SOP/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://chorus-ai.io/Chorus_SOP/docs/Data-Quality/Local Data Quality"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Local Data Quality | Chorus-SOP"><meta data-rh="true" name="description" content="SOP for implementing iterative updates to ETL logic at sites based on quality checks"><meta data-rh="true" property="og:description" content="SOP for implementing iterative updates to ETL logic at sites based on quality checks"><link data-rh="true" rel="icon" href="/Chorus_SOP/img/chorus-ai.png"><link data-rh="true" rel="canonical" href="https://chorus-ai.io/Chorus_SOP/docs/Data-Quality/Local Data Quality"><link data-rh="true" rel="alternate" href="https://chorus-ai.io/Chorus_SOP/docs/Data-Quality/Local Data Quality" hreflang="en"><link data-rh="true" rel="alternate" href="https://chorus-ai.io/Chorus_SOP/docs/Data-Quality/Local Data Quality" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/Chorus_SOP/blog/rss.xml" title="Chorus-SOP RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/Chorus_SOP/blog/atom.xml" title="Chorus-SOP Atom Feed"><link rel="stylesheet" href="/Chorus_SOP/assets/css/styles.b040b797.css">
+<script src="/Chorus_SOP/assets/js/runtime~main.df1a2575.js" defer="defer"></script>
+<script src="/Chorus_SOP/assets/js/main.55b28bee.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Chorus_SOP/"><div class="navbar__logo"><img src="/Chorus_SOP/img/chorus-ai.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/Chorus_SOP/img/chorus-ai.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Home</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/Chorus_SOP/docs/intro">SOPs</a><a class="navbar__item navbar__link" href="/Chorus_SOP/blog">Blog</a></div><div class="navbar__items navbar__items--right"><div class="navbarSearchContainer_Bca1"></div><a href="https://github.com/chorus-ai/Chorus_SOP" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Chorus_SOP/docs/intro">SOP Intro</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/central-processing">Central Processing</a><button aria-label="Expand sidebar category &#x27;Central Processing&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/chart-review">Chart Review</a><button aria-label="Expand sidebar category &#x27;Chart Review&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/common-data-elements">Common Data Elements</a><button aria-label="Expand sidebar category &#x27;Common Data Elements&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" aria-expanded="true" href="/Chorus_SOP/docs/category/data-quality">Data Quality</a><button aria-label="Collapse sidebar category &#x27;Data Quality&#x27;" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/Chorus_SOP/docs/Data-Quality/Local Data Quality">Local Data Quality</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/Chorus_SOP/docs/Data-Quality/Central Data Quality Reports">Central Data Quality Reports</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-requests">Data Requests</a><button aria-label="Expand sidebar category &#x27;Data Requests&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-uploading">Data Uploading</a><button aria-label="Expand sidebar category &#x27;Data Uploading&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/flowsheet-data">Flowsheet Data</a><button aria-label="Expand sidebar category &#x27;Flowsheet Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/freetext-data">Freetext Data</a><button aria-label="Expand sidebar category &#x27;Freetext Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/gis-exposure-data">GIS Exposure Data</a><button aria-label="Expand sidebar category &#x27;GIS Exposure Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/imaging-data">Imaging Data</a><button aria-label="Expand sidebar category &#x27;Imaging Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/multimodal-linkage">Multimodal Linkage</a><button aria-label="Expand sidebar category &#x27;Multimodal Linkage&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/omop-mapping">OMOP Mapping</a><button aria-label="Expand sidebar category &#x27;OMOP Mapping&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/privacy">Privacy</a><button aria-label="Expand sidebar category &#x27;Privacy&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/structured-ehr-data">Structured EHR Data</a><button aria-label="Expand sidebar category &#x27;Structured EHR Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/waveform-data">Waveform Data</a><button aria-label="Expand sidebar category &#x27;Waveform Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/templates">Templates</a><button aria-label="Expand sidebar category &#x27;Templates&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/deprecated-documentation">Deprecated Documentation</a><button aria-label="Expand sidebar category &#x27;Deprecated Documentation&#x27;" type="button" class="clean-btn menu__caret"></button></div></li></ul></nav><button type="button" title="Collapse sidebar" aria-label="Collapse sidebar" class="button button--secondary button--outline collapseSidebarButton_PEFL"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_kv0_"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/Chorus_SOP/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/Chorus_SOP/docs/category/data-quality"><span itemprop="name">Data Quality</span></a><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Local Data Quality</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><h1>Approved</h1>
+<h1>Standard Operating Protocol for Investigating Data Quality at Sites</h1>
+<h1>Purpose</h1>
+<p>This SOP outlines a step-by-step approach for evaluating local data quality at sites, submitting quality overviews to the central location, and reviewing and updating an ETL implementation accordingly.</p>
+<p>Note that the workflow below can be followed without submitting full data extracts to the central location. The only interaction with the central cloud that is necessary is the submission of the Ares Index files, which contain aggregate counts of concepts and data quality overviews.</p>
+<p>We expect that this iterative workflow will be executed more frequently than the full data extracts will be submitted.</p>
+<p><img decoding="async" loading="lazy" alt="Local Site QC Workflow" src="/Chorus_SOP/assets/images/CHoRUS_Local_QC-64f31b42da5c0e15dd5baaa0286fb7a0.png" width="3023" height="2568" class="img_ev3q"></p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-1-execute-qc-tools-locally">STEP 1: EXECUTE QC TOOLS LOCALLY<a href="#step-1-execute-qc-tools-locally" class="hash-link" aria-label="Direct link to STEP 1: EXECUTE QC TOOLS LOCALLY" title="Direct link to STEP 1: EXECUTE QC TOOLS LOCALLY">​</a></h2>
+<p>The first step in evaluating the quality and characteristics of your site&#x27;s data locally is launching the QC tools against those data. There are three main tools we&#x27;re focused on within CHoRUS, and that we plan to update in order to tailor to CHoRUS-specific needs as those needs become better defined.</p>
+<p>These tools are:</p>
+<ul>
+<li><a href="https://github.com/OHDSI/Achilles" target="_blank" rel="noopener noreferrer">Achilles</a>
+<ul>
+<li>Achilles executes a variety of characterization-oriented queries against an OMOP dataset to extract patient counts per concept, prevalence over time, etc.</li>
+</ul>
+</li>
+<li><a href="https://github.com/OHDSI/DataQualityDashboard" target="_blank" rel="noopener noreferrer">Data Quality Dashboard - DQD</a>
+<ul>
+<li>DQD runs a variety of quality-oriented queries against an OMOP dataset to evaluate those data with regard to their completeness, conformance, and plausibility</li>
+</ul>
+</li>
+<li><a href="https://github.com/OHDSI/AresIndexer" target="_blank" rel="noopener noreferrer">AresIndexer</a>
+<ul>
+<li>The AresIndexer augments output from the above tools to prepare it for visualization in the <a href="https://github.com/OHDSI/AresIndexer" target="_blank" rel="noopener noreferrer">Ares</a> web application</li>
+</ul>
+</li>
+</ul>
+<p>In order to execute these processes locally, you can either:</p>
+<p><strong>(A)</strong> configure a local R environment and run the relevant packages against your database</p>
+<ul>
+<li>Head to the <a href="https://ohdsi.github.io/Hades/rSetup.html" target="_blank" rel="noopener noreferrer">OHDSI Hades</a> documentation page and follow the R-setup instructions for your operating system</li>
+<li>Install the three packages and their associated dependencies above using the <code>remotes</code> package<!-- -->
+<ul>
+<li>e.g. <code>remotes::install_github(&quot;/OHDSI/DataQualityDashboard&quot;)</code></li>
+</ul>
+</li>
+<li>Connect to your database and execute the packages in the following order<!-- -->
+<ul>
+<li><code>Achilles::achilles(...)</code></li>
+<li><code>DataQualityDashboard::executeDqChecks(...)</code></li>
+<li><code>Achilles::exportToAres(...)</code></li>
+<li><code>Achilles::performTemporalCharacterization(...)</code>
+<ul>
+<li>Note that this function is not essential and may fail if you don&#x27;t have concepts that meet its time constraints (36 months)</li>
+</ul>
+</li>
+<li><code>AresIndexer::augmentConceptFiles(...)</code></li>
+</ul>
+</li>
+<li>Note that an example of the above process flow can be found in the <a href="https://github.com/chorus-ai/chorus-container-apps/blob/main/etl/src/etl/ares.R" target="_blank" rel="noopener noreferrer">chorus-container-apps repo</a></li>
+<li>Once you&#x27;ve executed these checks, you should have a data index directory with the <a href="https://github.com/chorus-ai/StandardsModule/discussions/86#discussioncomment-8411235" target="_blank" rel="noopener noreferrer">following structure</a></li>
+</ul>
+<p><strong>(B)</strong> use the existing <code>chorus-etl</code> Docker image that has all components and dependencies installed and available</p>
+<ul>
+<li>pull the public <code>chorus-etl</code> Docker image<!-- -->
+<ul>
+<li><code>docker pull ghcr.io/chorus-ai/chorus-etl:main</code></li>
+</ul>
+</li>
+<li>launch it either locally or in the cloud<!-- -->
+<ul>
+<li>if on local machine:<!-- -->
+<ul>
+<li>run the command <code>docker run -it --entrypoint /bin/bash --name chorus-etl -v /&lt;some_local_dir&gt;:/ares_output ghcr.io/chorus-ai/chorus-etl:main</code>
+<ul>
+<li>This command launches a container based on the <code>chorus-etl</code> image and places you at a command line console for that container</li>
+</ul>
+</li>
+<li>install a command-line editor like nano <code>&gt; apt update &amp;&amp; apt install nano</code></li>
+<li>update the <code>ares.R</code> file in the container using the editor above to reference your database connection parameters<!-- -->
+<ul>
+<li>you will need to set the <code>aresDataRoot</code> parameter to <code>/ares_output</code>, which you mounted in the command above</li>
+</ul>
+</li>
+<li>launch the file above <code>Rscript /opt/etl/src/etl/ares.R &lt;args if desired&gt;</code></li>
+</ul>
+</li>
+<li>if in data site&#x27;s cloud:<!-- -->
+<ul>
+<li>send an email to <a href="mailto:jared.houghtaling@tuftsmedicine.org" target="_blank" rel="noopener noreferrer">Jared</a> to discuss details</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Once the checks have executed successfully, you should be able to see a dated data index in <code>&lt;some_local_dir&gt;</code> that you configured in the Docker command above</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="relevant-resources">Relevant Resources<a href="#relevant-resources" class="hash-link" aria-label="Direct link to Relevant Resources" title="Direct link to Relevant Resources">​</a></h3>
+<p><em>OFFICE HOURS</em></p>
+<ul>
+<li><a href="https://drive.google.com/drive/folders/1b2EhWZ08OvEjFj5A0uCAbR0SsbQan7e6?usp=drive_link" target="_blank" rel="noopener noreferrer">Achilles Output</a></li>
+<li><a href="https://drive.google.com/drive/folders/134ZQEQEOQCbjjFRHqHoxI-gDdsZJ9Utl?usp=drive_link" target="_blank" rel="noopener noreferrer">DQD Output</a></li>
+<li><a href="https://drive.google.com/drive/folders/16Z8ssUC0kolGJzjWqe2jd5ONFVef2neL?usp=drive_link" target="_blank" rel="noopener noreferrer">DQD Overview</a></li>
+<li><a href="https://drive.google.com/drive/folders/19gv_n-WFqoFAM-1MHNpRa5heEUbrjoOg?usp=drive_link" target="_blank" rel="noopener noreferrer">Ares Overview</a></li>
+<li><a href="https://drive.google.com/drive/folders/1LAmtp7kygnqr1vuGvKS3wmTvbn5gmNZ_?usp=drive_link" target="_blank" rel="noopener noreferrer">Contributing Ares Results Pt 1</a></li>
+<li><a href="https://drive.google.com/file/d/1VTgdQYw5IyLvV2wmT9Zv4u-0O7pH5bGB/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Constructing Ares Index for Upload</a></li>
+</ul>
+<p><em>OTHERS</em></p>
+<ul>
+<li><a href="https://github.com/chorus-ai/StandardsModule/discussions/86" target="_blank" rel="noopener noreferrer">DQD Discussion</a></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-2-access-upload-portal-and-submit-release-index">STEP 2: ACCESS UPLOAD PORTAL AND SUBMIT RELEASE INDEX<a href="#step-2-access-upload-portal-and-submit-release-index" class="hash-link" aria-label="Direct link to STEP 2: ACCESS UPLOAD PORTAL AND SUBMIT RELEASE INDEX" title="Direct link to STEP 2: ACCESS UPLOAD PORTAL AND SUBMIT RELEASE INDEX">​</a></h2>
+<p>One member from each Data Generating Site (DGS) will receive an external user access credential to the MGH Azure cloud environment. With this credential, you will be able to access the external cloud portal to upload results and view ares.</p>
+<p>The DGS portal (scripted <a href="https://github.com/chorus-ai/chorus-container-apps/tree/main/www-dgs" target="_blank" rel="noopener noreferrer">here</a> and built into <a href="https://github.com/chorus-ai/chorus-container-apps/pkgs/container/chorus-www-dgs" target="_blank" rel="noopener noreferrer"><code>chorus-www-dgs</code></a>) will have links to two locations:</p>
+<ul>
+<li>
+<p>An Ares web application instance with the following sources:</p>
+<ul>
+<li>Ingested Data Releases for Each DGS + MERGE</li>
+<li>Approved Data Releases for Each DGS + MERGE</li>
+<li>Remote Data Releases for Each DGS</li>
+</ul>
+</li>
+<li>
+<p>An AresIndex upload portal, where you can upload a compressed (.zip) copy of your release index</p>
+<ul>
+<li>e.g. <code>20240203.zip</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>IF</strong> you would like to deploy the Ares web application locally for tracking data quality and characterization at your site, we have built a <a href="https://github.com/chorus-ai/chorus-container-apps/pkgs/container/chorus-ares" target="_blank" rel="noopener noreferrer">Docker image</a> and provided <a href="https://github.com/chorus-ai/chorus-container-apps/blob/main/ares/README.md" target="_blank" rel="noopener noreferrer">documentation</a> to get you started.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="relevant-resources-1">Relevant Resources<a href="#relevant-resources-1" class="hash-link" aria-label="Direct link to Relevant Resources" title="Direct link to Relevant Resources">​</a></h3>
+<p><em>OFFICE HOURS</em></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/13K-AiFgHVMRbLO5pvONdvsPg7a382WNo/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Deploy Ares Web App Locally</a></li>
+<li><em>A Standards office hour session walking through this upload workflow is planned</em></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-3-review-recently-submitted-releases-in-ares">STEP 3: REVIEW RECENTLY SUBMITTED RELEASE(S) IN ARES<a href="#step-3-review-recently-submitted-releases-in-ares" class="hash-link" aria-label="Direct link to STEP 3: REVIEW RECENTLY SUBMITTED RELEASE(S) IN ARES" title="Direct link to STEP 3: REVIEW RECENTLY SUBMITTED RELEASE(S) IN ARES">​</a></h2>
+<p>As mentioned in STEP 2, a user from each DGS will have access to the external Ares portal. Here, that user will be able to review Ares results from their site and compare those results to other sites within the network.</p>
+<p>Note that each DGS will appear three separate times in this Ares view:</p>
+<ol>
+<li>Releases that have been ingested in the cloud but not approved</li>
+<li>Releases that have been approved for integration into the CHoRUS analytics enclave</li>
+<li>Releases that describe the state of your CHoRUS data locally (created by you in STEP 1)</li>
+</ol>
+<p>In your review, it&#x27;s important to investigate and understand any issues in the data quality tab for your particular source release, and then link those issues with potential logic and/or mapping updates in a future ETL version.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="relevant-resources-2">Relevant Resources<a href="#relevant-resources-2" class="hash-link" aria-label="Direct link to Relevant Resources" title="Direct link to Relevant Resources">​</a></h3>
+<p><em>OFFICE HOURS</em></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1MTzRHX0whhjGNhlB0YqpO7_VBqNEfW1G/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Review Ares Results to Evaluate for Data Challenge</a></li>
+<li><a href="https://drive.google.com/file/d/1bSiJLrYkvWRILe4HDBP50htg3YiQhF54/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Use Ares to Update ETL Logic</a></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-4-meet-with-standards-team-to-evaluate-results-and-define-next-steps">STEP 4: MEET WITH STANDARDS TEAM TO EVALUATE RESULTS AND DEFINE NEXT STEPS<a href="#step-4-meet-with-standards-team-to-evaluate-results-and-define-next-steps" class="hash-link" aria-label="Direct link to STEP 4: MEET WITH STANDARDS TEAM TO EVALUATE RESULTS AND DEFINE NEXT STEPS" title="Direct link to STEP 4: MEET WITH STANDARDS TEAM TO EVALUATE RESULTS AND DEFINE NEXT STEPS">​</a></h2>
+<p><a href="mailto:Marta.Alvarez@tuftsmedicine.org" target="_blank" rel="noopener noreferrer">Marty Alvarez</a> is the point of contact for scheduling one-on-one meetings with the Standards Team. Most DGS have already scheduled and participated in these meetings; we anticipate they will become very useful and targeted once DGS have uploaded data that can be discussed in detail.</p>
+<p>These discussions will likely evaluate severity of quality checks, ability of DGS data to support downstream CHoRUS analytics, and priorities for updating the ETL and mappings appropriately.</p>
+<p>It could be that a meeting is not necessary and the source release submission represents a data update with no logic changes rather than data stemming from new logic. If so, the DGS can skip STEP 4 and proceed to STEP 5.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="step-5-implement-prioritized-updates-and-re-run-etl"><strong>STEP 5: IMPLEMENT PRIORITIZED UPDATES AND RE-RUN ETL</strong><a href="#step-5-implement-prioritized-updates-and-re-run-etl" class="hash-link" aria-label="Direct link to step-5-implement-prioritized-updates-and-re-run-etl" title="Direct link to step-5-implement-prioritized-updates-and-re-run-etl">​</a></h2>
+<p>Following a meeting and review together with the Standards Team (should that be necessary), each DGS will need to work to implement any necessary changes to the ETL logic, and to update/validate any associated mappings.</p>
+<p>This iterative update process will likely be multidisciplinary, requiring input from data engineers, clinicians, informaticists, or ontologists.</p>
+<p>The process itself is essential in curating high-quality data extracts and, ultimately, supporting meaningful analytics downstream.</p>
+<p>Following updates, the DGS can return to Step 1, re-executing the quality checks and proceeding</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="related-office-hours">Related Office Hours<a href="#related-office-hours" class="hash-link" aria-label="Direct link to Related Office Hours" title="Direct link to Related Office Hours">​</a></h2>
+<p>The following office hour sessions provide additional context and demonstrations related to this SOP:</p>
+<ul>
+<li>
+<p><strong>[06-15-2023] Data Quality Dashboard (DQD)</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/17zvBNjF8kKTnOkNRqsiJuo9qAryzoKH4/view?usp=sharing" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1_ssquNQylV5U1RJc0TVyb3RkK90a2c-Q/edit?usp=sharing&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Introduction to Data Quality Dashboard tools and methodology</li>
+</ul>
+</li>
+<li>
+<p><strong>[07-06-2023] DQD Output Demo</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1-dtosCR5pvtJ-DDAYazTlXlkllXj4YRL/view?usp=sharing" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1C-vxe6PZR2nCCCv_-MZl9oD63M_U-4Zh/edit?usp=sharing&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Demonstration of DQD output interpretation and analysis</li>
+</ul>
+</li>
+<li>
+<p><strong>[10-26-23] Review and Prioritization of DQD Results, and Discussion of DQD Issue Severity</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1E8yRjp4r1oLsC9vJrceOMxg94ByQAbTT/view?usp=sharing" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/15kr8OTvjKSrm1VzWtf0ENF9NV4zfIKh6/edit?usp=sharing&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Detailed session on prioritizing and addressing DQD findings</li>
+</ul>
+</li>
+<li>
+<p><strong>[05-02-24] Using ARES to assess data readiness for the upcoming CHoRUS challenge</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1MTzRHX0whhjGNhlB0YqpO7_VBqNEfW1G/view?usp=sharing" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1uTTYGfez0GjLotEwfMyTcslnE_1A8EiM/edit?usp=sharing&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Practical application of ARES for data quality assessment</li>
+</ul>
+</li>
+<li>
+<p><strong>[02-15-24] Constructing the Ares Index for Upload</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1VTgdQYw5IyLvV2wmT9Zv4u-0O7pH5bGB/view?usp=sharing" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/18rdxQwAy-SGhvr7b2Mmi0GCNikRQ1NAC/edit?usp=sharing&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Technical guidance on ARES index construction and upload</li>
+</ul>
+</li>
+<li>
+<p><strong>[03-07-24] Deploying Ares locally and Mapping Data</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/13K-AiFgHVMRbLO5pvONdvsPg7a382WNo/view?usp=sharing" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1M80zs_H7JN5FOrSi_HhfZ-YZ79AakKRz/edit?usp=sharing&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Local deployment and configuration of ARES tools</li>
+</ul>
+</li>
+</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="theme-doc-footer-edit-meta-row row"><div class="col"><a href="https://github.com/chorus-ai/Chorus_SOP/edit/review/sop-website/docs/Data-Quality/Evaluating-Quality-At-Sites.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_vwxv"><span class="theme-last-updated">Last updated<!-- --> on <b><time datetime="2026-02-05T12:53:03.000Z">Feb 5, 2026</time></b> by <b>Polina Talapova</b></span></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/Chorus_SOP/docs/category/data-quality"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Data Quality</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/Chorus_SOP/docs/Data-Quality/Central Data Quality Reports"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Central Data Quality Reports</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#step-1-execute-qc-tools-locally" class="table-of-contents__link toc-highlight">STEP 1: EXECUTE QC TOOLS LOCALLY</a><ul><li><a href="#relevant-resources" class="table-of-contents__link toc-highlight">Relevant Resources</a></li></ul></li><li><a href="#step-2-access-upload-portal-and-submit-release-index" class="table-of-contents__link toc-highlight">STEP 2: ACCESS UPLOAD PORTAL AND SUBMIT RELEASE INDEX</a><ul><li><a href="#relevant-resources-1" class="table-of-contents__link toc-highlight">Relevant Resources</a></li></ul></li><li><a href="#step-3-review-recently-submitted-releases-in-ares" class="table-of-contents__link toc-highlight">STEP 3: REVIEW RECENTLY SUBMITTED RELEASE(S) IN ARES</a><ul><li><a href="#relevant-resources-2" class="table-of-contents__link toc-highlight">Relevant Resources</a></li></ul></li><li><a href="#step-4-meet-with-standards-team-to-evaluate-results-and-define-next-steps" class="table-of-contents__link toc-highlight">STEP 4: MEET WITH STANDARDS TEAM TO EVALUATE RESULTS AND DEFINE NEXT STEPS</a></li><li><a href="#step-5-implement-prioritized-updates-and-re-run-etl" class="table-of-contents__link toc-highlight"><strong>STEP 5: IMPLEMENT PRIORITIZED UPDATES AND RE-RUN ETL</strong></a></li><li><a href="#related-office-hours" class="table-of-contents__link toc-highlight">Related Office Hours</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Chorus_SOP/docs/intro">Tutorial</a></li></ul></div><div class="col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://chorus4ai.org/" target="_blank" rel="noopener noreferrer" class="footer__link-item">Homesite<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://twitter.com/CHoRUS4AI" target="_blank" rel="noopener noreferrer" class="footer__link-item">Twitter<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Chorus_SOP/blog">Blog</a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Chorus-AI, Inc. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

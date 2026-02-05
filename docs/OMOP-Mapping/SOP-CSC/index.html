@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-OMOP-Mapping/SOP-CSC" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.1.1">
+<title data-rh="true">Concept Set Creation in Atlas | Chorus-SOP</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://chorus-ai.io/Chorus_SOP/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://chorus-ai.io/Chorus_SOP/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://chorus-ai.io/Chorus_SOP/docs/OMOP-Mapping/SOP-CSC"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Concept Set Creation in Atlas | Chorus-SOP"><meta data-rh="true" name="description" content="An SOP for general conventions related to creating, reviewing, and managing Concept Sets in B2AI OHDSI Atlas"><meta data-rh="true" property="og:description" content="An SOP for general conventions related to creating, reviewing, and managing Concept Sets in B2AI OHDSI Atlas"><link data-rh="true" rel="icon" href="/Chorus_SOP/img/chorus-ai.png"><link data-rh="true" rel="canonical" href="https://chorus-ai.io/Chorus_SOP/docs/OMOP-Mapping/SOP-CSC"><link data-rh="true" rel="alternate" href="https://chorus-ai.io/Chorus_SOP/docs/OMOP-Mapping/SOP-CSC" hreflang="en"><link data-rh="true" rel="alternate" href="https://chorus-ai.io/Chorus_SOP/docs/OMOP-Mapping/SOP-CSC" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/Chorus_SOP/blog/rss.xml" title="Chorus-SOP RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/Chorus_SOP/blog/atom.xml" title="Chorus-SOP Atom Feed"><link rel="stylesheet" href="/Chorus_SOP/assets/css/styles.b040b797.css">
+<script src="/Chorus_SOP/assets/js/runtime~main.df1a2575.js" defer="defer"></script>
+<script src="/Chorus_SOP/assets/js/main.55b28bee.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Chorus_SOP/"><div class="navbar__logo"><img src="/Chorus_SOP/img/chorus-ai.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/Chorus_SOP/img/chorus-ai.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Home</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/Chorus_SOP/docs/intro">SOPs</a><a class="navbar__item navbar__link" href="/Chorus_SOP/blog">Blog</a></div><div class="navbar__items navbar__items--right"><div class="navbarSearchContainer_Bca1"></div><a href="https://github.com/chorus-ai/Chorus_SOP" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Chorus_SOP/docs/intro">SOP Intro</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/central-processing">Central Processing</a><button aria-label="Expand sidebar category &#x27;Central Processing&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/chart-review">Chart Review</a><button aria-label="Expand sidebar category &#x27;Chart Review&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/common-data-elements">Common Data Elements</a><button aria-label="Expand sidebar category &#x27;Common Data Elements&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-quality">Data Quality</a><button aria-label="Expand sidebar category &#x27;Data Quality&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-requests">Data Requests</a><button aria-label="Expand sidebar category &#x27;Data Requests&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/data-uploading">Data Uploading</a><button aria-label="Expand sidebar category &#x27;Data Uploading&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/flowsheet-data">Flowsheet Data</a><button aria-label="Expand sidebar category &#x27;Flowsheet Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/freetext-data">Freetext Data</a><button aria-label="Expand sidebar category &#x27;Freetext Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/gis-exposure-data">GIS Exposure Data</a><button aria-label="Expand sidebar category &#x27;GIS Exposure Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/imaging-data">Imaging Data</a><button aria-label="Expand sidebar category &#x27;Imaging Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/multimodal-linkage">Multimodal Linkage</a><button aria-label="Expand sidebar category &#x27;Multimodal Linkage&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" aria-expanded="true" href="/Chorus_SOP/docs/category/omop-mapping">OMOP Mapping</a><button aria-label="Collapse sidebar category &#x27;OMOP Mapping&#x27;" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/Chorus_SOP/docs/OMOP-Mapping/SOP-CUT">Cataloging Unmapped Terms</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/Chorus_SOP/docs/OMOP-Mapping/SOP-CSC">Concept Set Creation in Atlas</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/Chorus_SOP/docs/OMOP-Mapping/SOP-CVoM">Clinical Validation of Mappings</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/Chorus_SOP/docs/OMOP-Mapping/OMOP-Domain-Definition">OMOP Domains</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/privacy">Privacy</a><button aria-label="Expand sidebar category &#x27;Privacy&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/structured-ehr-data">Structured EHR Data</a><button aria-label="Expand sidebar category &#x27;Structured EHR Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/waveform-data">Waveform Data</a><button aria-label="Expand sidebar category &#x27;Waveform Data&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/templates">Templates</a><button aria-label="Expand sidebar category &#x27;Templates&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/Chorus_SOP/docs/category/deprecated-documentation">Deprecated Documentation</a><button aria-label="Expand sidebar category &#x27;Deprecated Documentation&#x27;" type="button" class="clean-btn menu__caret"></button></div></li></ul></nav><button type="button" title="Collapse sidebar" aria-label="Collapse sidebar" class="button button--secondary button--outline collapseSidebarButton_PEFL"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_kv0_"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/Chorus_SOP/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/Chorus_SOP/docs/category/omop-mapping"><span itemprop="name">OMOP Mapping</span></a><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Concept Set Creation in Atlas</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><h1>Approved</h1>
+<h1>Standard Operating Protocol: Concept Set Creation for Selected Data Elements in OHDSI Atlas</h1>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="purpose">Purpose<a href="#purpose" class="hash-link" aria-label="Direct link to Purpose" title="Direct link to Purpose">​</a></h2>
+<p>This SOP provides standardized instructions for creating, reviewing, and managing Concept Sets in <a href="https://ca-b2ai-www-dgs.redbush-0f9d0a70.eastus2.azurecontainerapps.io/atlas/#/conceptsets" target="_blank" rel="noopener noreferrer">B2AI OHDSI Atlas</a> for selected data elements (e.g., measurements, conditions, drugs, procedures, observations) from <a href="https://docs.google.com/document/d/1_Cs5jx_SFv4TjtD0-nx0te0wmIhPsfsaUFE4lJHJIB8/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Tier 1</a>. Concept sets (also referred to as conceptsets or codesets) are curated, reusable semantic groupings of OMOP standard or classification concepts that operationalize a specific clinical idea or research variable. A concept set may include a single concept or multiple related concepts, depending on how the idea is represented in the vocabulary. They are used to operationalize meaning within the OMOP CDM framework, supporting cohort definitions, phenotype algorithms, and analytic queries.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="scope">Scope<a href="#scope" class="hash-link" aria-label="Direct link to Scope" title="Direct link to Scope">​</a></h2>
+<p>This SOP applies to all activities involving the definition, creation, validation, and maintenance of concept sets in OHDSI Atlas for use within the OMOP CDM. It encompasses cohort development, phenotype construction, variable standardization, and the reuse of concept sets across observational research and analytics.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="applicable-roles-and-responsibilities">Applicable Roles and Responsibilities<a href="#applicable-roles-and-responsibilities" class="hash-link" aria-label="Direct link to Applicable Roles and Responsibilities" title="Direct link to Applicable Roles and Responsibilities">​</a></h3>
+<p>This SOP is intended for the following roles:</p>
+<ul>
+<li><strong>Data Scientists</strong>: may serve as the primary concept set creators at contributing sites. They translate clinical definitions into executable logic, select appropriate OMOP standard concepts, and ensure consistency with study goals and modeling strategies.</li>
+<li><strong>Data Analysts</strong>: may create concept sets to support cohort logic, inclusion/exclusion criteria, and study endpoints. They ensure that the selected concepts align with study protocols and analytic frameworks.</li>
+<li><strong>Vocabulary Specialists</strong>: may create or review concept sets with a focus on ensuring the use of standard concepts, domain correctness, vocabulary integrity, and semantic alignment. They play a key role in validating and refining concept sets before use.</li>
+<li><strong>Study Designers and Epidemiologists</strong>: may initiate concept set creation to operationalize research definitions and phenotypes. Their contributions focus on ensuring conceptual clarity and consistency with clinical objectives and study design.</li>
+<li><strong>Subject Matter Experts (Clinicians at Contributing Sites)</strong>: may participate in the creation or review of concept sets by contributing real-world clinical knowledge, identifying edge cases, and ensuring terminology reflects site-specific documentation and clinical nuance.</li>
+</ul>
+<p>All roles are expected to adhere to the procedures outlined in this SOP to promote consistency, reusability, and semantic interoperability within and across research studies.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="glossary">Glossary<a href="#glossary" class="hash-link" aria-label="Direct link to Glossary" title="Direct link to Glossary">​</a></h2>
+<table><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody><tr><td><strong>Concept Set</strong></td><td>A named and versioned set of one or more OMOP standard concepts used to define inclusion/exclusion logic in a cohort or analysis.</td></tr><tr><td><strong>Data Element</strong></td><td>A meaningful clinical unit (e.g., lab test, diagnosis, medication) used as a building block in defining phenotypes, cohort criteria, and analytic variables in OHDSI Atlas.</td></tr><tr><td><strong>OHDSI Atlas</strong></td><td>A web-based platform for cohort and concept set design using OMOP CDM and OHDSI Standardized Vocabularies.</td></tr><tr><td><strong>Standard Concept</strong></td><td>A concept in the OMOP CDM vocabulary where the standard_concept field is set to &#x27;S&#x27; in the CONCEPT table. Standard concepts serve as the target for mapping source codes and are used for creating concept sets and conducting standardized analyses across datasets.</td></tr><tr><td><strong>Concept Set Expression</strong></td><td>The logic that defines which standard concepts are included in a concept set, based on user-selected concepts, use of <code>Descendants</code>, and <code>Exclude</code> flags. It determines the final semantic scope of the concept set used in cohort logic.</td></tr><tr><td><strong>Included Concepts</strong></td><td>The resolved list of all standard concepts included in a concept set, after applying descendants and exclusions from the Concept Set Expression. These are the actual concept IDs used in cohort generation and analysis.</td></tr><tr><td><strong>Included Source Codes</strong></td><td>The list of non-standard source codes (e.g., ICD-10, CPT4) that are mapped to the included standard concepts. Useful for understanding what upstream source codes will be captured by the concept set.</td></tr><tr><td><strong>RC (Record Count)</strong></td><td>The number of individual records in the OMOP CDM that are mapped directly to the selected concept. This reflects how frequently that specific concept (without descendants) appears across CDM tables.</td></tr><tr><td><strong>DRC (Descendant Record Count)</strong></td><td>The number of records in the CDM mapped to the selected concept and all of its descendant concepts in the vocabulary hierarchy. This value provides a broader measure of how often the clinical idea represented by the parent concept appears in the data.</td></tr><tr><td><strong>PC (Person Count)</strong></td><td>The number of distinct persons in the CDM who have at least one record coded with the selected concept (without descendants). This helps estimate how many unique patients are directly associated with the concept.</td></tr><tr><td><strong>DPC (Descendant Person Count)</strong></td><td>The number of distinct persons in the CDM who have at least one record coded with the selected concept or any of its descendants. This shows the overall patient population that could be captured when the concept is used with the “include descendants” option.</td></tr><tr><td><strong>Optimize</strong></td><td>A utility in the Concept Set Expression editor that removes unnecessary child concepts when a parent concept is included with <code>Descendants</code>, simplifying the expression without changing the underlying concept inclusion.</td></tr><tr><td><strong>Descendants Checkbox</strong></td><td>A flag in ATLAS used during concept selection to automatically include all semantic children of the selected concept based on vocabulary hierarchies.</td></tr><tr><td><strong>Exclude Checkbox</strong></td><td>A flag used to remove a concept (and optionally its descendants) from a concept set, typically used to refine broad inclusions or remove off-target concepts.</td></tr><tr><td><strong>Cohort Definition</strong></td><td>A structured, logic-based specification in ATLAS used to identify a group of persons who meet specific criteria over time, using one or more concept sets.</td></tr><tr><td><strong>Phenotype (computable)</strong></td><td>A structured algorithm that identifies individuals in health data who meet specific clinical criteria. These criteria are typically expressed using diagnosis codes, procedures, drug exposures, measurements, observations, and temporal relationships, allowing the algorithm to be executed on standardized datasets.</td></tr><tr><td><strong>Phenotype (OHDSI)</strong></td><td>A computable clinical definition developed using OHDSI tools (e.g., ATLAS) and OMOP CDM conventions to ensure consistency, transparency, and reproducibility across data sources. It includes standardized concept sets, logic for defining patient inclusion/exclusion, temporal constraints, and optional validation artifacts.</td></tr><tr><td><strong>Phenotype (biological)</strong></td><td>The observable physical, physiological, biochemical, or behavioral traits of an organism resulting from the interaction between its genotype and environmental exposures. This definition is included solely for disambiguation purposes and is not applicable to OMOP/OHDSI-based phenotyping workflows.</td></tr></tbody></table>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="responsibilities">Responsibilities<a href="#responsibilities" class="hash-link" aria-label="Direct link to Responsibilities" title="Direct link to Responsibilities">​</a></h2>
+<table><thead><tr><th>Role</th><th>Responsibilities</th></tr></thead><tbody><tr><td><strong>Concept Set Author</strong></td><td>Creates and curates concept sets following this SOP.</td></tr><tr><td><strong>Reviewer / Validator</strong></td><td>Reviews concept sets for semantic accuracy and reusability.</td></tr><tr><td><strong>Standards Team (with a Vocabulary expert)</strong></td><td>Approves new or updated concept sets and ensures compliance with vocabulary and standards governance.</td></tr><tr><td><strong>Atlas Admin</strong></td><td>Maintains OHDSI Atlas access and manages user roles.</td></tr></tbody></table>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="prerequisites">Prerequisites<a href="#prerequisites" class="hash-link" aria-label="Direct link to Prerequisites" title="Direct link to Prerequisites">​</a></h2>
+<ul>
+<li>Access to a running CHoRUS B2AI instance of OHDSI Atlas with vocabulary data loaded (including custom vocabularies) and assigned authoring rights.</li>
+<li>Familiarity with OMOP CDM, standard vocabulary structure, and domain-specific logic.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="concept-set-creation-workflow">Concept Set Creation Workflow<a href="#concept-set-creation-workflow" class="hash-link" aria-label="Direct link to Concept Set Creation Workflow" title="Direct link to Concept Set Creation Workflow">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-1-define-the-clinical-intent">Step 1: Define the Clinical Intent<a href="#step-1-define-the-clinical-intent" class="hash-link" aria-label="Direct link to Step 1: Define the Clinical Intent" title="Direct link to Step 1: Define the Clinical Intent">​</a></h3>
+<ul>
+<li>Select the data element to represent from the <a href="https://docs.google.com/document/d/1_Cs5jx_SFv4TjtD0-nx0te0wmIhPsfsaUFE4lJHJIB8/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Phenotype-based list of data elements - Tier 1 Justification</a>.</li>
+<li>Define the Clinical Justification in the document if it has not yet been provided.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-2-search-for-standard-concepts-in-atlas">Step 2: Search for Standard Concepts in Atlas<a href="#step-2-search-for-standard-concepts-in-atlas" class="hash-link" aria-label="Direct link to Step 2: Search for Standard Concepts in Atlas" title="Direct link to Step 2: Search for Standard Concepts in Atlas">​</a></h3>
+<ul>
+<li>Access <a href="https://ca-b2ai-www-dgs.redbush-0f9d0a70.eastus2.azurecontainerapps.io/atlas/#/conceptsets" target="_blank" rel="noopener noreferrer">B2AI OHDSI Atlas</a> and select the <code>Search</code> tab from the main navigation.</li>
+<li>Enter the data element into the Atlas search bar (note: the search is character-sensitive).</li>
+</ul>
+<blockquote>
+<p>Alternatively, use the <a href="https://athena.ohdsi.org/search-terms/terms" target="_blank" rel="noopener noreferrer">OHDSI Athena browser</a> to explore specific concept names and IDs - Athena offers more flexible search capabilities and may be more effective for identifying exact matches. Once identified, you can copy the relevant concept IDs into Atlas.</p>
+</blockquote>
+<ul>
+<li>Click the <strong>Search</strong> button.</li>
+</ul>
+<blockquote>
+<p>Tip: Instead of manually searching and selecting concepts, you can type a concept name and click the <strong>Shopping Cart</strong> button. Atlas will add the selected concept automatically into the Concept Set Expression. This can be useful at the start of concept set creation to quickly capture candidate terms, though you should still review and refine them afterward.</p>
+</blockquote>
+<ul>
+<li>Use filters by <code>standard concept</code>, <code>domain</code> (e.g., Condition, Drug), and <code>vocabulary</code> (e.g., SNOMED, RxNorm) to narrow down the list of returned concepts.</li>
+</ul>
+<blockquote>
+<p>Tip: Selecting the correct domain for concepts ensures that your concept set is properly aligned with downstream cohort definitions and analytic workflows. If you are uncertain, check the OMOP <a href="https://ohdsi.github.io/CommonDataModel/cdm54.html#Current_Support_for_CDM_v54" target="_blank" rel="noopener noreferrer">CDM v5.4 specification</a>, revisit the <a href="https://drive.google.com/drive/u/4/folders/1iSl3ZZmZYq5i8wLoJq5S3NIrdh9NXHkX" target="_blank" rel="noopener noreferrer">respective office hours session</a>, or consult <a href="https://github.com/chorus-ai/Chorus_SOP/blob/review-concept-set-creation/sop-website/docs/Concept-Set-Creation/OMOP-Domain-Definition.mdx" target="_blank" rel="noopener noreferrer">the helper table</a> for additional information.</p>
+</blockquote>
+<ul>
+<li>To determine which concepts are most relevant for your data element, review the record/patient count (RC/PC) and descendant record/patient count (DRC/DPC) columns.</li>
+<li>A practical approach is to order results by DRC to identify the concepts (often higher-level parents) that are most prevalent in the dataset, and then refine by excluding unrelated descendants.</li>
+<li>Combine this prevalence-based check with your clinical knowledge and project requirements to select the most appropriate concept(s).</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-3-add-concepts-to-the-concept-set-expression-with-attention-to-descendants-exclusions-and-source-codes">Step 3: Add Concepts to the Concept Set Expression with Attention to Descendants, Exclusions and Source Codes<a href="#step-3-add-concepts-to-the-concept-set-expression-with-attention-to-descendants-exclusions-and-source-codes" class="hash-link" aria-label="Direct link to Step 3: Add Concepts to the Concept Set Expression with Attention to Descendants, Exclusions and Source Codes" title="Direct link to Step 3: Add Concepts to the Concept Set Expression with Attention to Descendants, Exclusions and Source Codes">​</a></h3>
+<ul>
+<li>Select checkboxes next to standard concepts that accurately represent your data element.</li>
+</ul>
+<blockquote>
+<p>Example, if your data element is Sepsis, search for &quot;Sepsis&quot; in the Condition domain and select the Standard concept.</p>
+</blockquote>
+<ul>
+<li>Use the <code>Descendants</code> checkbox to include all semantic children of the selected concept. This allows you to automatically include more specific subtypes or variations of the concept, based on the concept hierarchy.</li>
+</ul>
+<blockquote>
+<p>Example: Checking <code>Descendants</code> for the concept Sepsis will include specific types like <code>Gram positive sepsis</code>, <code>Sepsis due to Streptococcus</code>, etc.</p>
+</blockquote>
+<p><img decoding="async" loading="lazy" alt="Concept Set Search and Descendants Inclusion Example" src="/Chorus_SOP/assets/images/concept-search-and-descendants-inclusion-example-6cd168db6261b0841243531d235d5a6c.png" width="1903" height="917" class="img_ev3q"></p>
+<ul>
+<li>Use the <code>Exclude</code> checkbox to subtract concepts you do not want included in the concept set or both <code>Exclude</code> and <code>Descendants</code> to exclude entire branches. This is useful if a child concept is too broad, irrelevant, or contradicts the intended definition.</li>
+</ul>
+<p><img decoding="async" loading="lazy" alt="Concept Exclusion Example" src="/Chorus_SOP/assets/images/concept-exclusion-example-0083b87494a4f9a2c5db109a46e7f489.png" width="1882" height="891" class="img_ev3q"></p>
+<ul>
+<li>Once you have selected the desired concepts, click the <code>Add to Concept Set</code> button to include them.</li>
+<li>Then click the <code>Concept Set</code> tab. If concepts have been added, the shopping cart icon and the tab label will appear in red. In this tab, you can review the <code>Concept Set Expression</code>, including all included and intentionally excluded concepts.</li>
+<li>Click on <code>Included Concepts</code> to review the final list of included concepts (with descendants and exclusions applied). This step allows you to 1) verify what is actually included in the concept set; 2) manually remove or exclude any remaining unwanted concepts; 3) catch edge cases that may have been automatically pulled in via descendants.</li>
+<li>Then, under the <code>Included Concepts</code> section, use the <code>Exclude</code> checkbox to remove any concepts that are not relevant to your target population.</li>
+</ul>
+<blockquote>
+<p>Example: If you are creating a concept set for Sepsis cases unrelated to pregnancy, childbirth, or the neonatal period, use the <code>Exclude</code> checkbox to remove concepts not relevant to the intended population, such as:  <code>Sepsis of the newborn</code> (4071063), <code>Perinatal sepsis</code> (37017557), <code>Puerperal sepsis</code> (4102318), <code>Sepsis during labor</code> (4009954), <code>Miscarriage with sepsis</code> (4285746).
+Tip: This is where you confirm the effect of your inclusion/exclusion logic, and where most common mistakes are caught.</p>
+</blockquote>
+<ul>
+<li>After defining your concept set, switch to the <code>Included Source Codes</code> tab. Here you can 1) compare captured codes against those reported in the literature or clinical guidelines; 2) ensure no important source codes are missing, particularly those frequently used at your site.</li>
+</ul>
+<blockquote>
+<p>Tip: Avoid mixing standard and source codes inappropriately within the same concept set expression and attempting to exclude source codes with the Exclude flag (this does not work in Atlas).</p>
+</blockquote>
+<ul>
+<li>After you have created a draft concept set, the <code>Recommend</code> tab can suggest additional related concepts you may not have considered. Review all suggested concepts carefully before including them, as the algorithm may also surface terms that are clinically irrelevant or outside your intended scope.</li>
+<li>Click <code>Save</code> to store your concept set.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-4-apply-naming-convention-to-the-concept-set">Step 4: Apply Naming Convention to the Concept Set<a href="#step-4-apply-naming-convention-to-the-concept-set" class="hash-link" aria-label="Direct link to Step 4: Apply Naming Convention to the Concept Set" title="Direct link to Step 4: Apply Naming Convention to the Concept Set">​</a></h3>
+<ul>
+<li>Return to the <code>Concept Set Expression</code> section.</li>
+<li>Enter the Concept Set name in the white input field at the top of the screen and click <code>Save</code>. Use the following naming format to ensure consistency across the project:</li>
+</ul>
+<p><code>Project Name</code>-<code>OMOP Domain</code>-<code>Data Element Name</code>-<code>Version</code>-<code>Status Tag</code></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="recommended-naming-elements">Recommended Naming Elements<a href="#recommended-naming-elements" class="hash-link" aria-label="Direct link to Recommended Naming Elements" title="Direct link to Recommended Naming Elements">​</a></h4>
+<table><thead><tr><th>Element</th><th>Example</th></tr></thead><tbody><tr><td>Project Name</td><td>B2AI</td></tr><tr><td>Domain</td><td>Condition, Meas/Obs, Measurement, Drug/Device, Procedure, Observation</td></tr><tr><td>Data Element</td><td>Serum creatinine, Anticonvulsants, Sepsis, Atrial Fibrillation</td></tr><tr><td>Version</td><td>v1, v1.2, v2</td></tr><tr><td>Status Tag</td><td><code>draft</code>, <code>pending validation</code>, <code>validated</code></td></tr></tbody></table>
+<p><strong>Examples</strong>:</p>
+<ul>
+<li><code>B2AI</code>-<code>Condition</code>-<code>Sepsis</code>-<code>v1</code>-<code>draft</code></li>
+<li><code>B2AI</code>-<code>Measurement</code>-<code>Serum Sodium</code>-<code>v2</code>-<code>validated</code></li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="versioning-guidance">Versioning Guidance<a href="#versioning-guidance" class="hash-link" aria-label="Direct link to Versioning Guidance" title="Direct link to Versioning Guidance">​</a></h4>
+<ul>
+<li><strong>Major version change (v1 → v2):</strong><br>
+<!-- -->Apply when the logic of the concept set changes in a way that could alter the clinical definition or analytic results:<!-- -->
+<ul>
+<li>Adding or removing a concept</li>
+<li>Changing descendant or exclusion logic</li>
+<li>Switching to a different domain concept</li>
+</ul>
+</li>
+<li><strong>Minor version change (v1.0 → v1.1):</strong><br>
+<!-- -->Apply when only metadata or supporting details are updated, but the underlying logic remains the same:<!-- -->
+<ul>
+<li>Refining the clinical justification text</li>
+<li>Correcting typos or formatting</li>
+</ul>
+</li>
+<li><strong>Status Tag:</strong> Moves independently of versioning to reflect review stage (e.g., <code>draft</code> → <code>pending validation</code> → <code>validated</code>).</li>
+</ul>
+<blockquote>
+<p>Example: <code>B2AI-Condition-Sepsis-v1-draft</code> → [update applied] → <code>B2AI-Condition-Sepsis-v2-pending validation</code> → [review completed] → <code>B2AI-Condition-Sepsis-v2-validated</code></p>
+</blockquote>
+<ul>
+<li><strong>Rules</strong>:<!-- -->
+<ul>
+<li>Each update to a concept set must be reflected by updating the concept set name to a new version.</li>
+<li>Do not create a new concept set for minor or major revisions. Instead, rename the existing one to reflect the new version.</li>
+</ul>
+</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-5-optimize-document-and-save">Step 5: Optimize, Document and Save<a href="#step-5-optimize-document-and-save" class="hash-link" aria-label="Direct link to Step 5: Optimize, Document and Save" title="Direct link to Step 5: Optimize, Document and Save">​</a></h3>
+<ul>
+<li>Click the <code>Optimize</code> button (top-right corner of the screen, if available). This will remove redundant child concepts that are already covered by a parent with Descendants checked, simplifying the expression logic and making it easier to manage.</li>
+</ul>
+<blockquote>
+<p>Note: Optimization ensures a cleaner concept set expression but does not change the underlying list of included concepts used for cohort logic.</p>
+</blockquote>
+<ul>
+<li>In the <code>Concept Set Expression</code> tab, locate the input field labeled &quot;Enter the concept set description here&quot;.</li>
+<li>Enter a clear and concise concept set description, including but not limited to a Clinical Justification.</li>
+</ul>
+<blockquote>
+<p>Example: &quot;Sepsis is a clinically significant condition used to identify systemic infection and organ dysfunction. In B2AI, it supports phenotypes related to infection severity stratification, ICU admission prediction, and early clinical deterioration. This concept set includes only Condition domain standard concepts related to systemic and bacterial sepsis. Perinatal, neonatal, and obstetric-specific sepsis concepts (e.g., puerperal sepsis, sepsis during labor) were excluded to maintain focus on non-obstetric populations.&quot;
+<img decoding="async" loading="lazy" alt="Concept Set Name and Description Example" src="/Chorus_SOP/assets/images/concept-set-name-and-description-example-22bff9b507b080c132d636f28940ae07.png" width="1873" height="900" class="img_ev3q"></p>
+</blockquote>
+<ul>
+<li>After final review, click <code>Save</code>.</li>
+<li>Once the concept set is finalized and saved, close it and navigate to the <code>Concept Sets</code> tab. Find the concept set you created, copy its ID, and paste it into the <code>Concept Set ID</code> field in the table of <a href="https://docs.google.com/document/d/1_Cs5jx_SFv4TjtD0-nx0te0wmIhPsfsaUFE4lJHJIB8/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Phenotype-based list of data elements - Tier 1 Justification</a> document.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-6-register-concept-set-in-the-inventory-catalog">Step 6: Register Concept Set in the Inventory Catalog<a href="#step-6-register-concept-set-in-the-inventory-catalog" class="hash-link" aria-label="Direct link to Step 6: Register Concept Set in the Inventory Catalog" title="Direct link to Step 6: Register Concept Set in the Inventory Catalog">​</a></h3>
+<p>Log the new concept set in the <a href="https://docs.google.com/spreadsheets/d/1Oq5DoQ48Ruqussl__mmfT5ttDV3nfASYm154Gy-S8us/edit?usp=sharing" target="_blank" rel="noopener noreferrer"><strong>Concept Set Inventory</strong></a> (shared institutional Google spreadsheet), including:</p>
+<ul>
+<li>Concept Set ID</li>
+<li>Concept Set Name</li>
+<li>Data Element Covered</li>
+<li>Author(s)</li>
+<li>Date Created</li>
+<li>Atlas URL</li>
+<li>Vocabulary Version</li>
+<li>Review Status</li>
+<li>Date Reviewed</li>
+<li>Reviewer Name</li>
+<li>Notes on logic</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-7-review-and-validation">Step 7: Review and Validation<a href="#step-7-review-and-validation" class="hash-link" aria-label="Direct link to Step 7: Review and Validation" title="Direct link to Step 7: Review and Validation">​</a></h3>
+<ul>
+<li>Assign a reviewer (vocabulary expert / subject domain expert).</li>
+<li>Reviewer checks:<!-- -->
+<ul>
+<li>✅ Concepts added (no gaps or redundancies)</li>
+<li>✅ Standardness</li>
+<li>✅ Descendants used appropriately</li>
+<li>✅ Unwanted concepts excluded</li>
+<li>✅ Domain alignment</li>
+<li>✅ Concept Set Description is filled out and includes a clear Clinical Justification</li>
+<li>✅ Registration in Concept Set Inventory</li>
+</ul>
+</li>
+</ul>
+<p>Reviewer documents the review outcome in the Concept Set Inventory (fields: Review Status, Date Reviewed, Reviewer Name, Notes on logic if needed).</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="common-pitfalls-to-avoid">Common Pitfalls to Avoid<a href="#common-pitfalls-to-avoid" class="hash-link" aria-label="Direct link to Common Pitfalls to Avoid" title="Direct link to Common Pitfalls to Avoid">​</a></h4>
+<ul>
+<li>Including non-standard concepts.</li>
+<li>Using concepts from the wrong domain.</li>
+<li>Missing descendants.</li>
+<li>Overly broad sets without exclusions.</li>
+<li>Not versioning or documenting updates.</li>
+<li>Including both children and parents in the concept set expression simultaneously.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="step-x-importing-and-exporting-concept-sets-in-atlas">Step X: Importing and Exporting Concept Sets in Atlas<a href="#step-x-importing-and-exporting-concept-sets-in-atlas" class="hash-link" aria-label="Direct link to Step X: Importing and Exporting Concept Sets in Atlas" title="Direct link to Step X: Importing and Exporting Concept Sets in Atlas">​</a></h3>
+<p>Atlas supports several methods for transferring concept sets between environments.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="import-options">Import Options<a href="#import-options" class="hash-link" aria-label="Direct link to Import Options" title="Direct link to Import Options">​</a></h4>
+<p>The choice depends on whether you want to <strong>recreate</strong>, <strong>enrich</strong>, or <strong>fully reproduce</strong> a concept set.</p>
+<ul>
+<li><strong>Concept Identifiers:</strong> Paste one or more Concept IDs (e.g., <code>132797</code> for Sepsis).<!-- -->
+<ul>
+<li>Multiple IDs should be separated by commas (no spaces).</li>
+<li>Useful for quick reconstruction from documentation or spreadsheets.</li>
+</ul>
+</li>
+<li><strong>Source Codes:</strong> Enter raw source codes (ICD, CPT, etc.) for Atlas to resolve to standard concepts.<!-- -->
+<ul>
+<li>Useful when importing directly from site-specific code lists.</li>
+</ul>
+</li>
+<li><strong>Concept Set Expression JSON:</strong> Paste a full JSON representation of a concept set.<!-- -->
+<ul>
+<li>Preserves descendants, exclusions, and optimization flags.</li>
+<li>Recommended for transferring validated or finalized sets across environments.</li>
+</ul>
+</li>
+<li><strong>Repository (Copy Existing):</strong> Select an existing concept set in Atlas and copy it as a starting point.<!-- -->
+<ul>
+<li>Useful for reusing or adapting previously curated sets.</li>
+</ul>
+</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="after-importing-all-methods">After Importing (All Methods)<a href="#after-importing-all-methods" class="hash-link" aria-label="Direct link to After Importing (All Methods)" title="Direct link to After Importing (All Methods)">​</a></h4>
+<p>Once a concept set is imported into Atlas, continue with the standard workflow:</p>
+<ol>
+<li>Go to <strong><code>Concept Set Expression</code></strong> to review the logic.</li>
+<li>Click <strong><code>Included Concepts</code></strong> to validate the resolved list.<!-- -->
+<ul>
+<li>Check for unintended inclusions from descendants.</li>
+<li>Manually exclude or remove irrelevant terms.</li>
+</ul>
+</li>
+<li>Click <strong><code>Included Source Codes</code></strong> to confirm coverage of site-specific codes and compare against published code lists or literature.<!-- -->
+<ul>
+<li>Avoid mixing source and standard codes in the expression.</li>
+<li>Remember: the <code>Exclude</code> checkbox does <strong>not</strong> exclude source codes.</li>
+</ul>
+</li>
+<li>Use <strong><code>Optimize</code></strong> (if available) to simplify the expression by removing redundant child concepts already covered by parent + descendants. A concept set may already appear optimized, but there is no way to be certain without running the function - so always apply it to confirm.</li>
+<li>Enter <strong>Concept Set Name</strong> and a <strong>Concept Set Description</strong> including the clinical justification.</li>
+<li>Click <strong><code>Save</code></strong> and register the concept set in the Concept Set Inventory.</li>
+</ol>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="export-options">Export Options<a href="#export-options" class="hash-link" aria-label="Direct link to Export Options" title="Direct link to Export Options">​</a></h4>
+<ul>
+<li><strong>Concept Set Expression JSON:</strong> Exports the full expression, including descendants, exclusions, and annotations.<!-- -->
+<ul>
+<li>Best for sharing validated sets across sites or environments.</li>
+</ul>
+</li>
+<li><strong>Concept Identifier List:</strong> Exports only the IDs from the expression.<!-- -->
+<ul>
+<li>Useful for lightweight documentation or sharing minimal lists.</li>
+</ul>
+</li>
+<li><strong>Included Concept Identifier List:</strong> Exports the fully resolved set of included concepts (with descendants).<!-- -->
+<ul>
+<li>Useful for validation, review, and cross-checking against literature or source data.</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="resources-and-references">Resources and References<a href="#resources-and-references" class="hash-link" aria-label="Direct link to Resources and References" title="Direct link to Resources and References">​</a></h2>
+<ul>
+<li><a href="https://ohdsi.github.io/TheBookOfOhdsi/OhdsiAnalyticsTools.html" target="_blank" rel="noopener noreferrer">Book of OHDSI. Chapter 8 OHDSI Analytics Tools</a></li>
+<li><a href="https://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas:concept_sets" target="_blank" rel="noopener noreferrer">OHDSI Wiki – Concept Sets</a></li>
+<li><a href="https://docs.finngen.fi/working-in-the-sandbox/which-tools-are-available/atlas/detailed-guide/how-to-define-a-cohort-in-atlas/concept-sets" target="_blank" rel="noopener noreferrer">FINNGEN Atlas Guide</a></li>
+<li><a href="https://www.youtube.com/watch?v=dr9FhEkf04o" target="_blank" rel="noopener noreferrer">ATLAS Tutorial: Overview of ATLAS</a></li>
+<li><a href="https://www.youtube.com/watch?v=mfjxNwn3KkM" target="_blank" rel="noopener noreferrer">ATLAS Tutorial: Explore Concept Sets</a></li>
+<li><a href="https://www.youtube.com/watch?v=2_JsAAFExMU" target="_blank" rel="noopener noreferrer">ATLAS Tutorial: Create New Concept Sets</a></li>
+<li><a href="https://www.youtube.com/watch?v=gHPWMzzx6z8" target="_blank" rel="noopener noreferrer">2024 OHDSI Europe Symposium Vocabulary Tutorial (Session 1 of 2)</a></li>
+<li><a href="https://www.youtube.com/watch?v=Z94DStbr3So&amp;t=520s" target="_blank" rel="noopener noreferrer">2024 OHDSI Europe Symposium Vocabulary Tutorial (Session 2 of 2)</a></li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="related-office-hours">Related Office Hours<a href="#related-office-hours" class="hash-link" aria-label="Direct link to Related Office Hours" title="Direct link to Related Office Hours">​</a></h2>
+<p>The following office hour sessions provide additional context and demonstrations related to this SOP:</p>
+<ul>
+<li>
+<p><strong>[07-17-25] Concept set creation for selected data elements in OHDSI Atlas</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/105VVcrimmA3ZKmQRWFJCUSd12sXGkZsB/view?usp=share_link" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1sfv84jPXXm2H26Yh6swBJf_lXSYfPUFl/edit?usp=share_link&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Comprehensive demonstration of concept set creation workflow</li>
+</ul>
+</li>
+<li>
+<p><strong>[07-24-25] Concept set creation demo for measurements of interest from CHoRUS Tier 1 elements</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1ZqtQ_2OAi9qUQjwbiqXgj8-TKVDscvba/view?usp=share_link" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/1EtTJ8wOtE9DnL-4Uwy5bV2HzWqpXp_oz/edit?usp=share_link&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Hands-on demo focusing on Tier 1 measurement concepts</li>
+</ul>
+</li>
+<li>
+<p><strong>[09-04-25] Concept set related work</strong></p>
+<ul>
+<li><a href="https://drive.google.com/file/d/1elMKGY-9MJLPajqmiBUbXnMykQ_-1Gvl/view?usp=share_link" target="_blank" rel="noopener noreferrer">Video Recording</a> | <a href="https://docs.google.com/document/d/11xW1xwiaxRRxu-nv363FMbmLj4X1P8HB/edit?usp=share_link&amp;ouid=104468275537210259794&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Transcript</a></li>
+<li>Updates and ongoing work related to concept set development</li>
+</ul>
+</li>
+</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="theme-doc-footer-edit-meta-row row"><div class="col"><a href="https://github.com/chorus-ai/Chorus_SOP/edit/review/sop-website/docs/OMOP-Mapping/Concept-Set-Creation.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_vwxv"><span class="theme-last-updated">Last updated<!-- --> on <b><time datetime="2026-02-05T12:53:03.000Z">Feb 5, 2026</time></b> by <b>Polina Talapova</b></span></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/Chorus_SOP/docs/OMOP-Mapping/SOP-CUT"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Cataloging Unmapped Terms</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/Chorus_SOP/docs/OMOP-Mapping/SOP-CVoM"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Clinical Validation of Mappings</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#purpose" class="table-of-contents__link toc-highlight">Purpose</a></li><li><a href="#scope" class="table-of-contents__link toc-highlight">Scope</a><ul><li><a href="#applicable-roles-and-responsibilities" class="table-of-contents__link toc-highlight">Applicable Roles and Responsibilities</a></li></ul></li><li><a href="#glossary" class="table-of-contents__link toc-highlight">Glossary</a></li><li><a href="#responsibilities" class="table-of-contents__link toc-highlight">Responsibilities</a></li><li><a href="#prerequisites" class="table-of-contents__link toc-highlight">Prerequisites</a></li><li><a href="#concept-set-creation-workflow" class="table-of-contents__link toc-highlight">Concept Set Creation Workflow</a><ul><li><a href="#step-1-define-the-clinical-intent" class="table-of-contents__link toc-highlight">Step 1: Define the Clinical Intent</a></li><li><a href="#step-2-search-for-standard-concepts-in-atlas" class="table-of-contents__link toc-highlight">Step 2: Search for Standard Concepts in Atlas</a></li><li><a href="#step-3-add-concepts-to-the-concept-set-expression-with-attention-to-descendants-exclusions-and-source-codes" class="table-of-contents__link toc-highlight">Step 3: Add Concepts to the Concept Set Expression with Attention to Descendants, Exclusions and Source Codes</a></li><li><a href="#step-4-apply-naming-convention-to-the-concept-set" class="table-of-contents__link toc-highlight">Step 4: Apply Naming Convention to the Concept Set</a></li><li><a href="#step-5-optimize-document-and-save" class="table-of-contents__link toc-highlight">Step 5: Optimize, Document and Save</a></li><li><a href="#step-6-register-concept-set-in-the-inventory-catalog" class="table-of-contents__link toc-highlight">Step 6: Register Concept Set in the Inventory Catalog</a></li><li><a href="#step-7-review-and-validation" class="table-of-contents__link toc-highlight">Step 7: Review and Validation</a></li><li><a href="#step-x-importing-and-exporting-concept-sets-in-atlas" class="table-of-contents__link toc-highlight">Step X: Importing and Exporting Concept Sets in Atlas</a></li></ul></li><li><a href="#resources-and-references" class="table-of-contents__link toc-highlight">Resources and References</a></li><li><a href="#related-office-hours" class="table-of-contents__link toc-highlight">Related Office Hours</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Chorus_SOP/docs/intro">Tutorial</a></li></ul></div><div class="col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://chorus4ai.org/" target="_blank" rel="noopener noreferrer" class="footer__link-item">Homesite<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://twitter.com/CHoRUS4AI" target="_blank" rel="noopener noreferrer" class="footer__link-item">Twitter<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Chorus_SOP/blog">Blog</a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Chorus-AI, Inc. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>
