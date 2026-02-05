@@ -19,30 +19,30 @@ The purpose of this Standard Operating Protocol (SOP) is to establish a clear an
 | Term | Definition |
 |------|------------|
 | **Mapping** (a map) | A defined link between a concept (term) in one code system or dataset and a concept in another code system (sometimes the same one) that has the same or very similar meaning. In OMOP, mapping is the process of transforming a source concept into a standard concept using `Maps to` and `Maps to value` relationships. |
-| **Concept ID** | Integer key that uniquely identifies a concept in the OMOP vocabulary and is used in all *_concept_id fields. |
-| **Source Concept** | Concept that represents the original code from the source system (often non-standard) before mapping to a standard soncept. |
-| **Standard Concept** | Concept marked as standard in OMOP; used to store clinical facts in CDM tables after mapping from source concepts. |
-| **Custom Concept** | Standard concept created/maintained by users when no suitable external standard code exists. |
-| **Classification Concept** | Non-standard concept used only for grouping and hierarchy (roll-up), not for recording patient-level data. |
-| **Concept Synonym** | Alternative name (synonym, abbreviation, translation) linked to a concept_id to support flexible search and matching. |
-| **Invalid Reason** | Flag on a concept indicating why it is no longer valid (e.g., deprecated or updated and replaced). |
+| **Concept ID** | An integer key that uniquely identifies a concept in OHDSI Vocabularies and is used as a reference key in all *_concept_id fields across various OMOP tables. |
+| **Source Concept** | Concept that represents the original code from the source system (often non-standard) in its original state (before mapping to a standard concept). |
+| **Standard Concept** |Concept designated as Sstandard in OMOP and used to represent clinical facts in CDM tables in standardized way (after mapping from source concepts). |
+| **Custom Concept** | Standard concept created/maintained by users when no suitable external standard code exists. They are usually assigned with the concept_id from the 2bil+ range. |
+| **Classification Concept** | Concept used for grouping and hierarchy (roll-up) purposes, not typically for recording patient-level data. |
+| **Concept Synonym** | Alternative concept name (synonym, abbreviation, translation) linked to a concept_id to support various representations, flexible search, and matching. |
+| **Invalid Reason** | Flag on a concept indicating why it is no longer valid (e.g., deprecated or upgraded and replaced). |
 | **Source Vocabulary** | Coding system in which the original data are recorded (e.g., ICD10CM, local lab codes). |
-| **Target Vocabulary** | Standard vocabulary to which source codes are mapped (e.g., SNOMED for conditions, RxNorm for drugs). |
+| **Target Vocabulary** | Destination vocabulary to which source codes are mapped (e.g., SNOMED for conditions, RxNorm for drugs). |
 | **Vocabulary ID** | Short identifier of the vocabulary a concept belongs to (e.g., `ICD10CM`, `SNOMED`, `RxNorm`). |
-| **Domain ID** | High-level category (Condition, Drug, Procedure, Measurement, Observation, Device, etc.) that determines which CDM table should store the concept. |
-| **Concept Class ID** | Semantic subtype defined by the vocabulary (e.g., `Clinical Finding`, `Ingredient`, `Brand Name`) used to organize concepts. |
-| **Relationship ID** | Name of the relationship between two concepts (e.g., `Is a`, `Subsumes`, `Maps to`, `Maps to value`). |
-| **Maps to / Maps to value** | Special relationships used for mapping: `Maps to` links a source concept to its main standard concept; `Maps to value` links it to an additional value/detail concept (e.g., result, severity); it is primarily used for Measurement and Observation concepts, where the second concept populates value_as_concept_id. |
-| **One-to-one mapping** | An ideal mapping (also called an equivalent mapping) is when the target standard concept expresses exactly the same clinical meaning as the source term and fully preserves its intent. |
-| **One-to-many mapping** | Mapping where a single source code maps to multiple standard concepts (e.g., combined diagnosis that becomes two separate SNOMED conditions, multicomponent drugs that become several separate RxNorm/RxNorm Extension Ingredients). |
-| **Athena** | OHDSI web interface for browsing and downloading OMOP vocabularies and inspecting concepts, domains, and relationships. |
-| **Usagi** | OHDSI desktop tool that suggests candidate standard concepts for source terms using string similarity, used to build mapping tables. |
+| **Domain ID** | High-level category (Condition, Drug, Procedure, Measurement, Observation, Device, etc.) that defines which semantics space and set of rules a concept belongs to, and designates the CDM table that should store the concept. |
+| **Concept Class ID** | Subtype defined by the external vocabulary authors (e.g., Clinical Finding, Ingredient, Brand Name) and used to organize concepts semantically or structurally. |
+| **Relationship ID** | Short identifier of the relationship between two concepts (e.g., Is a, Subsumes, Maps to, Maps to value). |
+| **Maps to / Maps to value** | Special relationships used for mapping of source codes to standard concepts: Maps to links to a primary standard concept; Maps to value links it to an additional value/detail concept (e.g., result, historical condition, severity); it is only used for Measurement and Observation concepts, where the second concept populates the value_as_concept_id field. |
+| **One-to-one mapping** | An preferred mapping scenario (also called an equivalent mapping) is when the target Standard concept expresses exactly the same clinical meaning as the source term and fully preserves its intent. |
+| **One-to-many mapping** | Mapping scenario where a single source code maps to multiple standard concepts (e.g., a combined diagnosis that maps to the two separate SNOMED conditions, multicomponent drugs that maps to several separate RxNorm/RxNorm Extension Ingredients). |
+| **Athena** | OHDSI web interface for browsing and downloading OHDSI Vocabularies and inspecting concepts, their attributes, synonyms, domains, and relationships. |
+| **Usagi** | OHDSI desktop tool that suggests candidate standard concepts for source terms using string similarity, which is used to build mappings and export them into tables. |
 
 ## Prerequisites
 - Access to the [OHDSI Athena](https://athena.ohdsi.org/search-terms/terms) browser.
-- OHDSI Standardized Vocabularies loaded into an OMOP Vocabulary instance in database.
-- Familiarity with OMOP CDM, standard vocabulary structure, and domain-specific logic. 
-- Installed and configured [OHDSI Usagi](https://ohdsi.github.io/Usagi/) with the current OMOP vocabulary snapshot.
+- OHDSI Standardized Vocabularies loaded into an OMOP instance in database.
+- Familiarity with OMOP CDM, vocabularies structure, and domain-specific logic. 
+- Installed and configured [OHDSI Usagi](https://ohdsi.github.io/Usagi/) with the current OHDSI Vocabularies snapshot.
 
 ## Procedures 
 
@@ -76,7 +76,7 @@ Also, form an initial assumption about the likely domain of the most frequent so
 * Medications (map to a Drug/Device domain concept).
 * Labs (map to a Measurement/Observation domain concept).
 * Devices (map to a Device domain concept)
-* Facts about a patient social history, "history of" condition (map to an Observation domain concept).
+* Facts about a patient social history, historical health records (map to an Observation domain concept).
 > Example: An ICD-10-CM diagnosis code [I63 "Cerebral infarction"](https://athena.ohdsi.org/search-terms/terms/1569193) is a Condition domain source code and should map to a SNOMED concept for Cerebral infarction. A local lab code for "HbA1c" is a Measurement and should map to a LOINC concept for Hemoglobin A1c test ("Hemoglobin A1c/Hemoglobin.total in Blood"). If you are unsure of a code’s domain (some codes might be tricky, like certain ICD-10 Z-codes that represent social circumstances or history), consult clinicians, OHDSI domain guidelines or check in OHDSI Athena before mapping.
 
 > Tip: Identifying the domain guides you to the right target vocabulary; however in OMOP, some vocabularies map to unexpected domains (e.g., certain ICD-10-CM codes map to Measurement or Observation, some CPT4/HCPCS codes map to Drug or Device). Therefore, we do not recommend restricting your mapping by domain filters. Instead, **let the vocabulary determine the target domain, and then use that domain information to decide which CDM table should be populated**.
