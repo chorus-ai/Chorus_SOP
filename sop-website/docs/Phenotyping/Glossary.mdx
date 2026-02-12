@@ -1,0 +1,61 @@
+# Glossary for Cohort Definition Using OHDSI ATLAS SOP
+
+| Term | Definition |
+|---|---|
+| `OHDSI ATLAS` | A web-based open-source application for designing and executing analyses on OMOP CDM data; includes tools for cohort definition, concept set management, characterization, and population-level effect estimation. |
+| `OMOP CDM` | The Observational Medical Outcomes Partnership Common Data Model that standardizes healthcare data (e.g., EHR, claims) into common tables (e.g., CONDITION_OCCURRENCE, DRUG_EXPOSURE) with standard vocabularies; CHoRUS B2AI data is stored in OMOP CDM format to enable use of ATLAS and OHDSI tools. |
+| `Cohort` | A set of persons who satisfy one or more criteria for a duration of time. |
+| `Cohort Definition` | Specifies how patients enter (start) the cohort and how/when they exit, effectively implementing a computable phenotype representing a disease, exposure, or outcome. |
+| `Cohort Entry Event (Index Event)` | A specific event that qualifies a person to enter the cohort and sets the cohort start date (index date), e.g., first occurrence of a diagnosis or initiation of a drug; defined in ATLAS under Cohort Entry Events. |
+| `Concept Set` | A defined list of standard concepts used to represent a clinical idea; attached to cohort criteria to specify which codes/events count (e.g., “Myocardial Infarction” concept set attached to a Condition Occurrence criterion). |
+| `Initial Event Criteria` | The primary criteria in Cohort Entry Events that a record must meet to qualify as a cohort entry, including the event domain (condition, drug, procedure, etc.), attached concept set(s), and event-level attributes (e.g., first occurrence, date limits). |
+| `Inclusion Criteria` | Additional conditions that refine the cohort after identifying initial events; in ATLAS, these filter/qualify cohort entries further (e.g., requiring a prior condition, a lab result, or excluding patients) and are defined in the Inclusion Criteria section. |
+| `Censoring Event` | An event that ends cohort membership early (e.g., death or initiation of a competing treatment); specified in ATLAS in the Cohort Exit section via Add Censoring Event. |
+| `Event Persistence (Cohort Exit Strategy)` | The rule defining how long a cohort entry remains active in the absence of censoring; ATLAS supports options such as end of continuous observation, fixed duration relative to the index, or end of continuous drug exposure. |
+| `Cohort Era / Collapse` | The approach to handling multiple cohort entries per person by merging episodes that occur within a specified collapse gap into a single cohort era (e.g., 180-day gap merges episodes within 180 days), producing eras with a start date (first entry) and end date (per exit rules/last episode). |
+| `Continuous Observation Window` | A requirement that a person has continuous observation (OBSERVATION_PERIOD) for at least X days before and/or Y days after the index event date to ensure sufficient baseline and/or follow-up data completeness. |
+| `OBSERVATION_PERIOD` | OMOP CDM table defining when a person is considered observable in the dataset; ATLAS uses it to enforce “continuous observation” constraints and to trim events/eras to valid observation time. |
+| `Qualifying Event` | An event instance that satisfies the cohort entry criteria (and, after applying inclusion rules, remains eligible to define a cohort start). |
+| `Cohort Episode / Cohort Entry` | A single interval of cohort membership for a person (start = index date; end = persistence/end/censoring); multiple episodes can exist per person unless limited/collapsed. |
+| `Index Start Date / Index End Date` | The start/end timestamps of the entry event used as the anchor for relative time windows; which one you use depends on event type (e.g., visit has duration, condition often does not). |
+| `Baseline (Lookback) Window` | Time before the index date used to assess prior history, eligibility, and covariates (commonly enforced via “continuous observation before” and/or prior-event criteria). |
+| `Follow-up (Time-at-Risk) Window`| Time after the index date during which outcomes are measured; implemented via persistence and/or continuous observation after index and/or censoring. |
+| `Washout Period` | A predefined lookback window used to confirm “no prior occurrence/exposure” (incident/new-user designs), typically operationalized as 0 occurrences of a concept set before index. |
+| `Incidence vs Prevalence` | Incidence cohorts aim for first/initial occurrences (often “earliest event per person” + washout); prevalence cohorts include anyone with evidence at any time (often “all events” or “any occurrence”). |
+| `CONDITION_OCCURRENCE vs CONDITION_ERA` | CONDITION_OCCURRENCE records individual diagnosis events; CONDITION_ERA groups proximate condition occurrences into episodes; selecting one vs the other changes counts and temporal logic. |
+| `DRUG_EXPOSURE vs DRUG_ERA` | DRUG_EXPOSURE records individual dispensing/administrations; DRUG_ERA collapses exposures into continuous episodes with allowable gaps; impacts persistence and on-treatment definitions. |
+| `VISIT_OCCURRENCE` | OMOP CDM table representing encounters; used to restrict cohorts to inpatient/ER/outpatient settings and to tie events to a specific encounter. |
+| `Visit Type / Visit Concept` | Standard concepts describing visit categories (e.g., inpatient, ER); used in visit-based criteria to define care setting context. |
+| `Domain Alignment` | Ensuring the concept set’s domain matches the criterion (e.g., Condition concepts in a Condition Occurrence criterion) to prevent silent undercounting/misclassification. |
+| `Standard vs Non-standard Concepts` | Standard concepts are intended for analysis; non-standard are source-coded and should be mapped—mixing them can cause undercounts depending on ETL and ATLAS settings. |
+| `Attrition` | Stepwise reduction in counts as entry restrictions and inclusion rules are applied; used for QA and interpretation of “why counts drop.” |
+| `Cohort Diagnostics` | ATLAS diagnostics outputs (e.g., incidence over time, inclusion rule impact, code distribution) used to validate face validity and detect logic/data issues. |
+| `Censoring vs Exclusion` | Exclusion prevents entry (or removes qualifying events) based on criteria; censoring allows entry but truncates follow-up when a censoring event occurs (e.g., death). |
+| `Competing Risk` | An event (often death) that precludes observing the primary outcome; handled by censoring and/or analysis strategy (outside ATLAS cohort logic). |
+| `Calendar Time Restriction` | Restricting index dates to a study period (e.g., after 2020-01-01) to align with data completeness and protocol-defined eras. |
+| `Concept Set Expression Options` | Common concept-set semantics: include descendants, include mapped concepts, exclude concepts; these materially affect sensitivity/specificity and must be documented. |
+| `"Person count" vs "Record count"` | Person count = unique persons with ≥1 matching record; record count = total event rows; concept set counts can differ from cohort counts due to added temporal/logic constraints. |
+| `Add Initial Event` | Defines the primary entry event type and its concept set. Keep minimal; reflects the phenotype "index." |
+| `Add attribute` | Adds constraints to an event (e.g., occurrence count, timing, demographics). Prefer readable attributes; avoid over-nesting. |
+| `Delete Criteria` | Removes a criterion/attribute/group. Document why removed if it changes phenotype intent. |
+| `Restrict initial events to: having all/any/at least/at most …` | Applies boolean/count logic to additional criteria tied to entry events. Use for essential context (e.g., inpatient setting). |
+| `Add criteria to group` | Adds another criterion under a boolean group. Use groups to express (A AND B) OR (C AND D). |
+| `with at least / at most / exactly N occurrences of` | Frequency constraint on matching events. "Exactly 0" is key for washout/no-history logic. |
+| `using all occurrences of` | Evaluate the criterion over all matching events for the person (not just one). Important when counting occurrences across time. |
+| `event starts between … days Before/After index start date` | Relative time window for event start anchored to index start. Controls temporal alignment; common for baseline/follow-up windows. |
+| `event ends between … days Before/After index start date.` | Relative time window for event end anchored to index start | Use with start window to enforce overlap with visits/eras. |
+| `All days Before / All days After` | No bound in that direction. Useful for “overlap” logic with visits: start ≤ index and end ≥ index. |
+| `The index date refers to the event from the Cohort Entry criteria` | Relative timing anchors are computed from the entry event. Ensure you understand which event is the anchor in nested groups. |
+| `Restrict to the same visit occurrence` | Forces matching events to share the same visit_occurrence_id as the index event. Prevents linking unrelated events across visits; can reduce counts sharply. |
+| `Allow events from outside observation period` | Allows events to qualify even if outside OBSERVATION_PERIOD. Usually keep OFF; enabling can create implausible person-time. |
+| `with continuous observation of at least X days before and Y days after event index date` | Requires uninterrupted observation around index date. Baseline/follow-up completeness constraint; major driver of attrition. |
+| `Limit initial events to: all/earliest/latest events per person` | Controls whether a person can enter multiple times and which index is used. Incident cohorts usually “earliest”; episodic studies often “all.” |
+| `New inclusion criteria` | Adds an inclusion rule block applied after entry events. Use for modular eligibility logic + transparent attrition reporting. |
+| `Limit qualifying events to: all/earliest/latest events per person` | Final event-per-person selection after inclusion rules. Use to enforce one index per person after complex inclusion logic. |
+| `Add Censoring Event` | Adds an event that truncates cohort follow-up. Use death here for follow-up censoring (not via concept sets). |
+| `Event Persistence: Event will persist until …`| Default cohort end rule in absence of censoring. Choose to match estimand/time-at-risk (fixed window vs on-treatment vs observation end). |
+| `Fixed duration relative to initial event` | Cohort end = index start/end + offset. Offset from start = uniform duration; from end = variable duration for eras/visits. |
+| `Event date to offset from: start date / end date` | Selects anchor for fixed duration. End-date anchor matters for visit length/drug era duration. |
+| `Number of days offset` | Length of persistence window. Document rationale (e.g., 30-day risk window). |
+| `No censoring events selected` | No early truncation beyond persistence/observation trimming. Verify this is intentional; otherwise add death/other censoring. |
+| `Specify era collapse gap size` | Merges episodes separated by ≤ gap into one cohort era. Large gaps reduce episode counts; affects incidence/recurrence interpretation. |
