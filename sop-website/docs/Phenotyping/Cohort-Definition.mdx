@@ -19,11 +19,617 @@ This SOP applies to all cohort definitions created and reviewed within the CHoRU
 - **Compliance Officers/Data Stewards**: Ensure that the cohort definitions (and any patient data they entail) adhere to regulatory and data use policies. They verify that sensitive events (e.g. death) are handled properly (e.g. as censoring events) and that cohort definitions are reproducible and auditable.
 - **Project Leads/Scientists**: Define the clinical intent of the cohort (phenotype) and confirm that the implemented cohort definition in ATLAS matches the intended definition. They provide clinical context (e.g. requiring certain observation times or prior conditions) and approve the final cohort definition.
 
-## [Glossary](link)
+## [Glossary](./Glossary.mdx)
 
 ## Prerequisites
 - **Access to ATLAS**: The user must have an active ATLAS account with permissions to create and edit cohort definitions. This SOP assumes the user can log into the CHoRUS ATLAS instance and navigate to the Cohort Definitions module.
 - **OMOP CDM Familiarity**: Users should understand the OMOP CDM tables and how clinical events are represented. A basic understanding of the data content in CHoRUS (e.g. types of source data and how they map to OMOP) is also required.
 - **Concept Sets Prepared**: Ideally, any needed concept sets (collections of standard codes for conditions, drugs, etc.) are created or available in ATLAS prior to cohort definition. ATLAS allows creating concept sets on the fly during cohort definition, but having them pre-defined (especially standard ones like "Inpatient Visit" or specific diagnosis categories) can speed up the process and ensure consistency.
 - **Cohort Definition Design**: A clear definition of the cohort is needed upfront. This includes the clinical rationale for inclusion/exclusion criteria, the time windows of interest (e.g. require 1-year baseline, or follow-up period), and how multiple events for one person should be handled. These design decisions should be documented (e.g. in protocol or phenotype definition document) before implementation in ATLAS.
+
+# Cohort Definition Workflow (OHDSI ATLAS)
+
+This workflow describes how to build a cohort (computable phenotype) in ATLAS: **define cohort entry events**, optionally **restrict** those events, apply **inclusion criteria**, then define **exit/censoring** and **era collapse** settings. Use the **attrition/diagnostics** outputs to QA each stage.
+
+---
+
+## 1. Cohort Entry Events
+
+### 1.1 Add Initial Event vs Add Attribute
+1. Click **+ Add Initial Event** to add the primary entry criterion (domain + event type), e.g. **Condition Occurrence**, **Drug Exposure**, **Procedure**, **Visit Occurrence**, etc.
+2. Click **Add attribute…** to refine the selected criterion (e.g., first diagnosis, age filter, occurrence count, date constraints).
+3. Use **Delete Criteria** to remove an event/attribute/group you added by mistake.
+
+**Rule of thumb**
+- **Add Initial Event** = defines *what event* anchors cohort entry.
+- **Add attribute** = adds *constraints* to that event.
+
+---
+
+### 1.2 Attach a Concept Set to the Initial Event
+1. Add an initial event (e.g., **Condition Occurrence**).
+2. Open the criterion’s dropdown and choose **Import Concept Set**.
+3. Select an existing concept set or create a new one, then attach it to the criterion.
+
+**QA tip**
+- Prefer **standard concepts** and ensure **domain alignment** (e.g., condition concepts used in a condition criterion).
+
+---
+
+### 1.3 Continuous Observation Requirement (X days before / Y days after)
+In **Cohort Entry Events**, configure:
+
+> **with continuous observation of at least X days before and Y days after event index date**
+
+This requires an **OBSERVATION_PERIOD** spanning the index event with sufficient lookback/follow-up.
+
+**Common configurations**
+- **0 / 0**: no baseline or follow-up requirement (prevalence-style cohorts).
+- **365 / 0**: require ≥1 year baseline (incident/new-user designs; covariate lookback).
+- **0 / 30**: require ≥30 days follow-up (short-term outcome observation).
+- **365 / 365**: strict baseline + follow-up requirement (protocol-driven designs).
+
+**Operational logic**
+- Index date must be ≥ **X** days after observation start and ≥ **Y** days before observation end.
+- Be cautious: large **Y** can exclude patients who die/leave early (often better handled via **censoring** rather than exclusion).
+
+---
+
+### 1.4 Limit Initial Events per Person
+Use **Limit initial events to**:
+- **All events per person**: allow multiple cohort entries per person (episodic/recurrent-event analyses).
+- **Earliest event per person**: one entry per person at first qualifying event (incident cohorts).
+- **Latest event per person**: one entry per person at most recent qualifying event (rare; cross-sectional “latest occurrence” use cases).
+
+**Example**
+- "All pneumonia episodes" → **All events**
+- "First-ever Myocardial Infarction" → **Earliest**
+- "Most recent opioid exposure" → **Latest**
+
+---
+
+### 1.5 Restrict Initial Events (Entry Event Restrictions)
+Use **Restrict initial events to: having [all/any/at least/at most] of the following criteria** to add context tightly coupled to the index event.
+
+1. Choose the group logic: **all / any / at least X / at most X**
+2. Click **Add criteria to group** to add each required criterion.
+3. Use **Add attribute** on each criterion to specify occurrence counts, timing, etc.
+
+#### How to choose **all / any / at least X / at most X** (with examples)  
+  **Examples**
+- **ALL of the following** (AND logic)  
+  Use when *every* condition is required for the index event to be valid. 
+  - **Index**: *Sudden cardiac death-related* **Condition Occurrence**  
+    **Restrictions (ALL):**  
+    1) **Inpatient/ER visit context**  
+       - **Criterion**: *Visit Occurrence* = concept set **Inpatient or ER visit**  
+       - **Attributes**:  
+         - **Temporal**: visit **starts** between *All days before* and *0 days after* index start; visit **ends** between *0 days before* and *All days after* index start (overlap)  
+         - **Optional checkbox**: **Restrict to the same visit occurrence**  
+    2) **Adult population**  
+       - **Attribute**:  Age at occurrence ≥ 18 (computed from PERSON.year_of_birth (and month/day if available) relative to the event start date)
+
+- **ANY of the following** (OR logic)  
+  Use when *alternative pathways* should qualify entry (one is sufficient).
+
+  **Example A**  
+  - **Index**: *Hospital-acquired infection (HAI) suspicion* (your chosen index event, e.g., **Inpatient Visit start** or a **Device exposure start**)  
+    **Restrictions (ANY):**
+    1) **Positive culture** within 0-7 days after index  
+       - **Criterion**: *Measurement* (or *Observation*, depending on your OMOP implementation) = concept set **Positive culture result / organism detected**  
+       - **Attributes**:  
+         - **Occurrence count**: **at least 1**  
+         - **Temporal**: event **starts** between **0 days after** and **7 days after** index start date  
+         - *(Optional)* **value restriction**: "positive/abnormal" (measurement value)
+    2) **New broad-spectrum antibiotic start** within 0-2 days after index  
+       - **Criterion**: *Drug Exposure* = concept set **Broad-spectrum systemic antibacterials**  
+       - **Attributes**:  
+         - **Occurrence count**: **at least 1**  
+         - **Temporal**: drug **starts** between **0** and **2 days after** index start date  
+         - *(Optional)* **new use / washout**: **exactly 0** exposures to the same concept set in **-30 to -1 days** (or your protocol baseline)  
+    3) **Fever observation** within 0-1 day after index  
+       - **Criterion**: *Measurement* (core temperature) **OR** *Observation/Condition* (fever) using an appropriate concept set  
+       - **Attributes** (choose one pattern):  
+         - **Occurrence count**: **at least 1**  
+         - **Temporal**: event **starts** between **0** and **1 day after** index start date  
+         - *(Optional, if temperature modeled as Measurement)* **threshold**: temperature **≥ 38.0°C/100.4°F** (value/operator/unit)
+
+  **Example B**  
+  - **Index**: *Traumatic brain injury (TBI)* (choose your index event, commonly **Condition Occurrence: TBI**)  
+    **Restrictions (ANY):**
+    1) **TBI diagnosis evidence**  
+       - **Criterion**: *Condition Occurrence* = concept set **TBI diagnoses**  
+       - **Attributes**:  
+         - **Occurrence count**: **at least 1** (default)  
+         - *(Optional)* **Inpatient/ER context**: add a Visit criterion and use **same visit occurrence**
+    2) **Head CT procedure evidence** (alternative signal when diagnosis coding is incomplete)  
+       - **Criterion**: *Procedure Occurrence* = concept set **CT head/brain**  
+       - **Attributes**:  
+         - **Occurrence count**: **at least 1**  
+         - **Temporal overlap** with index (if index is visit-based) and/or  
+         - **Restrict to the same visit occurrence** (recommended when index is visit/encounter anchored)
+
+---
+
+- **AT LEAST X of the following** (k-of-n logic; "≥X")  
+Identifies a specific condition or subphenotype based on the presence of a minimum number (k) of criteria, symptoms, or markers out of a total set (n) available. Use when you want a *minimum evidence threshold* from multiple indicators to improve specificity (the ability of a test to correctly identify individuals who do not have a condition, representing the true negative rate). 
+
+  **Example A**  
+  - **Index**: *Sepsis suspicion at admission* (often **Inpatient Visit start** as index)  
+    **Restrictions (AT LEAST 2 of 3):**
+    1) **Blood culture ordered** (0-1 day)  
+       - **Criterion**: *Procedure* or *Measurement* = concept set **Blood culture order/collection**  
+       - **Attributes**: **at least 1**, **starts 0-1 day after** index start  
+    2) **IV antibiotics started** (0-1 day)  
+       - **Criterion**: *Drug Exposure* = concept set **IV systemic antibiotics**  
+       - **Attributes**: **at least 1**, **starts 0-1 day after** index start  
+    3) **Lactate measured** (0-1 day)  
+       - **Criterion**: *Measurement* = concept set **Lactate**  
+       - **Attributes**: **at least 1**, **starts 0-1 day after** index start  
+       - *(Optional)* value attribute: lactate **≥ 2 mmol/L** (protocol-dependent)
+
+  **Example B**  
+  - **Index**: *Epilepsy phenotype* (often **Condition Occurrence: epilepsy** as index)  
+    **Restrictions (AT LEAST 2 of 3):**
+    1) **Epilepsy diagnosis**  
+       - **Criterion**: *Condition Occurrence* = concept set **Epilepsy**  
+       - **Attributes**: **at least 1**; *(optional)* **earliest per person** if incident  
+    2) **Anti-seizure medication exposure**  
+       - **Criterion**: *Drug Exposure* = concept set **Anti-seizure meds (ASMs)**  
+       - **Attributes**: **at least 1**; **temporal** within **-180 to +30 days** of index (example window)  
+    3) **EEG performed**  
+       - **Criterion**: *Procedure Occurrence* = concept set **EEG**  
+       - **Attributes**: **at least 1**; **temporal** within **-180 to +30 days** of index
+
+---
+
+- **AT MOST X of the following** (upper-bound constraint; "≤X")  
+  Use to enforce *exclusions / mutual exclusivity* (keep the cohort "clean") or limit competing signals.
+
+  **Example A**  
+  - **Index**: *Isolated TBI cohort*  
+    **Restrictions (AT MOST 0 of the following):**
+    1) **Polytrauma major injury diagnoses** in the same visit  
+       - **Criterion**: *Condition Occurrence* = concept set **Major trauma/polytrauma**  
+       - **Attributes**:  
+         - **Occurrence count**: **exactly 0**  
+         - **Restrict to the same visit occurrence** (or temporal overlap with index visit)  
+    2) **Penetrating trauma mechanism** codes in the same visit  
+       - **Criterion**: *Condition Occurrence* (or *Observation*) = concept set **Penetrating trauma**  
+       - **Attributes**: **exactly 0**, **same visit occurrence** (recommended)
+
+  **Example B**  
+  - **Index**: *First-line monotherapy new user* (e.g., ACE inhibitor initiation)  
+    **Restrictions (AT MOST 0 of the following):**
+    1) **Other antihypertensive classes** during baseline window  
+       - **Criterion**: *Drug Exposure* = concept set **Other antihypertensive drug classes**  
+       - **Attributes**:  
+         - **Occurrence count**: **exactly 0**  
+         - **Temporal**: **-365 to -1 days** before index start (example baseline)
+
+  **Example C**  
+  - **Index**: *Clean baseline cohort* for a safety/effectiveness study  
+    **Restrictions (AT MOST 1 of the following):**
+    1) End-stage renal disease  ESRD  
+    2) Metastatic cancer  
+    3) Transplant  
+       - **Criterion**: *Condition Occurrence* = concept set **High-risk comorbidities** (or separate criteria per condition set)  
+       - **Attributes**:  
+         - **Occurrence count**: **at most 1** across the listed criteria (group-level)  
+         - **Temporal**: **All time before** to **0 days before** index start (or a defined baseline window)
+    → Use cautiously; document rationale because it changes generalizability.
+
+---
+- **Summary**
+- **ALL of the following** (AND logic)  
+  Use when *everything on your list must be true*.  
+  **Why you need it:** You use **ALL** when you want a **strict, precise cohort** - e.g., the event must happen **in an inpatient/ER visit** *and* the person must be **an adult** - so you don’t include people who match only part of what you mean.
+
+- **ANY of the following** (OR logic)  
+  Use when *any one item on your list is enough*.  
+  **Why you need it:** You use **ANY** when the same clinical idea can show up in **different ways in the data** - e.g., infection suspicion might appear as **positive culture OR antibiotics OR fever** - so you don’t miss real cases just because one signal is missing.
+
+- **AT LEAST X of the following** (threshold rule; “X out of N”)  
+  Use when *you want more than one piece of evidence*.  
+  **Why you need it:** You use **AT LEAST X** when one signal alone is **too weak or noisy** - e.g., require **2 of 3** sepsis signals (culture, IV antibiotics, lactate) or **2 of 3** epilepsy signals (diagnosis, ASM medication, EEG) - to reduce false positives.
+
+- **AT MOST X of the following** (upper limit rule)  
+  Use when *you want to prevent entry if too many “disqualifying” things are present*.  
+  **Why you need it:** You use **AT MOST X** to keep the cohort **clean and focused** - e.g., exclude **polytrauma** to get "isolated TBI," or exclude **other antihypertensive classes** to ensure **true monotherapy** - so your cohort matches the study intent.
+
+**When to use restrictions**
+- Context *bound to the index event* (e.g., "diagnosis occurs during inpatient visit").
+- Narrow time-window rules around index.
+- First/absence constraints tightly defining "entry".
+
+---
+
+### 1.6 Temporal Anchors (Event Start/End Windows)
+ATLAS expresses timing relative to the **index event**:
+
+- **event starts between** `[A] days Before/After` and `[B] days Before/After` **index start date**
+- **event ends between** `[C] days Before/After` and `[D] days Before/After` **index start date**
+
+#### Patterns with examples
+
+**1) Baseline history (lookback): "did the person have X before index?"**  
+Use for eligibility, covariates, prior disease, prior treatment.
+- **Pattern:** `start between 365 days before and 0 days before`  
+- **Example:** "Hypertension diagnosis in prior 365 days"
+  - **Criterion:** Condition Occurrence = concept set *Hypertensive disorder*
+  - **Attributes:**
+    - **Occurrence count:** at least 1
+    - **Temporal:** event **starts 365d before → 0d before** index start
+
+**2) Washout / new use: "ensure no prior exposure before index"**  
+Use for incident/new-user designs (avoid prevalent/ongoing users).
+- **Pattern:** `start between All days before and 1 day before` + count = **0**  
+- **Example:** "No ACE inhibitor exposure in baseline"
+  - **Criterion:** Drug Exposure = concept set *ACE inhibitors*
+  - **Attributes:**
+    - **Occurrence count:** exactly 0
+    - **Temporal:** event **starts All days before → 1d before** index start
+
+**3) Post-index follow-up window: “capture outcomes after index”**  
+Use for outcomes or downstream events.
+- **Pattern:** `start between 0 days after and 30 days after`  
+- **Example:** “AKI within 7 days after surgery”
+  - **Criterion:** Condition Occurrence = concept set *Acute kidney injury*
+  - **Attributes:**
+    - **Occurrence count:** at least 1
+    - **Temporal:** event **starts 0d after → 7d after** index start
+
+**4) Overlap with index (classic for visits): "event must span the index date"**  
+Use to require that something (usually a visit) **covers** the index date.
+- **Pattern (overlap template):**
+  - event **starts** between **All days before** and **0 days after** index start
+  - event **ends** between **0 days before** and **All days after** index start
+  - meaning: started on/before index and ended on/after index → index occurs **during** the event
+- **Example:** "Index diagnosis occurred during an inpatient/ER visit"
+  - **Criterion:** Visit Occurrence = concept set *Inpatient or ER visit*
+  - **Attributes:**
+    - **Temporal (overlap):** start ≤ index AND end ≥ index (using the template above)
+    - **Optional checkbox:** Restrict to the same visit occurrence
+
+**5) Same-day only (tight coupling): "must happen on index date"**  
+Use when you truly want same-day events.
+- **Pattern:** `start between 0 days before and 0 days after`  
+- **Example:** "Culture collected on index date"
+  - **Criterion:** Measurement/Procedure = concept set *Blood culture collection/order*
+  - **Attributes:**
+    - **Occurrence count:** at least 1
+    - **Temporal:** event **starts 0d before → 0d after** index start
+
+---
+
+#### Boundary note (important)
+- **0 days before** usually includes the **same calendar day** as the index.
+- **1 day before** enforces **strictly before** (excludes same-day events).
+
+---
+
+## How to choose "ideal" temporal anchors (practical guidance)
+
+**A) Start from the research question + required time ordering**  
+Define windows that match the clinical timeline you mean:
+- **Baseline (eligibility/covariates):** must occur **before** index
+- **Exposure ascertainment:** defines "on treatment" or "new use"
+- **Outcome window:** must occur **after** index, within a clinically plausible timeframe  
+**Document the rationale** (1-2 sentences per window).
+
+**B) Use clinical knowledge to avoid impossible timing**  
+Pick anchors consistent with care processes and physiology:
+- labs/imaging often occur **after** symptom onset
+- antibiotics may start **after** culture collection but before culture results
+- "hospital-acquired" often requires a minimum time since admission (e.g., ≥48h); implement using visit-based index + timing restrictions.
+
+**C) Prefer literature / validated phenotypes when available**  
+Reuse time windows from:
+- published cohort/phenotype definitions
+- OHDSI examples and training materials
+- network phenotype libraries  
+Even if adapted, keeping the same temporal structure improves comparability.
+
+**D) Stress-test empirically (recommended)**  
+Before finalizing:
+1. Check **attrition/diagnostics** (e.g., generation running/failed => View Report), to see which temporal rule drives drop-offs
+2. Review **time-to-event distributions** (days relative to index)
+3. Run sensitivity windows (e.g., baseline 180 vs 365; outcome 30 vs 90) to confirm results are stable
+
+---
+
+#### Quick cheatsheet
+
+| Goal | Recommended anchor pattern |
+|---|---|
+| “Had X in prior year” | start **365 before → 0 before** |
+| “No X before index (washout)” | start **All before → 1 before**, count **exactly 0** |
+| “Outcome within 30 days” | start **0 after → 30 after** |
+| “During same inpatient visit” | **overlap template** + **same visit occurrence** |
+| “Same-day procedure/event” | start **0 before → 0 after** |
+
+---
+
+### 1.7 Visit Restrictions & “Restrict to the same visit occurrence”
+
+**Goal:** Require that the index event happens **during a specific visit type** (e.g., inpatient/ER), and optionally ensure the linked events are from the **same encounter record** (same `visit_occurrence_id`).
+
+**How to do it**
+1. Under **Restrict initial events**, click **Add criteria to group**.
+2. Add **Visit Occurrence** as a criterion (e.g., *Inpatient Visit* or *ER Visit* concept set).
+3. Configure the **overlap** timing so the visit spans the index date:
+   - Visit **starts** between **All days before** and **0 days after** index start  
+   - Visit **ends** between **0 days before** and **All days after** index start  
+   *(the visit started on/before index and ended on/after index → index occurred "inside" the visit.)*
+4. Check **Restrict to the same visit occurrence**.
+
+**What "Restrict to the same visit occurrence" means**
+- It forces the visit criterion and the index event to share the **same `visit_occurrence_id`**.
+- Without it, ATLAS can satisfy the visit criterion using **any** visit in the time window (a different encounter), which can create incorrect linkages.
+
+**When to use (typical)**
+- When "during the same hospital encounter" is part of the *clinical meaning* of the phenotype.
+- When your index event can occur in many settings and you need to restrict to one (inpatient-only, ER-only, ICU-only).
+- When you want to reduce false matches due to multiple visits close in time.
+
+**Examples**
+
+**Example A - "Inpatient/ER fever"**
+- **Index event:** Fever (Measurement+Meas Value: core temperature OR Observation/Condition: fever)
+- **Restriction:** Must occur during an inpatient/ER visit  
+  - **Criterion:** Visit Occurrence = concept set *Inpatient or ER visit*  
+  - **Attributes:**
+    - **Temporal overlap (visit spans index):**
+      - start: **All before → 0 after**
+      - end: **0 before → All after**
+    - **Restrict to the same visit occurrence:** ON  
+  *(fever must be recorded within that same inpatient/ER encounter.)*
+
+**Example B - "Head CT during same encounter as suspected TBI"**
+- **Index event:** Condition Occurrence = concept set *TBI diagnoses*
+- **Restriction:** Head CT must be performed in the same visit as the diagnosis  
+  - **Criterion:** Procedure Occurrence = concept set *CT head/brain*  
+  - **Attributes:**
+    - **Occurrence count:** at least 1
+    - **Temporal:** starts **0 before → 0 after** (same day) *or* **0 before → 1 after** (within 24-48h)
+    - **Restrict to the same visit occurrence:** ON  
+  *(the CT is tied to the same encounter where TBI was diagnosed.)*
+
+---
+
+### 1.8 Allow Events Outside Observation Period
+
+**What it does:**
+- Lets a criterion be satisfied by events that fall **outside** the person’s **OBSERVATION_PERIOD**.
+
+**Why this is risky:**
+- Events outside OBSERVATION_PERIOD are typically treated as **not reliably observable** (data may be incomplete or not expected to exist there).
+
+**Recommendation**
+- Keep **OFF** by default.
+- Turn **ON** only if your network explicitly defines valid events outside observation (rare, requires documentation).
+
+**Example (rare justified case)**
+- Your network defines Observation Periods conservatively (e.g., coverage starts later than true care history), but still stores verified historical diagnoses before OP start that you are instructed to use.
+- If you enable this, document the policy and validate with QA.
+
+---
+
+## 2. Inclusion Criteria
+
+**Definition** Inclusion criteria are **post-entry filters** applied after initial events are identified.  
+**Why they matter:** They improve **clarity, modularity, and QA** because ATLAS can report attrition **per rule**.
+
+### 2.1 When to use Inclusion Criteria vs Entry Restrictions
+
+- Use **Entry restrictions** for:
+  - same-visit / overlap mechanics
+  - "must happen during inpatient visit"
+  - narrow context tied directly to the index event
+
+- Use **Inclusion criteria** for:
+  - modular eligibility rules (age, comorbidities)
+  - prior history requirements (baseline diagnoses/exposures)
+  - lab thresholds
+  - exclusions you want to audit ("how many were removed by this rule?")
+
+**Rule of thumb:**  
+If you want to **see a separate attrition line item** for it, prefer **Inclusion Criteria**.
+
+### 2.2 Add Inclusion Rules
+
+1. Click **New inclusion criteria**.
+2. Name it descriptively (e.g., "Adult", "Baseline observation ≥365d", "No prior cancer").
+3. Click **Add criteria to group** and configure attributes.
+
+**Examples**
+
+**Example A - "Adult (≥18 at index)"**
+- **Criterion:** *Person* (age at index)  
+- **Attributes:**
+  - **Age ≥ 18** at cohort start date (index)  
+*(exclude pediatrics.)*
+
+**Example B - "No prior cancer in baseline"**
+- **Criterion:** Condition Occurrence = concept set *Malignancy*  
+- **Attributes:**
+  - **Occurrence count:** exactly 0
+  - **Temporal:** starts **365 before → 1 before** index  
+*(ensure cancer-free baseline for cleaner interpretation.)*
+
+**Example C - "Baseline observation ≥365 days"**
+- Prefer using the **Cohort Entry** continuous observation setting, but you can also enforce with an inclusion rule if needed for QA visibility.
+*(require enough history to know what happened before index.)*
+
+### 2.3 Limit Qualifying Events per Person (post-inclusion)
+
+After inclusion rules, optionally set:
+- **All / earliest / latest qualifying event per person**
+
+**Examples**
+- **Incident design:** Start with **All** candidate events (to test rules), then keep **Earliest qualifying** so each person contributes one index date.
+- **Recurrent episodes:** Keep **All qualifying** if multiple episodes per person are meaningful (e.g., repeated infections).
+- **Cross-sectional "most recent" cohort:** Keep **Latest qualifying** if your question needs the most recent event per person.
+
+---
+
+## 3. Cohort Exit
+
+**Definition:** Exit logic defines **when the cohort episode ends**.  
+Cohort end = **persistence rule** (default end) + optional **censoring events** (end earlier if something happens).
+
+### 3.1 Event Persistence (default end strategy)
+
+Choose one:
+
+1. **End of continuous observation**
+   - Follow people until their observation period ends (data coverage ends).  
+   **Example:** "Follow until we lose data coverage" (common for long follow-up).
+
+2. **Fixed duration relative to initial event**
+   - End = index **start or end** + **N days**  
+   - Offset from **start date** → everyone gets the same duration  
+   - Offset from **end date** → duration depends on the event length (visit length, drug era length)  
+   **Examples:**
+   - "30-day outcome window after diagnosis" → **start + 30 days**
+   - "Follow 14 days after discharge" (visit has length) → **end + 14 days**
+
+3. **End of continuous drug exposure**
+   - Cohort persists while drug exposure continues, allowing a **gap** (grace period).  
+   **Examples:**
+   - On-treatment safety: remain in cohort while taking Drug A with **gap ≤30 days**
+   - Treatment episode: end when exposure stops (plus optional extension)
+
+**Documentation tip**
+Write one sentence: *"We used [persistence] because [clinical/analytic rationale]."*  
+Example: "Fixed 90-day follow-up after index to capture medium-term outcomes."
+
+---
+
+### 3.2 Censoring Events (Add Censoring Event)
+
+**Definition:** Censoring events end the cohort **early**, before the persistence end, when an important event happens.
+
+1. Click **+ Add Censoring Event**
+2. Add **Death** (common) and/or other events (e.g., treatment switch, competing outcome)
+
+**Examples**
+
+**Example A - Death censoring**
+- **Censoring criterion:** Death (DEATH table logic)  
+- **Attributes:** usually none needed (any death)  
+*(stop follow-up when the person dies.)*
+
+**Example B - Censor on treatment switch**
+- **Censoring criterion:** Drug Exposure = concept set *Competing therapy*  
+- **Attributes:**
+  - **Occurrence count:** at least 1
+  - **Temporal:** starts **0 after → All after** index  
+*(stop "on-treatment" follow-up once they start another therapy.)*
+
+**Death handling (critical)**
+- Do **not** search for "death" using condition/observation concept sets.
+- Use **Death** criterion (DEATH table logic) via **censoring** or as a dedicated outcome cohort.
+
+**Effective cohort end**
+Cohort end date = earliest of:
+- persistence-defined end
+- first censoring event date (across all censoring criteria)
+
+---
+
+## 4. Cohort Era (Collapse)
+
+**Definition:** Collapse settings control whether multiple qualifying episodes for the same person are merged into one longer episode.
+
+### 4.1 Collapse gap size
+
+Set **Specify era collapse gap size** (days):
+- If the gap between one episode ending and the next starting is **≤ N days** → ATLAS **merges** them into one longer era.
+- **0 days** = only **overlapping** or **back-to-back** episodes merge.
+- Larger gaps → **fewer** eras per person, **longer** era durations.
+
+---
+
+#### Real-life examples (what this looks like in practice)
+
+**Example 1 - Drug refills (statin / antihypertensive)**
+- Patient fills lisinopril:
+  - Rx #1: Jan 1 (30 days supply) → ends Jan 30  
+  - Next fill: Feb 10 → starts Feb 10  
+  - Gap = 11 days (Jan 31 → Feb 10)
+- If collapse gap is **30 days**, these two exposures are treated as **one continuous treatment episode**.
+- If collapse gap is **0 days**, they become **two separate episodes**.
+- **Why this matters:** many patients refill late; a small grace period better matches real medication use.
+
+**Example 2 - Antibiotics (short courses)**
+- Amoxicillin course:
+  - Jan 1-Jan 7, then another course Jan 20-Jan 27 (gap 12 days)
+- With **30-day gap**, ATLAS may merge into one "extended antibiotic episode," which could be **wrong** if you want distinct infection events.
+- Typical choice here is **0-7 days** depending on the question.
+- **Rule of thumb:** for **short-course meds**, use **smaller gaps** unless you explicitly want "any use within a month."
+
+**Example 3 - Pneumonia diagnoses (billing repeats during one illness)**
+- Diagnosis recorded:
+  - Jan 3, Jan 10, Jan 18 (same illness episode, repeated coding)
+- If your cohort exit is fixed (e.g., 30 days after diagnosis), then without collapse, you might create multiple overlapping pneumonia episodes.
+- Using collapse gap **30 days** often merges these into **one pneumonia episode**.
+- **Why:** repeated codes within weeks often represent the *same clinical episode*, not reinfection.
+
+**Example 4 - Chronic disease follow-up codes (diabetes, hypertension)**
+- Diabetes diagnosis appears repeatedly across visits (Mar, Apr, Jul, Oct).
+- Using a large collapse gap (e.g., **180 days**) can produce one long era that spans months.
+- **When appropriate:** if your cohort is "people living with diabetes" (prevalent phenotype).
+- **When not appropriate:** if your cohort is "new diabetes diagnosis episode" (incident). For that, collapse is usually irrelevant because you’ll use **earliest per person**.
+
+**Example 5 - Relapsing/remitting conditions (COPD exacerbation, MS relapse)**
+- COPD exacerbation encounters:
+  - Feb 1 (episode), Feb 20 (return visit), Mar 5 (another flare)
+- If you consider returns within ~30 days part of the same exacerbation, set gap **30 days**.
+- If you want to count each flare separately, set gap **0-7 days**.
+- **Why:** patients often re-present for the same exacerbation within weeks.
+
+**Example 6 - Hospitalizations (readmissions)**
+- Discharge: May 1  
+- Readmission: May 10 (gap 9 days)
+- If you collapse with **30 days**, you may treat a readmission as the same "episode," which is often **not desired** if your outcome is readmission.
+- For hospitalization episodes, many studies keep **0 days** (separate encounters), and handle readmission explicitly as an outcome.
+
+---
+
+#### Typical defaults
+- **Drug episodes:** gap **30 days** (refill grace period)
+- **Relapsing/chronic conditions:** gap **180 days** (group close recurrences)
+- **Incident cohorts (earliest per person):** collapse often irrelevant (only one episode anyway)
+
+---
+
+#### Simple advice
+- Pick the gap so it matches what you consider "the same episode" clinically:
+  - **Short acute events** (hospitalizations, procedures): usually **0 days**
+  - **Repeated coding for one illness** (pneumonia follow-ups): often **30 days**
+  - **Long-term treatment** (maintenance meds): often **30 days**
+  - **Chronic condition prevalence**: large gaps (e.g., **180 days**) can be reasonable
+- If unsure: run sensitivity checks (**0 vs 30 vs 180**) and compare:
+  - number of eras per person,
+  - average era duration,
+  - whether merging changes conclusions.
+
+### 4.2 Trimming (if available)
+
+Defaults usually trim to:
+- observation period boundaries
+- censoring events
+
+**Recommendation**
+- Prefer explicit study-window restrictions via entry/inclusion logic (e.g., "index date after 2020-01-01") rather than relying on trimming.
+---
+
+## 5. Resources and References
+- [Book of OHDSI:Chapter 10 Defining Cohorts](https://ohdsi.github.io/TheBookOfOhdsi/Cohorts.html)
+- [ATLAS Tutorial: Create A New Cohort Definition](https://www.youtube.com/watch?v=JQFGedOaNiw)
+- [2019 OHDSI Tutorials - Cohort Definition & Phenotyping (1 of 3)](https://www.youtube.com/watch?v=SKiZpHEfv_E)
+- [2019 OHDSI Tutorials - Cohort Definition & Phenotyping (2 of 3)](https://www.youtube.com/watch?v=SFCPwKJORy4)
+- [2019 OHDSI Tutorials - Cohort Definition & Phenotyping (3 of 3)](https://www.youtube.com/watch?v=FO3vQ9ajObY)
+
 
