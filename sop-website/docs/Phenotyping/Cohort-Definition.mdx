@@ -1,0 +1,29 @@
+---
+title: Cohort Definition Using OHDSI ATLAS
+id: SOP-CDUOA
+description:  This SOP defines a standardized, auditable, and reproducible process for creating cohorts (computable phenotypes) in OHDSI ATLAS
+---
+
+# Pending Approval
+# Standard Operating Protocol: Cohort Definition Using OHDSI ATLAS
+
+## Purpose
+This SOP describes a standardized process for defining cohorts in OHDSI ATLAS. It is tailored to CHoRUS Bridge2AI (B2AI) data converted to the OMOP CDM, but the procedures are generalizable to any ATLAS instance. The purpose is to ensure cohorts are defined correctly and consistently across teams, with clear documentation of inclusion/exclusion logic and adherence to best practices in observational research.
+
+## Scope
+This SOP applies to all cohort definitions created and reviewed within the CHoRUS network’s OHDSI ATLAS environment. It covers cohort definitions for analyses such as incidence, characterization, and outcomes research. The scope includes steps from initial cohort design through cohort entry criteria specification, inclusion rules, censoring (exit) criteria, and cohort era settings. 
+
+### Applicable Roles and Responsibilities
+- **Data Analysts/Phenotype Developers**: Responsible for creating cohort definitions in ATLAS following this SOP, including selecting appropriate initial events, inclusion and exit criteria, and verifying cohort logic.
+- **Quality Assurance (QA) Team**: Responsible for reviewing cohort definitions for correctness, completeness, and compliance with this SOP. QA ensures that all criteria (entry, inclusion, exit, era collapse) are appropriately applied and documented.
+- **Compliance Officers/Data Stewards**: Ensure that the cohort definitions (and any patient data they entail) adhere to regulatory and data use policies. They verify that sensitive events (e.g. death) are handled properly (e.g. as censoring events) and that cohort definitions are reproducible and auditable.
+- **Project Leads/Scientists**: Define the clinical intent of the cohort (phenotype) and confirm that the implemented cohort definition in ATLAS matches the intended definition. They provide clinical context (e.g. requiring certain observation times or prior conditions) and approve the final cohort definition.
+
+## [Glossary](link)
+
+## Prerequisites
+- **Access to ATLAS**: The user must have an active ATLAS account with permissions to create and edit cohort definitions. This SOP assumes the user can log into the CHoRUS ATLAS instance and navigate to the Cohort Definitions module.
+- **OMOP CDM Familiarity**: Users should understand the OMOP CDM tables and how clinical events are represented. A basic understanding of the data content in CHoRUS (e.g. types of source data and how they map to OMOP) is also required.
+- **Concept Sets Prepared**: Ideally, any needed concept sets (collections of standard codes for conditions, drugs, etc.) are created or available in ATLAS prior to cohort definition. ATLAS allows creating concept sets on the fly during cohort definition, but having them pre-defined (especially standard ones like "Inpatient Visit" or specific diagnosis categories) can speed up the process and ensure consistency.
+- **Cohort Definition Design**: A clear definition of the cohort is needed upfront. This includes the clinical rationale for inclusion/exclusion criteria, the time windows of interest (e.g. require 1-year baseline, or follow-up period), and how multiple events for one person should be handled. These design decisions should be documented (e.g. in protocol or phenotype definition document) before implementation in ATLAS.
+
