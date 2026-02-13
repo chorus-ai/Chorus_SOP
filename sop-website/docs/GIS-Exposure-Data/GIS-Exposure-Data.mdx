@@ -1,8 +1,8 @@
 # Exposome Geocoder – Input Preparation and Usage Guide
 
-> **Note:** This toolkit does **not** require or share any Protected Health Information (PHI).
+> **Note:** This toolkit does **not** share any Protected Health Information (PHI).
 
-This repository provides a **reproducible workflow** to geocode patient location data and link the resulting Census Tract (FIPS 11-digit) identifiers with Exposome datasets for environmental exposure analysis. 
+This repository provides a **reproducible workflow** to geocode patient location data (Phase 1) and link the resulting coordinates with exposome datasets (Phase 2). This workflow ensures that sensitive address data remains local while generating standardized exposure metrics to be shared to central server without identifiers.
 
 This SOP describes the workflow for running codes to geocode patient location data and link latitude and longitude coordinates with exposome datasets. All code will be executed locally at each site. Only the exposure tables containing exposome data will be shared with the central server; no address-level data will be transmitted or stored centrally. Sites should use the most granular address information available to them or latitude/longitude coordinates.
 
@@ -10,36 +10,42 @@ This SOP describes the workflow for running codes to geocode patient location da
 
 ---
 ## 📑 Table of Contents
-- [Geocoding Patient Data for Exposome Linkage](#geocoding-patient-data-for-exposome-linkage)
-  - [📑 Table of Contents](#-table-of-contents)
-  - [Overview](#overview)
-  - [Input Options](#input-options)
-    - [Option 1: Address](#option-1-address)
-    - [Option 2: Coordinates](#option-2-coordinates)
-    - [Option 3: OMOP CDM](#option-3-omop-cdm)
-  - [Usage Guide](#UsageGuideForGeocoding)
-    - [Step 1: Prepare Input Data](#step-1-prepare-input-data)
-    - [Step 2: Generate FIPS Codes](#step-2-generate-fips-codes)
-      - [For CSV Input (Option 1 & 2)](#for-csv-input-option-1--2)
-      - [For OMOP Input (Option 3)](#for-omop-input-option-3)
-    - [Step 3: Output Structure](#step-3-output-structure)
-      - [CSV Input (Option 1 & 2)](#csv-input-option-1--2)
-      - [OMOP Input (Option 3)](#omop-input-option-3)
-    - [Step 4: GIS Linkage with PostGIS-Exposure Tool](#step-4-gis-linkage-with-postgis-exposure-tool)
-      - [Prerequisites for GIS Linkage](#prerequisites-for-gis-linkage)
-      - [Expected Outputs](#expected-outputs)
-      - [GIS Linkage Workflow](#gis-linkage-workflow)
-      - [Notes \& Tips](#notes--tips)
-    - [Step 5: Validate \& Inspect Outputs](#step-5-validate--inspect-outputs)
-    - [Step 6: Optional - Site-level Date Shifting](#step-6-optional---site-level-date-shifting)
-    - [Step 7: Upload \& Centralized De-identification](#step-7-upload--centralized-de-identification)
-  - [Appendix](#appendix)
-    - [Geocoding Workflow](#geocoding-workflow)
-      - [Method: DeGAUSS Toolkit (Docker-based)](#method-degauss-toolkit-docker-based)
-      - [DeGAUSS Docker Commands (Executed Internally)](#degauss-docker-commands-executed-internally)
-      - [Script Highlights](#script-highlights)
-        - [Address\_to\_FIPS.py Logic](#address_to_fipspy-logic)
-        - [OMOP\_to\_FIPS.py Logic](#omop_to_fipspy-logic)
+- [Overview](#overview)
+- [Input Options](#input-options)
+  - [Option 1: Address](#option-1-address)
+  - [Option 2: Coordinates](#option-2-coordinates)
+  - [Option 3: OMOP CDM](#option-3-omop-cdm)
+- [Usage Guide](#usage-guide)
+  - [Step 1: Prepare Input Data](#step-1-prepare-input-data)
+    - [Guidance on Populating LOCATION_HISTORY.csv](#guidance-on-populating-location_historycsv)
+  - [Step 2: Generate FIPS Codes](#step-2-generate-fips-codes)
+    - [For CSV Input (Option 1 & 2)](#for-csv-input-option-1--2)
+    - [For OMOP Input (Option 3)](#for-omop-input-option-3)
+    - [Note on Dependencies (Firewall Warning)](#note-on-dependencies-firewall-warning)
+  - [Step 3: Output Structure](#step-3-output-structure)
+    - [CSV Input (Option 1 & 2)](#csv-input-option-1--2)
+      - [Reason Column Values](#reason-column-values)
+    - [OMOP Input (Option 3)](#omop-input-option-3)
+  - [Step 4: GIS Linkage with PostGIS-Exposure Tool](#step-4-gis-linkage-with-postgis-exposure-tool)
+    - [Prerequisites for GIS Linkage](#prerequisites-for-gis-linkage)
+    - [Expected Outputs](#expected-outputs)
+    - [GIS Linkage Workflow](#gis-linkage-workflow)
+    - [Notes & Tips](#notes--tips)
+  - [Step 5: Validate & Inspect Outputs](#step-5-validate--inspect-outputs)
+  - [Step 6: Optional - Site-level Date Shifting](#step-6-optional---site-level-date-shifting)
+  - [Step 7: Upload & Centralized De-identification](#step-7-upload--centralized-de-identification)
+- [References & sample files](#references--sample-files)
+  - [Geocoding](#geocoding)
+  - [GIS Linkage](#gis-linkage)
+- [Related Office Hours](#related-office-hours)
+- [Appendix](#appendix)
+  - [Appendix A: Data Dictionary and Logic](#appendix-a-data-dictionary-and-logic)
+  - [Appendix B: Geocoding Workflow](#appendix-b-geocoding-workflow)
+    - [Method: DeGAUSS Toolkit (Docker-based)](#method-degauss-toolkit-docker-based)
+    - [DeGAUSS Docker Commands (Executed Internally)](#degauss-docker-commands-executed-internally)
+    - [Script Highlights](#script-highlights)
+      - [Address_to_FIPS.py Logic](#address_to_fipspy-logic)
+      - [OMOP_to_FIPS.py Logic](#omop_to_fipspy-logic)
 ---
 
 ## Overview
@@ -48,7 +54,7 @@ This workflow uses **two separate Docker containers** to support end-to-end geoc
 1. **Exposome Geocoder Container (`prismaplab/exposome-geocoder:1.0.3`)**  
    Performs address or coordinate-based geocoding to generate Census Tract (FIPS 11-digit) codes using [DeGAUSS](https://degauss.org) backend tools.
 
-2. **Exposome Linkage Container (`ghcr.io/chorus-ai/chorus-postgis-sdoh:main`)**  
+2. **Exposome Linkage Container (`ghcr.io/chorus-ai/chorus-postgis-exposure:main`)**  
    Integrates the geocoded outputs with relevant environmental and social determinant datasets to produce analysis-ready files.
 
 Together, these containers enable:  
@@ -59,7 +65,13 @@ Together, these containers enable:
 ---
 
 ## Input Options
-You need to prepare **only ONE** of the following data elements per encounter.  
+**Phase 1 (Geocoding) Input:** To generate coordinates, you need to prepare **only ONE** of the following data elements per encounter (Option 1: Address, Option 2: Coordinates, or Option 3: OMOP CDM tables).
+
+**Phase 2 (Linkage) Input:** Regardless of the input option chosen for Phase 1, the final output **MUST** be transformed into two specific CSV files to run Phase 2.
+- **LOCATION.csv:** Contains the physical coordinates (latitude, longitude) and identifiers (location_id).
+- **LOCATION_HISTORY.csv:** Contains the temporal mapping of a person (entity_id, which is same as person_id) to a location (location_id) over a specific time range (start_date, end_date).
+
+_See Appendix A for the Data Dictionary and population logic._
 
 ### Option 1: Address
 Sample input files [here](https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/address_files/input)
@@ -130,6 +142,8 @@ As with address-based input, including `LOCATION.csv` and `LOCATION_HISTORY.csv`
 | location           | location_id, address_1, address_2, city, state, zip, location_source_value, country_concept_id, country_source_value, latitude, longitude |
 | location_history   | location_id, relationship_type_concept_id, domain_id, entity_id, start_date, end_date |
 
+_If you have OMOP CDM with required elements already, it can be used to prepare location and location history CSV tables as required by Phase 2._
+
 ---
 
 ## Usage Guide
@@ -147,6 +161,13 @@ For **Option 1 (Address)** or **Option 2 (Coordinates)**, your data must be in a
   -   `LOCATION_HISTORY.csv`
     
 > ⚠️ Only `.csv` files are supported. Convert `.xlsx` or other formats before running the tool.
+
+### **Guidance on Populating LOCATION_HISTORY.csv:**
+
+This table links a person to a specific location for a specific time range.
+
+- **If you have full residential history:** Use the actual move-in (start_date) and move-out (end_date) dates.
+- **If you only have  location for index ICU encounter and do not have access to previous residential addresses with date stamps as required by location history table, you can use the following logic to populate LOCATION_HISTORY.csv:** If linking to specific encounters, set start_date equal to the relevant encounter admission date, that is visit_start_date (in visit_occurance table) . Set end_date to NULL.
 
 ---
 
@@ -203,6 +224,14 @@ docker run -it --rm \
     --port <port_number> \
     --database <database_name>
 ```
+
+### Note on Dependencies (Firewall Warning):
+The Address_to_FIPS.py script attempts to pull Docker images automatically. If you have a strict firewall, you may need to pull these images manually before running the script:
+```bash
+docker pull ghcr.io/degauss-org/geocoder:3.3.0
+docker pull ghcr.io/degauss-org/census_block_group:0.6.0
+```
+
 ---
 
 ### Step 3: Output Structure
@@ -225,6 +254,9 @@ Each input file produces:
 > `<timestamp>` indicates when the script was executed (e.g., 20250624_150230).
 
 If `LOCATION.csv` and `LOCATION_HISTORY.csv` were included, they are copied to `output/` but not zipped.
+
+### IMPORTANT TO NOTE
+**Phase 2 input preparation note:** If you used **Option 1 (Address)** and did not provide a pre-built `LOCATION.csv`, you can use the CSV inside `coordinates_from_address_<timestamp>.zip` (generated in Phase 1) as the source of geocoded latitude/longitude values to populate `LOCATION.csv`. Ensure your `location_id` values are consistent between `LOCATION.csv` and `LOCATION_HISTORY.csv` before running Phase 2.
 
 **Zipped Output Columns Description**
 
@@ -312,7 +344,7 @@ Sample `DATA_SRC_SIMPLE.csv` and `VRBL_SRC_SIMPLE.csv`: [here](https://github.co
      --env VARIABLES=134,135,136 \
      --env DATA_SOURCES=1234,5150,9999 \
      -v $(pwd)/test/source:/source \
-     -d ghcr.io/chorus-ai/chorus-postgis-sdoh:main
+     -d ghcr.io/chorus-ai/chorus-postgis-exposure:main
    ```
    - Replace `VARIABLES` with the comma-separated list of variable IDs you need from `VRBL_SRC_SIMPLE.csv`.
    - Replace `DATA_SOURCES` with the relevant data source IDs (from `DATA_SRC_SIMPLE.csv`).
@@ -397,9 +429,69 @@ The following office hour sessions provide additional context and demonstrations
 
 ## Appendix
 
-### Geocoding Workflow
-This guide outlines the scripts, workflows, and Docker-based DeGAUSS toolkit used for generating Census Tract (FIPS) information from patient data.
-To convert patient location data into Census Tract identifiers (**FIPS11**), we use a two-step geocoding process powered by [DeGAUSS](https://degauss.org), executed locally via Docker containers.
+### Appendix A: Data Dictionary and Logic
+
+To successfully run Phase 2, your data must match the OMOP CDM definitions below.
+
+---
+
+### 1. LOCATION Table
+
+Represents physical location or address information.
+
+| Field | Description |
+|--------|--------------|
+| **location_id** | The unique key assigned to a Location. Each instance of a Location in the source data should use this key. **[REQUIRED]** |
+| address_1 | First line of the address. |
+| address_2 | Second line of the address. |
+| city | City name. |
+| state | State name. |
+| zip | Zip codes are handled as strings (3 digit or 5 digit). |
+| county | County name. |
+| **latitude** | Geocoded latitude (Float). **[REQUIRED]** |
+| **longitude** | Geocoded longitude (Float). **[REQUIRED]** |
+
+---
+
+### 2. LOCATION_HISTORY Table
+
+Stores relationships between persons and geographic locations over time.
+
+| Field | Description |
+|--------|--------------|
+| **location_id** | References the `location_id` in the LOCATION table. **[REQUIRED]** |
+| **entity_id** | Unique identifier for the entity (e.g., `person_id`). **[REQUIRED]** |
+| **domain_id** | Domain of the entity. Must be `PERSON` for this pipeline. **[REQUIRED]** |
+| **start_date** | Date the relationship started. **[REQUIRED]** |
+| end_date | Date the relationship ended. |
+
+---
+
+### 3. EXTERNAL_EXPOSURE Table
+
+After Phase 2 execution, the pipeline generates the `external_exposure` table with the columns below.
+
+| Variable | Description |
+|------------|--------------|
+| external_exposure_id | Unique row identifier for the exposure record. |
+| location_id | Foreign key linking to the input `LOCATION.csv` file. |
+| person_id | Foreign key linking to `entity_id` in the input `LOCATION_HISTORY.csv` file. |
+| exposure_start_date | Start date of the exposure event (calculated overlap). |
+| exposure_end_date | End date of the exposure event. |
+| exposure_source_value | Name of the environmental variable linked. |
+| value_as_number | Numerical value of the environmental variable. |
+| unit_concept_id | OMOP Concept ID representing the unit of measure. |
+| exposure_concept_id | OMOP Concept ID representing the environmental variable. |
+| exposure_type_concept_id | OMOP Concept ID for the type of exposure. |
+| value_as_concept_id | OMOP Concept ID for categorical results. |
+
+**Note:** This table reflects the exposure data generated as output of Phase 2.
+
+---
+
+### Appendix B: Geocoding Workflow
+
+This guide outlines the scripts, workflows, and Docker based DeGAUSS toolkit used to generate latitude and longitude coordinates from patient data. The process follows a two step geocoding workflow powered by DeGAUSS and executed locally via Docker containers.
 
 #### Method: DeGAUSS Toolkit (Docker-based)
 
@@ -437,6 +529,8 @@ docker run --rm -v "ABS_OUTPUT_FOLDER:/tmp" \
 --- 
 
 #### Script Highlights
+
+While our codes have functionality to generate FIPS codes in addition to latitude and longitude coordinates as detailed below, Phase 2 requires only latitude and longitude coordinates.
 
 ##### Address_to_FIPS.py Logic
 This [script](https://github.com/bihorac-LAB/Exposome/blob/main/Tools/code/Address_to_FIPS.py) handles CSV-based input:
