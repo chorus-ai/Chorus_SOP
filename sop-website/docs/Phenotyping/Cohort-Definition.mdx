@@ -113,26 +113,37 @@ Use **Restrict initial events to: having [all/any/at least/at most] of the follo
   Use when *alternative pathways* should qualify entry (one is sufficient).
 
   **Example A**  
-  - **Index**: *Hospital-acquired infection (HAI) suspicion* (your chosen index event, e.g., **Inpatient Visit start** or a **Device exposure start**)  
-    **Restrictions (ANY):**
-    1) **Positive culture** within 0-7 days after index  
-       - **Criterion**: *Measurement* (or *Observation*, depending on your OMOP implementation) = concept set **Positive culture result / organism detected**  
-       - **Attributes**:  
-         - **Occurrence count**: **at least 1**  
-         - **Temporal**: event **starts** between **0 days after** and **7 days after** index start date  
-         - *(Optional)* **value restriction**: "positive/abnormal" (measurement value)
-    2) **New broad-spectrum antibiotic start** within 0-2 days after index  
-       - **Criterion**: *Drug Exposure* = concept set **Broad-spectrum systemic antibacterials**  
-       - **Attributes**:  
-         - **Occurrence count**: **at least 1**  
-         - **Temporal**: drug **starts** between **0** and **2 days after** index start date  
-         - *(Optional)* **new use / washout**: **exactly 0** exposures to the same concept set in **-30 to -1 days** (or your protocol baseline)  
-    3) **Fever observation** within 0-1 day after index  
-       - **Criterion**: *Measurement* (core temperature) **OR** *Observation/Condition* (fever) using an appropriate concept set  
-       - **Attributes** (choose one pattern):  
-         - **Occurrence count**: **at least 1**  
-         - **Temporal**: event **starts** between **0** and **1 day after** index start date  
-         - *(Optional, if temperature modeled as Measurement)* **threshold**: temperature **≥ 38.0°C/100.4°F** (value/operator/unit)
+**Index (surveillance anchor):** Inpatient visit start (or device exposure start, depending on the HAI definition)
+**Restrict initial events (ANY):** evidence of suspected/confirmed infection after index
+
+#### 1) Positive culture signal within 0-7 days after index
+- **Criterion:** Measurement (or Observation, depending on local OMOP ETL) = microbiology culture/result concept set
+- **Attributes:**
+  - Occurrence count: **at least 1**
+  - Temporal anchor: **event starts between 0 days after and 7 days after index start date**
+  - (Optional, if supported by local modeling) result/value constraint indicating **positive / organism detected**
+- **Note:** Microbiology representation is ETL-specific; verify whether positivity is modeled as measurement value, value_as_concept, or separate result rows.
+
+#### 2) Broad-spectrum antibiotic exposure within 0-2 days after index
+- **Criterion:** Drug Exposure = concept set Broad-spectrum systemic antibacterials
+- **Attributes:**
+  - Occurrence count: **at least 1**
+  - Temporal anchor: **drug exposure starts between 0 and 2 days after index start date**
+  - (Optional, to approximate “new start”) baseline washout:
+    - **exactly 0** exposures to the same antibiotic concept set in **30 to 1 days before index**
+- **Note:** Without washout, this identifies antibiotic exposure near index, not necessarily a new initiation.
+
+#### 3) Fever signal within 0–1 day after index
+- **Criterion (ANY within this branch, depending on phenotype design):**
+  - Measurement = body temperature, **or**
+  - Observation/Condition = fever concept set
+- **Attributes (measurement-based pattern):**
+  - Occurrence count: **at least 1**
+  - Temporal anchor: **event starts between 0 and 1 day after index start date**
+  - Value constraint: **temperature ≥ 38.0°C** (only if units are standardized in ETL)
+- **Attributes (coded-fever pattern):**
+  - Occurrence count: **at least 1**
+  - Temporal anchor: **event starts between 0 and 1 day after index start date**'
 
   **Example B**  
   - **Index**: *Traumatic brain injury (TBI)* (choose your index event, commonly **Condition Occurrence: TBI**)  
@@ -632,4 +643,11 @@ Defaults usually trim to:
 - [2019 OHDSI Tutorials - Cohort Definition & Phenotyping (2 of 3)](https://www.youtube.com/watch?v=SFCPwKJORy4)
 - [2019 OHDSI Tutorials - Cohort Definition & Phenotyping (3 of 3)](https://www.youtube.com/watch?v=FO3vQ9ajObY)
 
+---
 
+## Related Office Hours
+
+The following office hour session provide additional context and demonstrations related to this SOP:
+
+- **[02-12-26] Cohort Definitions Using ATLAS**
+  - [Video Recording](https://drive.google.com/file/d/10vASF0n825d5MlDSK2iF2eAII7ykPTDk/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/15TK35kZQppEm4wU9whKdoj16svr-3XxD/edit?usp=drive_link&ouid=114187541389028121198&rtpof=true&sd=true) 
