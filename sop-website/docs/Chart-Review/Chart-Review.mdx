@@ -6,7 +6,7 @@ To provide a standardized approach for conducting a chart review to ensure data 
 
 ## B. Scope ##
 
-This SOP applies to all cliniciancs and research assistants who will be involved in the chart review process.
+This SOP applies to all clinicians and research assistants who will be involved in the chart review process.
 
 ## C. Definitiions ##
 
@@ -29,13 +29,32 @@ The pilot stage will consist of reviewing 20 charts - each covered by two (2) CR
 
 The next 15 charts after the first 5 charts will also be read by two (2) CRs. This will allow the calculation of interrater reliability (IRR) by Data Annotation Team. Interim decision will be made by the Team when and how to proceed. If IRR is within reasonable level, the rest of charts will be read by 1 CR per chart. Otherwise, the DA team will determine whether more charts need to be annotated by 2 CRs per chart.
 
-E.2. The REDCap Survey protocol 
+E.2. The RedCap Survey Preparation 
+
+a. Upon receiving research identifiers (study_id and visit_occurrence) from the CHORUS DA team, each center should map these identifiers to actual EHR identifiers. Depending on center's policy or availability, this process can be done either with honest broker or a designated researcher. 
+
+b. The list of both research and EHR identifiers should be given to CRs at the center.
+
+c. The CR identify those patients using the individual center's EHR. If CR cannot identify for any reason, CR needs to report PP, who will then report to CHORUS DA team to issue more research identifiers from the enriched cohorts. 
+
+d. The CR needs to have enough time spared at least to go through the single chart. We recommend having approximately 60 minutes time window for the first chart review. 
+
+e. Please prepare a pen and a paper to write down.
+
+E.3. The RedCap Review Protocol
+
+ a. The PP accesses the redcap survey page (with the application through the University of Pittsburgh RedCap system: https://redcap-std.hs.pitt.edu/redcap/surveys/?s=injPIG). 
  
- a. The PP accesses the redcap survey page (with the application through the University of Pittsburgh REDCap system: https://redcap-std.hs.pitt.edu/redcap/surveys/?s=injPIG). 
+ b. The PP reviews the RedCap questions and familiarize the path.
  
- b. The PP reviews the REDCap questions and familiarize the path.
- 
- c. The PP selects CRs and educate the survey response process. 
+ c. The PP selects CRs and educate the survey response process. A few important teaching points are as follows: 
+
+i) Time to event documentation and calculation: Note that direct record of admission date based on EHR is not permitted in this research survey with privacy concern. Initially, you will be asked to log the time of admission only (please note the admission date on a paper). For example, if your patient was admitted on Feb-15 at 2300, you will not be permitted to write Feb-15. However, you will be asked to write the hours (i.e. 2300). Throughout the survey, when prompted to count the days since admission, you enter 'the day since admission'. This is a calendar day. For example, if the first evidence of sepsis occurred on Feb-16 at 0500 on the patient admitted on Feb-15 at 2300, you will write day 1 of admission (16-15=1). Then you are asked to write the time of 0500 as it was seen in EHR. (For your reference, at the end of the survey, the algorithm will subtract 2300-0500=1800, which will be applied to 2400-1800 to result in 0600 hours of delta value)
+
+ii) Use of the MedCalc: While the use of online calculator could be cumbersome, we found that some centers do not have automated calculation of some scoring metrics, including SOFA score. Given that, when and if there is no automated calculation available from your institution EHR, we recommend using the MedCalc - for which case, there is a link to MedCalc on each question that requires complex calculation.
+
+iii) There might be some questions that you simply do not have an answer, or not applicable to your patient. In that case, please leave the answer blank - which will be a flag for us to review to identify any major systematic flaws. 
+
  
  d. Each CR reviews 5 charts and annotate each of the concept. 
  
