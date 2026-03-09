@@ -4,7 +4,7 @@ id: SOP-CDUOA
 description:  This SOP defines a standardized, auditable, and reproducible process for creating cohorts (computable phenotypes) in OHDSI ATLAS
 ---
 
-# Pending Approval
+# Aapproved
 # Standard Operating Protocol: Cohort Definition Using OHDSI ATLAS
 
 ## Purpose
@@ -12,6 +12,72 @@ This SOP describes a standardized process for defining cohorts in OHDSI ATLAS. I
 
 ## Scope
 This SOP applies to all cohort definitions created and reviewed within the CHoRUS network’s OHDSI ATLAS environment. It covers cohort definitions for analyses such as incidence, characterization, and outcomes research. The scope includes steps from initial cohort design through cohort entry criteria specification, inclusion rules, censoring (exit) criteria, and cohort era settings. 
+
+## Cohort Lifecycle & Governance 
+
+### Lifecycle
+Use this canonical lifecycle for every phenotype/cohort:
+
+**Clinical question → Phenotype design → ATLAS implementation → [Phenotype Inventory](https://docs.google.com/spreadsheets/d/1Uu4C2D7MhPN9CwEerX27DbUS01ZjF9PqDA7ypnnPFco/edit?usp=sharing) Registration → Diagnostics → Revision → Approval → Release → Versioning → Reuse**
+> The cohort definition is not "done" when it runs; it is done when it is **validated, approved, versioned, and reusable**.
+
+### Ownership and approval checkpoints
+**Phenotype owner:**
+- A named individual or team responsible for the clinical/methodological intent and long-term maintenance of the phenotype.
+- The owner is the final decision-maker for acceptance of changes.
+
+**Approval is requested when:**
+- A cohort is intended for **cross-site use**, **publication**, or inclusion in a **phenotype library**.
+- Any change alters **who enters the cohort**, **when entry occurs**, or **time-at-risk / exit** behavior.
+
+**A phenotype is considered "locked" when:**
+- The definition has passed the minimum diagnostics checklist (see *Diagnostics & Transportability*), and
+- It has been approved by the phenotype owner + QA reviewer, and
+- A version tag has been assigned and recorded (see below).
+
+## Phenotype naming convention 
+
+Use a consistent naming scheme so cohorts are discoverable, comparable across sites, and auditable over time.
+
+### Naming template
+**`B2AI-<Phenotype>-<Population/Setting>-<IndexAnchor>-v<MAJOR.MINOR.PATCH>`**
+
+**Examples**
+- `B2AI-ICU-Shock-VasopressorStart-Adult-v1.0.0`
+- `B2AI-ICU-MechanicalVentilation-Invasive-Adult-v1.1.0`
+- `B2AI-Infection-HAI-Suspected-ICU-v0.3.0`
+- `B2AI-Neuro-TBI-InpatientOrER-Adult-v2.0.0`
+
+### Required fields
+- **Prefix:** `B2AI` 
+- **Phenotype name:** stable clinical label (e.g., Sepsis, Shock, ARDS, AKI)
+- **Population/setting:** at least one of `{Adult|Peds}` and `{ICU|Inpatient|ER|Outpatient}`
+- **Index anchor hint:** the event used as time zero (e.g., `Admission`, `Dx`, `DrugStart`, `Procedure`, `DeviceStart`)
+- **Version:** `vMAJOR.MINOR.PATCH` (see policy below)
+
+### Optional fields (use when needed)
+- **Intent tag:** `{Incident|Prevalent}` (if relevant to interpretation)
+- **Time window tag:** `{Early24h|Day0-2|Day0-7|28d}` (if the window is defining)
+- **Comparator tag:** `{Target|Comparator}` (for PLE studies)
+
+### Naming rules (to reduce ambiguity)
+- Avoid local site names or ETL artifacts in the name (e.g., do not embed “SiteA” or “has_visit_detail_id”).
+- Prefer concise, consistent abbreviations (ICU, ER, RRT, MV, VTE).
+- If the definition is designed for reuse, freeze the name and increment version rather than renaming.
+
+### Versioning & change control
+Use a simple semantic policy: **MAJOR.MINOR.PATCH** (e.g., `1.2.0`).
+
+- **MAJOR** (e.g., 1.x → 2.0): clinical meaning changes  
+  Examples: new index event anchor, new domain (Condition → Procedure), new inclusion logic that changes population identity, changing incident↔prevalent intent, changing outcome definition.
+- **MINOR** (e.g., 1.1 → 1.2): analytic behavior changes, but clinical meaning remains the same  
+  Examples: time-window adjustments (0-2d → 0-3d), tightening/loosening observation requirements, adding/removing a secondary restriction, altering era collapse gap.
+- **PATCH** (e.g., 1.2.0 → 1.2.1): non-functional edits  
+  Examples: typos, formatting, better documentation text, link fixes (no logic changes).
+
+**Change control requirements:**
+- Every change must be recorded with: *what changed, why, expected impact, reviewer, date*.
+- For MINOR/MAJOR changes: re-run diagnostics and re-approve.
 
 ### Applicable Roles and Responsibilities
 - **Data Analysts/Phenotype Developers**: Responsible for creating cohort definitions in ATLAS following this SOP, including selecting appropriate initial events, inclusion and exit criteria, and verifying cohort logic.
