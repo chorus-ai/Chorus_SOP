@@ -96,25 +96,27 @@ The Images folder should contain all images for the patient, with images organiz
 
 Folder and File names should follow the format below:
 
-Patient Identification: Typically includes a de-identified person ID.
-Study Id: The study Id, may be a de-identified version of DICOM tags StudyInstanceUID or StudyId.
-Series Id: The series Id, may be a de-identified version of DICOM tags SeriesInstanceUID or SeriesNumber.
-Modality: Refers to the type of equipment used for the scan, such as MR (Magnetic Resonance), CT (Computed Tomography), XR (X-ray), or US (Ultrasound).
-Instance Number: Represents the specific image number within a series.
-
-Optional: Inclusion of patient id, study id, and series id in the filename helps to recover orphaned files but is optional.
+* Patient Identification: Typically includes a de-identified person ID.
+* Modality: Refers to the type of equipment used for the scan, such as MR (Magnetic Resonance), CT (Computed Tomography), XR (X-ray), or US (Ultrasound); DICOM tag Modality (0008,0060).
+* Accession Id: The Accession number, may be a de-identified version of DICOM tag AccessionNumber (0008,0050).
+* Series Id: The series Id, may be a de-identified version of DICOM tag SeriesInstanceUID (0020,000E).
+* Instance Number: Represents the specific image number within a series, InstanceNumber (0020,0013).
 
 Example of a DICOM Image folder and filenames
+```
 root
   ├── 10001001
       ├── Images
-          ├── 1234
-              ├── 5678
-                  ├── 10001001_1234_5678_CT_000.dcm
-                  ├── 10001001_1234_5678_CT_001.dcm
-                  ├── 10001001_1234_5678_CT_002.dcm
+          ├──CT
+              ├── 1234
+                  ├── 5678
+                      ├── 000.dcm
+                      ├── 001.dcm
+                      ├── 002.dcm
                   ...
-This example would represent a CT scan for patient 1000100020 with Study Id 1234 and Series Id 5678. This image is the first in that series. Please Make sure that these fields match the dicom metadata tags.
+```
+
+This example would represent a CT scan for patient 10001001 with Accession Number 1234 and Series Id 5678, with instance numbers 000, 001, and 002. Please make sure that these fields match the dicom metadata tags.
 
 **DICOM Tags Recommended to Keep**
 
