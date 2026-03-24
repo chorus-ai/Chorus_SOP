@@ -91,11 +91,17 @@ Use a simple semantic policy: **MAJOR.MINOR.PATCH** (e.g., `1.2.0`).
 - **Access to ATLAS**: The user must have an active ATLAS account with permissions to create and edit cohort definitions. This SOP assumes the user can log into the [CHoRUS ATLAS](https://ca-www-engineer.redbush-0f9d0a70.eastus2.azurecontainerapps.io/atlas/#/home) instance and navigate to the Cohort Definitions module.
 - **OMOP CDM Familiarity**: Users should understand the OMOP CDM tables and how clinical events are represented. A basic understanding of the data content in CHoRUS (e.g. types of source data and how they map to OMOP) is also required.
 - **Concept Sets Prepared**: Ideally, any needed concept sets (collections of standard codes for conditions, drugs, etc.) are created or available in ATLAS prior to cohort definition. ATLAS allows creating concept sets on the fly during cohort definition, but having them pre-defined (especially standard ones like "Inpatient Visit" or specific diagnosis categories) can speed up the process and ensure consistency.
-- **Cohort Definition Design**: A clear definition of the cohort is needed upfront. This includes the clinical rationale for inclusion/exclusion criteria, the time windows of interest (e.g. require 1-year baseline, or follow-up period), and how multiple events for one person should be handled. These design decisions should be documented (e.g. in protocol or phenotype definition document) before implementation in ATLAS.
+- **Cohort Definition Design / Phenotype Intent Documented**: Before implementing in ATLAS, document a clear clinical definition and methodological intent for the cohort, including the index (onset) anchor, rationale for inclusion/exclusion criteria, baseline and follow-up (time-at-risk) windows, handling of multiple events per person (episode vs first event), and the intended meaning of era/collapse settings (e.g., in a protocol or phenotype definition document).
 
 # Cohort Definition Workflow (OHDSI ATLAS)
 
 This workflow describes how to build a cohort (computable phenotype) in ATLAS: **define cohort entry events**, optionally **restrict** those events, apply **inclusion criteria**, then define **exit/censoring** and **era collapse** settings. Use the **attrition/diagnostics** outputs to QA each stage.
+
+> **Normative rule (Entry vs Inclusion semantics):**
+> - **Entry criteria must define the biological onset anchor** (the event you treat as “time zero”).
+> - **Inclusion criteria must define analytic eligibility** (who you allow into the analysis after the anchor is defined).
+
+> _*This rule reduces variability across analysts and improves transportability across sites.*_
 
 ---
 
@@ -110,17 +116,21 @@ This workflow describes how to build a cohort (computable phenotype) in ATLAS: *
 - **Add Initial Event** = defines *what event* anchors cohort entry.
 - **Add attribute** = adds *constraints* to that event.
 
----
-
 ### 1.2 Attach a Concept Set to the Initial Event
 1. Add an initial event (e.g., **Condition Occurrence**).
 2. Open the criterion’s dropdown and choose **Import Concept Set**.
 3. Select an existing concept set or create a new one, then attach it to the criterion.
 
-**QA tip**
-- Prefer **standard concepts** and ensure **domain alignment** (e.g., condition concepts used in a condition criterion).
-
----
+#### Concept set considerations (Required for reproducibility)
+Document the following for each concept set used in entry or key restrictions:
+- **Descendant explosion policy**: are descendants included?  
+  *Impact:* can massively change cohort size and clinical meaning.
+- **Mapped vs unmapped concepts**: prefer standard concepts; confirm whether your ETL maps source codes properly.  
+  *Impact:* undercounting occurs if data exists only as unmapped/non-standard codes.
+- **Domain drift**: ensure concepts match the criterion domain (Condition concepts in Condition Occurrence, etc.).  
+  *Impact:* silent undercounts and wrong populations.
+- **Vocabulary release freeze** (recommended when reusing cohorts): record the vocabulary version/date and freeze concept set membership for a release.  
+  *Impact:* concept hierarchy changes across vocabulary releases can change cohort membership without any cohort logic edits.
 
 ### 1.3 Continuous Observation Requirement (X days before / Y days after)
 In **Cohort Entry Events**, configure:
@@ -129,17 +139,26 @@ In **Cohort Entry Events**, configure:
 
 This requires an **OBSERVATION_PERIOD** spanning the index event with sufficient lookback/follow-up.
 
-**Common configurations**
-- **0 / 0**: no baseline or follow-up requirement (prevalence-style cohorts).
-- **365 / 0**: require ≥1 year baseline (incident/new-user designs; covariate lookback).
-- **0 / 30**: require ≥30 days follow-up (short-term outcome observation).
-- **365 / 365**: strict baseline + follow-up requirement (protocol-driven designs).
+#### Technical meaning
+The index date must occur inside **OBSERVATION_PERIOD** with enough coverage:
+- index date ≥ observation start + X days
+- index date ≤ observation end − Y days
 
-**Operational logic**
+#### Analytical meaning
+- **Baseline covariate identifiability:** Without enough *prior* observation, "absence" of history may mean "not observed," not "truly absent."
+- **Incident cohort (new onset / new user)**: Require a washout period (e.g., ≥180–365 days of prior observation) with no prior evidence of the condition/exposure, so the index event is treated as the first observed start.
+- **Prevalent cohort (existing / ongoing)**: Do not require absence during baseline; include anyone with evidence of the condition/exposure, even if it started before the available observation window.
+- **Immortal time bias risk:** If you require long *post-index* observation (large Y), you may exclude early deaths/early loss-to-follow-up, creating biased survival comparisons. Prefer handling death as a censoring/outcome strategy rather than excluding those patients via Y-days requirements.
+
+#### Operational logic summary
 - Index date must be ≥ **X** days after observation start and ≥ **Y** days before observation end.
 - Be cautious: large **Y** can exclude patients who die/leave early (often better handled via **censoring** rather than exclusion).
 
----
+**Common configurations**
+- **0 / 0**: no baseline or follow-up requirement (feasibility or prevalence-oriented cohorts).
+- **365 / 0**: require ≥1 year baseline (incident/new-user design baseline, covariate lookback).
+- **0 / 30**: require ≥30 days follow-up (short-term outcome observation).
+- **365 / 365**: strict baseline + follow-up requirement (protocol-driven designs; use cautiously; justify).
 
 ### 1.4 Limit Initial Events per Person
 Use **Limit initial events to**:
@@ -151,8 +170,6 @@ Use **Limit initial events to**:
 - "All pneumonia episodes" → **All events**
 - "First-ever Myocardial Infarction" → **Earliest**
 - "Most recent opioid exposure" → **Latest**
-
----
 
 ### 1.5 Restrict Initial Events (Entry Event Restrictions)
 Use **Restrict initial events to: having [all/any/at least/at most] of the following criteria** to add context tightly coupled to the index event.
@@ -226,8 +243,6 @@ Use **Restrict initial events to: having [all/any/at least/at most] of the follo
          - **Temporal overlap** with index (if index is visit-based) and/or  
          - **Restrict to the same visit occurrence** (recommended when index is visit/encounter anchored)
 
----
-
 - **AT LEAST X of the following** (k-of-n logic; "≥X")  
 Identifies a specific condition or subphenotype based on the presence of a minimum number (k) of criteria, symptoms, or markers out of a total set (n) available. Use when you want a *minimum evidence threshold* from multiple indicators to improve specificity (the ability of a test to correctly identify individuals who do not have a condition, representing the true negative rate). 
 
@@ -257,8 +272,6 @@ Identifies a specific condition or subphenotype based on the presence of a minim
     3) **EEG performed**  
        - **Criterion**: *Procedure Occurrence* = concept set **EEG**  
        - **Attributes**: **at least 1**; **temporal** within **-180 to +30 days** of index
-
----
 
 - **AT MOST X of the following** (upper-bound constraint; "≤X")  
   Use to enforce *exclusions / mutual exclusivity* (keep the cohort "clean") or limit competing signals.
@@ -296,7 +309,6 @@ Identifies a specific condition or subphenotype based on the presence of a minim
          - **Temporal**: **All time before** to **0 days before** index start (or a defined baseline window)
     → Use cautiously; document rationale because it changes generalizability.
 
----
 - **Summary**
 - **ALL of the following** (AND logic)  
   Use when *everything on your list must be true*.  
@@ -319,17 +331,19 @@ Identifies a specific condition or subphenotype based on the presence of a minim
 - Narrow time-window rules around index.
 - First/absence constraints tightly defining "entry".
 
----
-
 ### 1.6 Temporal Anchors (Event Start/End Windows)
 ATLAS expresses timing relative to the **index event**:
 
 - **event starts between** `[A] days Before/After` and `[B] days Before/After` **index start date**
 - **event ends between** `[C] days Before/After` and `[D] days Before/After` **index start date**
 
+> `Baseline window` defines covariate observability 
+> `Absence criteria` define phenotype specificity 
+> `Washout` defines incident design
+
 #### Patterns with examples
 
-**1) Baseline history (lookback): "did the person have X before index?"**  
+**1) Baseline prior history (lookback): "did the person have X before index?"**  
 Use for eligibility, covariates, prior disease, prior treatment.
 - **Pattern:** `start between 365 days before and 0 days before`  
 - **Example:** "Hypertension diagnosis in prior 365 days"
@@ -377,13 +391,9 @@ Use when you truly want same-day events.
     - **Occurrence count:** at least 1
     - **Temporal:** event **starts 0d before → 0d after** index start
 
----
-
 #### Boundary note (important)
 - **0 days before** usually includes the **same calendar day** as the index.
 - **1 day before** enforces **strictly before** (excludes same-day events).
-
----
 
 ## How to choose "ideal" temporal anchors (practical guidance)
 
@@ -413,8 +423,6 @@ Before finalizing:
 2. Review **time-to-event distributions** (days relative to index)
 3. Run sensitivity windows (e.g., baseline 180 vs 365; outcome 30 vs 90) to confirm results are stable
 
----
-
 #### Quick cheatsheet
 
 | Goal | Recommended anchor pattern |
@@ -424,8 +432,6 @@ Before finalizing:
 | “Outcome within 30 days” | start **0 after → 30 after** |
 | “During same inpatient visit” | **overlap template** + **same visit occurrence** |
 | “Same-day procedure/event” | start **0 before → 0 after** |
-
----
 
 ### 1.7 Visit Restrictions & “Restrict to the same visit occurrence”
 
@@ -471,8 +477,6 @@ Before finalizing:
     - **Temporal:** starts **0 before → 0 after** (same day) *or* **0 before → 1 after** (within 24-48h)
     - **Restrict to the same visit occurrence:** ON  
   *(the CT is tied to the same encounter where TBI was diagnosed.)*
-
----
 
 ### 1.8 Allow Events Outside Observation Period
 
@@ -581,9 +585,20 @@ Choose one:
 Write one sentence: *"We used [persistence] because [clinical/analytic rationale]."*  
 Example: "Fixed 90-day follow-up after index to capture medium-term outcomes."
 
----
+### 3.2 Death handling
+Death can play different roles depending on study intent:
 
-### 3.2 Censoring Events (Add Censoring Event)
+- **Death as an outcome (mortality studies):**
+  - Define death as the outcome event (typically using DEATH logic/outcome cohort).
+- **Death as censoring (effectiveness studies):**
+  - Stop follow-up at death to avoid counting impossible time.
+- **Death as a competing event:**
+  - Recognize that death can preclude other outcomes; handle in analysis design/interpretation (not only cohort definition).
+
+**Operational rule:**
+- Do **not** represent death via "death concept sets" in Condition/Observation; use DEATH logic (outcome cohort or censoring).
+
+### 3.3 Censoring Events (Add Censoring Event)
 
 **Definition:** Censoring events end the cohort **early**, before the persistence end, when an important event happens.
 
@@ -621,12 +636,26 @@ Cohort end date = earliest of:
 
 ### 4.1 Collapse gap size
 
+**Interpretation principle:** Each era gap encodes a clinical assumption about what constitutes a single episode.
+
 Set **Specify era collapse gap size** (days):
 - If the gap between one episode ending and the next starting is **≤ N days** → ATLAS **merges** them into one longer era.
 - **0 days** = only **overlapping** or **back-to-back** episodes merge.
 - Larger gaps → **fewer** eras per person, **longer** era durations.
 
----
+Document the intended meaning using a table such as:
+
+| Collapse gap / persistence | Encoded clinical assumption |
+|---:|---|
+| 0 days | Separate events/episodes |
+| 30 days | One episode of an acute event (e.g., repeated codes for same illness) |
+| 90 days | Patient state / prolonged clinical phase |
+| 180 days | Chronic/relapsing condition grouping |
+| Drug persistence (end of continuous drug exposure) | Therapeutic treatment episode (on-treatment concept) |
+
+**Operational guidance:**
+- Choose gap based on clinical meaning and protocol/literature when available.
+- If uncertain: start with 0 and run sensitivity checks (0 vs 30 vs 180).
 
 #### Real-life examples (what this looks like in practice)
 
@@ -672,14 +701,10 @@ Set **Specify era collapse gap size** (days):
 - If you collapse with **30 days**, you may treat a readmission as the same "episode," which is often **not desired** if your outcome is readmission.
 - For hospitalization episodes, many studies keep **0 days** (separate encounters), and handle readmission explicitly as an outcome.
 
----
-
 #### Typical defaults
 - **Drug episodes:** gap **30 days** (refill grace period)
 - **Relapsing/chronic conditions:** gap **180 days** (group close recurrences)
 - **Incident cohorts (earliest per person):** collapse often irrelevant (only one episode anyway)
-
----
 
 #### Simple advice
 - Pick the gap so it matches what you consider "the same episode" clinically:
@@ -700,9 +725,43 @@ Defaults usually trim to:
 
 **Recommendation**
 - Prefer explicit study-window restrictions via entry/inclusion logic (e.g., "index date after 2020-01-01") rather than relying on trimming.
+
 ---
 
-## 5. Resources and References
+## 5. Diagnostics & Transportability
+
+### Minimal cohort diagnostics checklist 
+1. **Concept prevalence / concept contribution**
+   - confirm top contributing concepts match clinical intent
+2. **Time distributions**
+   - index date distribution; event timing relative to index for key restrictions/outcomes
+3. **Negative control prevalence (minimum sanity check)**
+   - confirm at least one "should be near-zero" check for obvious impossibilities (e.g., pediatric-only condition in adult-only cohort, sex-specific condition in opposite sex) OR an explicit rationale if not applicable
+4. **Cross-site transportability sanity**
+   - check whether cohort depends on site-specific ETL artifacts (e.g., only works if visits are linked a certain way)
+
+### General transportability principle (normative)
+**Phenotype definitions should represent the intended clinical definition, not compensate for source-specific ETL issues.**
+- If the phenotype only "works" at one site due to an ETL quirk, fix mapping/ETL rather than encoding that quirk into the cohort logic.
+
+---
+
+## 6. Operational pre-release checklist
+
+Before publishing/releasing a cohort:
+- [ ] Clinical question and phenotype intent documented (index anchor, eligibility, time-at-risk).
+- [ ] Concept set policies documented (descendants, mapping, domain, vocabulary freeze).
+- [ ] Continuous observation justified (baseline and follow-up rationale; bias considerations noted).
+- [ ] Entry vs inclusion semantics consistent with SOP rule.
+- [ ] Death role specified (outcome vs censoring vs competing event).
+- [ ] "Allow events outside observation period" is OFF **or** has documented justification + explicit approval.
+- [ ] Cohort era/collapse meaning documented (gap value + assumption table).
+- [ ] Minimal diagnostics completed and reviewed.
+- [ ] Version assigned; change log updated; owner + QA sign-off recorded.
+
+---
+
+## 7. Resources and References
 - [Book of OHDSI:Chapter 10 Defining Cohorts](https://ohdsi.github.io/TheBookOfOhdsi/Cohorts.html)
 - [ATLAS Tutorial: Create A New Cohort Definition](https://www.youtube.com/watch?v=JQFGedOaNiw)
 - [2019 OHDSI Tutorials - Cohort Definition & Phenotyping (1 of 3)](https://www.youtube.com/watch?v=SKiZpHEfv_E)
