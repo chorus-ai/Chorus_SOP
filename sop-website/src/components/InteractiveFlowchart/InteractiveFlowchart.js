@@ -31,11 +31,12 @@ const InteractiveFlowchart = () => {
   ];
 
   const supportingSOPs = [
+    { title: 'OMOP Mapping Principles', link: '/Chorus_SOP/docs/OMOP-Mapping/OMOP-Mapping-Principles', category: 'mapping' },
     { title: 'Clinical Validation of Mappings', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CVoM', category: 'mapping' },
     { title: 'Cataloging Unmapped Terms', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CUT', category: 'mapping' },
     { title: 'Concept Set Creation', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CSC', category: 'mapping' },
     { title: 'OMOP Domain Definition', link: '/Chorus_SOP/docs/OMOP-Mapping/OMOP-Domain-Definition', category: 'mapping' },
-    { title: 'Chart Review', link: '/Chorus_SOP/docs/Chart-Review', category: 'mapping' },
+    { title: 'Chart Review', link: '/Chorus_SOP/docs/Chart-Review', category: 'phenotyping' },
     { title: 'Common Data Elements', link: '/Chorus_SOP/docs/Common-Data-Elements', category: 'elements' },
     { title: 'Tier 1 Elements', link: '/Chorus_SOP/docs/Common-Data-Elements/Tier%201%20Elements', category: 'elements' },
     { title: 'Safe Harbor Approach', link: '/Chorus_SOP/docs/Privacy/Safe%20Harboring', category: 'privacy' },
@@ -173,6 +174,15 @@ const InteractiveFlowchart = () => {
       <div className={styles.supportingSOPs}>
         <h3>Supporting SOPs</h3>
         <div className={styles.supportingCategories}>
+          <div className={styles.supportingCategory}>
+            <h4>Phenotyping</h4>
+            {supportingSOPs.filter(sop => sop.category === 'phenotyping').map(sop => (
+              <a key={sop.title} href={sop.link} className={styles.supportingLink}>
+                {sop.title}
+              </a>
+            ))}
+          </div>
+
           <div className={styles.supportingCategory}>
             <h4>OMOP Mapping & Concepts</h4>
             {supportingSOPs.filter(sop => sop.category === 'mapping').map(sop => (
