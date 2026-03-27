@@ -31,7 +31,7 @@ const InteractiveFlowchart = () => {
   ];
 
   const supportingSOPs = [
-    { title: 'OMOP Mapping Principles', link: '/Chorus_SOP/docs/OMOP-Mapping/OMOP-Mapping-Principles', category: 'mapping' },
+    { title: 'OMOP Mapping Principles', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-OMP', category: 'mapping' },
     { title: 'Clinical Validation of Mappings', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CVoM', category: 'mapping' },
     { title: 'Cataloging Unmapped Terms', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CUT', category: 'mapping' },
     { title: 'Concept Set Creation', link: '/Chorus_SOP/docs/OMOP-Mapping/SOP-CSC', category: 'mapping' },
