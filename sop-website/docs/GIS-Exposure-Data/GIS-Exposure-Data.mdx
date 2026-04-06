@@ -16,15 +16,18 @@ This SOP describes the workflow for running codes to geocode patient location da
   - [Option 2: Coordinates](#option-2-coordinates)
   - [Option 3: OMOP CDM](#option-3-omop-cdm)
 - [Usage Guide](#usage-guide)
+- [Phase 1 Priority Workflow (Recommended)](#phase-1-priority-workflow-recommended)
   - [Step 1: Prepare Input Data](#step-1-prepare-input-data)
     - [Guidance on Populating LOCATION_HISTORY.csv](#guidance-on-populating-location_historycsv)
-  - [Step 2: Generate FIPS Codes](#step-2-generate-fips-codes)
-    - [For CSV Input (Option 1 & 2)](#for-csv-input-option-1--2)
+  - [Step 2: Run Geocoding for LOCATION Outputs (Primary)](#step-2-run-geocoding-for-location-outputs-primary)
+    - [Geocoding Levels Used by Address_to_LOCATION.py](#geocoding-levels-used-by-address_to_locationpy)
+    - [Success Rate Reporting](#success-rate-reporting)
+    - [Legacy / Optional FIPS Workflows](#legacy--optional-fips-workflows)
     - [For OMOP Input (Option 3)](#for-omop-input-option-3)
     - [Note on Dependencies (Firewall Warning)](#note-on-dependencies-firewall-warning)
   - [Step 3: Output Structure](#step-3-output-structure)
-    - [CSV Input (Option 1 & 2)](#csv-input-option-1--2)
-      - [Reason Column Values](#reason-column-values)
+    - [Primary Output (Address_to_LOCATION.py)](#primary-output-address_to_locationpy)
+    - [Legacy FIPS/Zip Outputs (when using FIPS scripts)](#legacy-fipszip-outputs-when-using-fips-scripts)
     - [OMOP Input (Option 3)](#omop-input-option-3)
   - [Step 4: GIS Linkage with PostGIS-Exposure Tool](#step-4-gis-linkage-with-postgis-exposure-tool)
     - [Prerequisites for GIS Linkage](#prerequisites-for-gis-linkage)
@@ -44,6 +47,7 @@ This SOP describes the workflow for running codes to geocode patient location da
     - [Method: DeGAUSS Toolkit (Docker-based)](#method-degauss-toolkit-docker-based)
     - [DeGAUSS Docker Commands (Executed Internally)](#degauss-docker-commands-executed-internally)
     - [Script Highlights](#script-highlights)
+      - [Address_to_LOCATION.py Logic](#address_to_locationpy-logic)
       - [Address_to_FIPS.py Logic](#address_to_fipspy-logic)
       - [OMOP_to_FIPS.py Logic](#omop_to_fipspy-logic)
 ---
@@ -51,14 +55,14 @@ This SOP describes the workflow for running codes to geocode patient location da
 ## Overview
 This workflow uses **two separate Docker containers** to support end-to-end geocoding and data linkage:
 
-1. **Exposome Geocoder Container (`prismaplab/exposome-geocoder:1.0.3`)**  
-   Performs address or coordinate-based geocoding to generate Census Tract (FIPS 11-digit) codes using [DeGAUSS](https://degauss.org) backend tools.
-
+1. **Exposome Geocoder Container (`prismaplab/exposome-geocoder:1.0.4`)**  
+   Performs address or coordinate-based geocoding to generate latitude/longitude for LOCATION workflows and supports FIPS workflows when needed, using [DeGAUSS](https://degauss.org) backend tools.
 2. **Exposome Linkage Container (`ghcr.io/chorus-ai/chorus-postgis-exposure:main`)**  
    Integrates the geocoded outputs with relevant environmental and social determinant datasets to produce analysis-ready files.
 
 Together, these containers enable:  
-- Address and latitude/longitude-based geocoding  
+- Address and latitude/longitude-based geocoding 
+- LOCATION and LOCATION_HISTORY preparation for linkage
 - OMOP CDM geocoding extraction and processing  
 - GIS linkage with PostGIS-SDoH indices (ADI, SVI, AHRQ)
 
@@ -124,12 +128,15 @@ If they are **not provided**, users will need to **manually update their LOCATIO
 
 Sample input files [here](https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/latlong_files/input)
 
-| latitude   | longitude | entity_id |
-|------------|-----------|-----------|
-| 30.353463  | -81.6749  | 1         |
-| 29.634219  | -82.3433  | 2         |
+| location_id | latitude   | longitude | zip   | entity_id | start_date |
+|-------------|------------|-----------|-------|-----------|------------|
+| 1           | 30.353463  | -81.6749  | 32209 | 1         | 2019-01-05 |
+| 2           | 29.634219  | -82.3433  | 32608 | 2         | 2019-02-14 |
 
 As with address-based input, including `LOCATION.csv` and `LOCATION_HISTORY.csv` enables seamless downstream processing with the linkage container.
+
+Important for auto-generated `LOCATION_HISTORY.csv` (if not provided as input and only location for index encounter is available):
+- Coordinates can be provided, but rows should include `location_id`, either address or zip, `entity_id` (which is same as `person_id` for a given subject), and `start_date` (for which `visit_start_date` can be used as a proxy if no `start_date` is available).
 
 ---
 
@@ -148,39 +155,101 @@ _If you have OMOP CDM with required elements already, it can be used to prepare 
 
 ## Usage Guide
 
+### Phase 1 Priority Workflow (Recommended)
+
+For Phase 1 geocoding (latitude/longitude generation), use:
+- **Script:** `Address_to_LOCATION.py`
+- **Container:** `prismaplab/exposome-geocoder:1.0.4`
+
+This workflow is recommended because it directly prepares files needed for Phase 2 linkage:
+-	`LOCATION.csv` (updated with latitude/longitude and `modifier_source_value`)
+-	`LOCATION_HISTORY.csv` (maintained in OMOP format)
+
+
 ### Step 1: Prepare Input Data
-Prepare **only ONE** of the data elements as indicated under the [Input Options](#input-options) per encounter.  
-For **Option 1 (Address)** or **Option 2 (Coordinates)**, your data must be in a **CSV file** format. 
+For the recommended workflow, place files in one input folder and run one command.
+
+**Preferred input (recommended for all sites):**
+-	`LOCATION.csv` in OMOP-style format
+-	`LOCATION_HISTORY.csv` in OMOP-style format
+
+**Also supported by `Address_to_LOCATION.py`:**
+
+-	encounter-level CSV files with address columns (for example `address` or `address_1/street`, plus city/state/zip)
+
+-	encounter-level CSV files with `latitude`/`longitude` (or `lat`/`lon`)
+
+**Minimum required columns across input files:**
+-	`location_id`
+-	either address or zip information (for `LOCATION.csv` generation)
+
+**Recommended columns for complete `LOCATION_HISTORY.csv` auto-generation:**
+
+-	`entity_id` (which is same as `person_id` for a given subject)
+-	`start_date` (for which `visit_start_date` can be used as a proxy if no `start_date` is available)
+-	`year` (used as `start_date = YYYY-01-01` only when start date columns are missing)
+
+Input file discovery behavior (for flexibility across sites):
+
+-	`LOCATION.csv` is preferred when present (filename match is case-insensitive) and is used as the primary input.
+-	If `LOCATION.csv` is not present, the script ingests all other `.csv` files in the input folder (excluding `LOCATION_HISTORY.csv`), concatenates them, and processes them as encounter-level input.
+-	Arbitrary encounter file names are supported as long as required columns are recognizable (for example `address_1`/`street`/`address` and `latitude`/`longitude` or `lat`/`lon`).
+
 
 #### Folder Structure
-- Place the CSV file(s) in a dedicated folder
-  - 📂 `input_address/`  *(for address-based data)*  
-  - 📂 `input_coordinates/`  *(for coordinate-based data)* 
-- Optionally, include:
-  -    `LOCATION.csv`
-  -   `LOCATION_HISTORY.csv`
+- Place CSV file(s) in a dedicated folder, for example:
+  - 📂 `input_location/` 
+  - `LOCATION.csv`
+  - `LOCATION_HISTORY.csv`
     
 > ⚠️ Only `.csv` files are supported. Convert `.xlsx` or other formats before running the tool.
 
-### **Guidance on Populating LOCATION_HISTORY.csv:**
+**Guidance on Populating LOCATION_HISTORY.csv:**
 
 This table links a person to a specific location for a specific time range.
+
+If `LOCATION_HISTORY.csv` is not provided, `Address_to_LOCATION.py` auto-generates it from the input rows used to build `LOCATION.csv`.
+-	Default identifiers used by the toolkit during auto-generation:
+
+     - `relationship_type_concept_id = 32848` (project default OMOP concept ID for location-person relationship type)
+     - `domain_id = 1147314` (project default OMOP concept ID corresponding to `PERSON` domain)
+
+-	`entity_id` mapping during auto-generation:
+
+     - uses input `entity_id` when present
+     - otherwise uses input `person_id`
+     - if both are missing/blank, script logs an alert and leaves `entity_id` blank
+
+-	Date mapping during auto-generation:
+     - `start_date` uses input `start_date` when present, otherwise, uses `visit_start_date` to impute `start_date`.
+     - if start date fields are missing and `year` is present, `start_date` is set to `YYYY-01-01`
+     - `end_date` uses input `end_date` when present, otherwise uses `visit_end_date` to impute `end_date`.
+     - `year` is not used to populate `end_date`
+     - if start-date values are missing/blank or invalid, script logs an alert and leaves `start_date` blank
+
+Important validation behavior:
+-	The script does **not** synthesize `entity_id` values.
+-	The script uses `year` only for `start_date` fallback (`YYYY-01-01`) when explicit start date fields are absent.
+-	If `entity_id` or date values are missing/invalid, the script continues execution, reports alert messages with row numbers, and leaves corresponding output fields blank.
+
+
+
 
 - **If you have full residential history:** Use the actual move-in (start_date) and move-out (end_date) dates.
 - **If you only have location for index ICU encounter and do not have access to previous residential addresses with date stamps as required by location history table, you can use the following logic to populate LOCATION_HISTORY.csv:** If linking to specific encounters, set start_date equal to the relevant encounter admission date, that is visit_start_date (in visit_occurance table) . Set end_date to NULL.
 
 ---
 
-### Step 2: Generate FIPS Codes
+### Step 2: Run Geocoding for LOCATION Outputs (Primary)
 
-**Container:** `prismaplab/exposome-geocoder:1.0.3`  
+**Container:** `prismaplab/exposome-geocoder:1.0.4`  
 Ensure **Docker Desktop** is running.  
 
 This step uses the Exposome Geocoder container to:
-- Convert addresses or coordinates into latitude/longitude
-- Assign 11-digit Census Tract (FIPS) codes
-
-#### For CSV Input (Option 1 & 2)
+- preserve any valid existing latitude/longitude provided by your site in `LOCATION.csv`
+- populate latitude/longitude using addresses
+-	impute missing latitude/longitude using staged geocoding fallback that utilizes available zip code information
+-	output updated `LOCATION.csv` for Phase 2
 
 ##### For macOS / Linux / Ubuntu
 
@@ -190,33 +259,53 @@ docker run -it --rm \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e HOST_PWD="$(pwd)" \
   -w /workspace \
-  prismaplab/exposome-geocoder:1.0.3 \
-  /app/code/Address_to_FIPS.py -i <input_folder_path>
+  prismaplab/exposome-geocoder:1.0.4 \
+  /app/code/Address_to_LOCATION.py -i <input_folder_path>
 ```
 
 ##### For Windows
-- Open Command Prompt or powershell
+- Open Command Prompt or PowerShell
 - Run command `wsl`
 - Execute the same command as above inside your WSL terminal.
 
 Example:
 
-If your file is named patients_address.csv inside 📂`input_address/`, run:
+If your files are inside 📂`input_location/`, run:
 
 ```bash
-docker run -it --rm   -v "$(pwd)":/workspace   -v /var/run/docker.sock:/var/run/docker.sock   -e HOST_PWD="$(pwd)"   -w /workspace   prismaplab/exposome-geocoder:1.0.3   /app/code/Address_to_FIPS.py -i input_address
+docker run -it --rm -v "$(pwd)":/workspace -v /var/run/docker.sock:/var/run/docker.sock -e HOST_PWD="$(pwd)" -w /workspace prismaplab/exposome-geocoder:1.0.4 /app/code/Address_to_LOCATION.py -i input_location
 ```
+
+##### Geocoding Levels Used by `Address_to_LOCATION.py`
+
+The script assigns the following levels to indicate how latitude and longitude coordinates were obtained:
+-	**Level 1:** Provided coordinates already present in input
+-	**Level 2:** Address-based geocoding
+-	**Level 3:** ZIP9-based geocoding fallback
+-	**Level 4:** ZIP5-based geocoding fallback
+-	**Failed:** No valid coordinate could be assigned
+
+The assigned level is written to `modifier_source_value` in `LOCATION.csv`.
+
+##### Success Rate Reporting
+
+The script writes a geocoding summary report in `output/`:
+-	`geocoding_summary_<timestamp>.csv`
+
+##### Legacy / Optional FIPS Workflows
+
+If site needs FIPS-specific outputs in Phase 1, they can still run `Address_to_FIPS.py` or `OMOP_to_FIPS.py` using the same container tag (`1.0.4`).
 
 #### For OMOP Input (Option 3)
 To extract and geocode directly from an OMOP database:
 
 ```bash
 docker run -it --rm \
-  -v /var/run/docker.sock:/var/run/docker.sock \
   -v "$(pwd)":/workspace \
+  -v /var/run/docker.sock:/var/run/docker.sock \
   -e HOST_PWD="$(pwd)" \
   -w /workspace \
-  prismaplab/exposome-geocoder:1.0.3 \
+  prismaplab/exposome-geocoder:1.0.4 \
   /app/code/OMOP_to_FIPS.py \
     --user <your_username> \
     --password <your_password> \
@@ -225,8 +314,10 @@ docker run -it --rm \
     --database <database_name>
 ```
 
+  > Staged geocoding that imputes latitude and longitude for cases when address is missing, but zip code is available has not been incorporated to this version.
+
 ### Note on Dependencies (Firewall Warning):
-The Address_to_FIPS.py script attempts to pull Docker images automatically. If you have a strict firewall, you may need to pull these images manually before running the script:
+The geocoding scripts attempt to pull Docker images automatically. If you have a strict firewall, you may need to pull these images manually before running the script:
 ```bash
 docker pull ghcr.io/degauss-org/geocoder:3.3.0
 docker pull ghcr.io/degauss-org/census_block_group:0.6.0
@@ -235,54 +326,44 @@ docker pull ghcr.io/degauss-org/census_block_group:0.6.0
 ---
 
 ### Step 3: Output Structure
-After running the geocoder container (for Option 1, 2, or 3), the tool generates output files in the `output/` folder.
+After running the geocoder container, the tool generates output files in the `output/` folder.
 
-#### CSV Input (Option 1 & 2)
-Sample outputs [demo/address_files/output](https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/address_files/output)
+### Primary Output (Address_to_LOCATION.py)
 
 **Files Generated**
-Each input file produces:
+
+-	`LOCATION.csv` (updated lat/lon + `modifier_source_value`)
+-	`LOCATION_HISTORY.csv` (OMOP schema preserved)
+-	`geocoding_summary_<timestamp>.csv` (success metrics)
+-	`geocode_failures_<timestamp>.csv` (only when failed records exist)
+-	`log/address_to_location_<timestamp>.log`
+
+### Legacy FIPS/Zip Outputs (when using FIPS scripts)
+
+Sample outputs [demo/address_files/output](https://github.com/bihorac-LAB/Exposome/tree/main/Tools/demo/address_files/output)
+
+Each input file can produce:
   - `<filename>_with_coordinates.csv` — input + latitude/longitude  
   - `<filename>_with_fips.csv` — input + FIPS codes  
 
-#### **Output Folder Example**
-  ```
-  output/
-  ├── coordinates_from_address_<timestamp>.zip
-  ├── geocoded_fips_codes_<timestamp>.zip
-  ```
-> `<timestamp>` indicates when the script was executed (e.g., 20250624_150230).
+---
 
-If `LOCATION.csv` and `LOCATION_HISTORY.csv` were included, they are copied to `output/` but not zipped.
+> This code has not been updated with latitude and longitude imputations utilizing zip codes and is not recommended to be used, however it may be useful if you need to generate FIPS codes for other purposes.
+
 
 ### IMPORTANT TO NOTE
-**Phase 2 input preparation note:** If you used **Option 1 (Address)** and did not provide a pre-built `LOCATION.csv`, you can use the CSV inside `coordinates_from_address_<timestamp>.zip` (generated in Phase 1) as the source of geocoded latitude/longitude values to populate `LOCATION.csv`. Ensure your `location_id` values are consistent between `LOCATION.csv` and `LOCATION_HISTORY.csv` before running Phase 2.
+**Phase 2 input preparation note:** The recommended workflow is to run `Address_to_LOCATION.py` and use generated `LOCATION.csv` and `LOCATION_HISTORY.csv` directly in Phase 2. Ensure your `location_id` values are consistent between `LOCATION.csv` and `LOCATION_HISTORY.csv` before running Phase 2.
 
-**Zipped Output Columns Description**
+**Reason Column Values (for failed records):**
 
-| Column           | Description                                                                 |
-|------------------|-----------------------------------------------------------------------------|
-| `Latitude`       | Latitude returned from the geocoder                                         |
-| `Longitude`      | Longitude returned from the geocoder                                        |
-| `geocode_result` | Outcome of geocoding — `geocoded` for successful matches, `Imprecise Geocode` if not precise |
-| `reason`         | Failure reason if applicable (see [Reason Column Values](#reason-column-values)) |
+Possible values include:
+-	**Street missing**
+-	**City missing**
+-	**State missing**
+-	**Zip missing**
+-	**ZIP9 not found in zip9-fips12 crosswalk**
+-	**ZIP5 not found in HUD crosswalk**
 
-##### Reason Column Values
-Used when geocoding fails or is imprecise. Possible values include:
-
-- **Hospital address given** – Detected from known hardcoded hospital addresses.  
-- **Street missing** – No street info provided.  
-- **Blank/Incomplete address** – Address is empty or has missing components.  
-- **Zip missing** – ZIP code not provided.  
-
-> 💡 **Tip:** You can expand hospital detection by adding known addresses to `HOSPITAL_ADDRESSES` in [`Address_to_FIPS.py`](https://github.com/bihorac-LAB/Exposome/blob/main/Tools/code/Address_to_FIPS.py).
-
-**Formatting Note for `HOSPITAL_ADDRESSES`:**
-  - Single-line string  
-  - Lowercase letters and numbers only  
-  - No commas or special characters  
-  - Fields separated by single spaces  
-  
 ---
 
 #### OMOP Input (Option 3)
@@ -307,6 +388,7 @@ OMOP_FIPS_result/
 LOCATION.csv
 LOCATION_HISTORY.csv
 ```
+
 ---
 
 ### Step 4: GIS Linkage with PostGIS-Exposure Tool
@@ -433,6 +515,8 @@ The following office hour sessions provide additional context and demonstrations
 
 To successfully run Phase 2, your data must match the OMOP CDM definitions below.
 
+These field requirements align with OMOP CDM v6.0 `LOCATION` and `LOCATION_HISTORY` expectations.
+
 ---
 
 ### 1. LOCATION Table
@@ -442,14 +526,18 @@ Represents physical location or address information.
 | Field | Description |
 |--------|--------------|
 | **location_id** | The unique key assigned to a Location. Each instance of a Location in the source data should use this key. **[REQUIRED]** |
-| address_1 | First line of the address. |
+| address_1 | First line of the address. **[RECOMMENDED, OPTIONAL]** |
 | address_2 | Second line of the address. |
-| city | City name. |
-| state | State name. |
-| zip | Zip codes are handled as strings (3 digit or 5 digit). |
-| county | County name. |
-| **latitude** | Geocoded latitude (Float). **[REQUIRED]** |
-| **longitude** | Geocoded longitude (Float). **[REQUIRED]** |
+| city | City name. **[RECOMMENDED, OPTIONAL]** |
+| state | State name. **[RECOMMENDED, OPTIONAL]** |
+| zip | ZIP code as string. ZIP+4 preferred; ZIP5 accepted. **[RECOMMENDED, OPTIONAL]** |
+| county | County name. **[RECOMMENDED, OPTIONAL]** |
+| location_source_value | Source text/value for location. **[OPTIONAL]** |
+| latitude | Geocoded latitude (Float). **[OPTIONAL]** |
+| longitude | Geocoded longitude (Float). **[OPTIONAL]** |
+
+Notes for this toolkit:
+-	The generated `LOCATION.csv` may also include OMOP-compatible country columns (`country_concept_id`, `country_source_value`) and geocoding provenance (`modifier_source_value`).
 
 ---
 
@@ -460,10 +548,17 @@ Stores relationships between persons and geographic locations over time.
 | Field | Description |
 |--------|--------------|
 | **location_id** | References the `location_id` in the LOCATION table. **[REQUIRED]** |
-| **entity_id** | Unique identifier for the entity (e.g., `person_id`). **[REQUIRED]** |
-| **domain_id** | Domain of the entity. Must be `PERSON` for this pipeline. **[REQUIRED]** |
+| **relationship_type_concept_id** | OMOP concept ID for location-person relationship type. Defaults to `32848`. **[REQUIRED]** |
+| **domain_id** | Domain of the entity. For this toolkit output, this is emitted as OMOP concept id `1147314` (PERSON domain concept). **[REQUIRED]** |
+| **entity_id** | Unique identifier for the entity; should be `person_id`. **[REQUIRED]** |
 | **start_date** | Date the relationship started. **[REQUIRED]** |
-| end_date | Date the relationship ended. |
+| end_date | Date the relationship ended. **[RECOMMENDED, OPTIONAL]** |
+
+Notes for this toolkit:
+-	`entity_id` should align with OMOP `PERSON.person_id` when `domain_id` is PERSON.
+-	If `LOCATION_HISTORY.csv` is not supplied, the script auto-generates it from available input fields.
+-	Missing values (`entity_id`/`person_id`, `start_date`/`visit_start_date`) trigger an alert, the script continues, and corresponding fields remain blank.
+-	If only `year` is provided, the script sets `start_date` to `YYYY-01-01` and does not infer `end_date` from `year`.
 
 ---
 
@@ -484,8 +579,44 @@ After Phase 2 execution, the pipeline generates the `external_exposure` table wi
 | exposure_concept_id | OMOP Concept ID representing the environmental variable. |
 | exposure_type_concept_id | OMOP Concept ID for the type of exposure. |
 | value_as_concept_id | OMOP Concept ID for categorical results. |
+| modifier_source_value | This field will be used to provide level that explains information used for coordinate generation. |
 
 **Note:** This table reflects the exposure data generated as output of Phase 2.
+
+---
+
+### 4. GEOCODING_SUMMARY Report (Phase 1 output)
+
+The `geocoding_summary_<timestamp>.csv` report provides record-level completion metrics for Phase 1 geocoding.
+
+| Column | Description |
+|--------|-------------|
+| total_records | Total number of rows processed in `LOCATION.csv`. |
+| records_with_coordinates | Number of rows with valid latitude and longitude after geocoding. |
+| records_without_coordinates | Number of rows that still do not have valid coordinates. |
+| success_rate_percent | Percent of rows with valid coordinates (`records_with_coordinates / total_records * 100`). |
+| level1_provided | Count of rows where input coordinates were already valid. |
+| level2_address | Count of rows geocoded from address-level input. |
+| level3_zip9 | Count of rows geocoded using ZIP9 fallback. |
+| level4_zip5 | Count of rows geocoded using ZIP5 fallback. |
+| failed | Count of rows with unresolved geocoding failures. |
+
+---
+
+### 5. GEOCODE_FAILURES Report (Phase 1 output)
+
+The `geocode_failures_<timestamp>.csv` report includes only rows that remain unresolved after staged geocoding.
+
+| Column | Description |
+|--------|-------------|
+| location_id | Location identifier associated with the failed geocoding row. |
+| address_1 | Normalized primary street/address line available at failure time. |
+| address_2 | Normalized secondary address/unit line available at failure time. |
+| city | Normalized city available at failure time. |
+| state | Normalized state available at failure time. |
+| zip | Normalized ZIP5 available at failure time. |
+| geocode_level | Final geocoding status (`failed`). |
+| geocode_reason | Aggregated reason(s) indicating why geocoding could not be completed. |
 
 ---
 
@@ -530,7 +661,21 @@ docker run --rm -v "ABS_OUTPUT_FOLDER:/tmp" \
 
 #### Script Highlights
 
-While our codes have functionality to generate FIPS codes in addition to latitude and longitude coordinates as detailed below, Phase 2 requires only latitude and longitude coordinates.
+While our toolkit supports both LOCATION generation and FIPS workflows, Phase 2 requires latitude and longitude coordinates in LOCATION-based files.
+
+#### Address_to_LOCATION.py Logic
+This [script](https://github.com/bihorac-LAB/Exposome/blob/main/Tools/code/Address_to_LOCATION.py) is the recommended Phase 1 workflow:
+
+-	Reads `LOCATION.csv` (or compatible encounter-level CSV inputs)
+-	Preserves valid existing latitude/longitude values
+-	Uses staged fallback to fill missing coordinates:
+    - address geocoding
+    - ZIP9 fallback
+    - ZIP5 fallback
+-	Writes:
+    - `LOCATION.csv` with updated coordinates and `modifier_source_value`
+    - `LOCATION_HISTORY.csv` in OMOP format
+    - geocoding summary and failure reports
 
 ##### Address_to_FIPS.py Logic
 This [script](https://github.com/bihorac-LAB/Exposome/blob/main/Tools/code/Address_to_FIPS.py) handles CSV-based input:
