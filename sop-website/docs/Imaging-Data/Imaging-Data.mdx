@@ -209,89 +209,32 @@ table or a CSV file to be part of the upload process with the same image_registr
 **SQL: CREATE Table**
 
 ```sql
-CREATE TABLE `image_registry` (
-```
-
-```sql
-  `image_registry_id` integer NOT NULL AUTO_INCREMENT,
-```
-
-```sql
-  `file_id` varchar(1024) NOT NULL,
-```
-
-```sql
-  `proc_id` integer NOT NULL,
-```
-
-```sql
-  `person_id` integer NOT NULL,
-```
-
-```sql
-  `group_id` integer NOT NULL,
-```
-
-```sql
-  `visit_ id` integer NOT NULL,
-```
-
-```sql
-  `datetime` datetime NOT NULL,
-```
-
-```sql
-  `src_file` varchar(1024) NOT NULL,
-```
-
-```sql
-  `trg_file` varchar(1024) DEFAULT NULL,
-```
-
-```sql
-  PRIMARY KEY (`image_registry_id`),
-```
-
-```sql
+CREATE TABLE image_registry (
+image_registry_id integer NOT NULL AUTO_INCREMENT,
+file_id varchar(1024) NOT NULL,
+proc_id integer NOT NULL,
+person_id integer NOT NULL,
+group_id integer NOT NULL,
+visit_ id integer NOT NULL,
+datetime datetime NOT NULL,
+src_file varchar(1024) NOT NULL,
+trg_file varchar(1024) DEFAULT NULL,
+PRIMARY KEY (image_registry_id)
 );
 ```
 
 **CSV: Header labels: (please implement columns in the order listed below)**
 
 ```sql
-`image_registry_id` - sequential integer value
-```
-
-```sql
-`file_id` varchar(1024) – name of the file. Ex “wo2d4400fflse.wfdb”
-```
-
-```sql
-`proc_id` integer – from the procedure.procedure_id
-```
-
-```sql
-`person_id` integer – from the person.person_id
-```
-
-```sql
-`group_id` integer – file grouping identifier
-```
-
-```sql
-`visit_ id` integer – from the visit_occurrence.visit_occurrence_id
-```
-
-```sql
-`datetime` datetime – SHIFTED date/time stamp of the file consistent with other OMOP tables and dates. Use format yyyy-MM-dd HH:mm:ss LOCAL time zone.
-```
-
-```sql
-`src_file` varchar(1024) – name and path of the source file
-```
-
-```sql
-`trg_file` varchar(1024) – this will be populated centrally, leave blank or null
+image_registry_id - sequential integer value
+file_id varchar(1024) – name of the file. Ex “wo2d4400fflse.wfdb”
+proc_id integer – from the procedure.procedure_id
+person_id integer – from the person.person_id
+group_id integer – file grouping identifier
+visit_ id integer – from the visit_occurrence.visit_occurrence_id
+datetime datetime – SHIFTED date/time stamp of the file consistent with other OMOP tables and dates. Use format yyyy-MM-dd HH:mm:ss LOCAL time zone.
+src_file varchar(1024) – name and path of the source file
+trg_file varchar(1024) – this will be populated centrally, leave blank or null
 ```
 
 ***Note:*** If you choose to create a SQL table, once the image_registry table has been populated, it will need to be exported to a CSV file to be included in your
@@ -308,7 +251,7 @@ image file dataset upload.
 *Table 2.0 Example CSV image registry file*
 
 Once the imaging data, DICOM files and image_registry CSV file has been received at central, the other imaging extension tables (Park, Nagy et al 2024) will be 
-created and populated for your site and integrated into the MERGE database. Data users should review the Image Workgroup extension to understand what metadata, features, and linkages are available for their particular clinical use case.
+created and populated for your site and integrated into the MERGE database. Data users should review the [Image Workgroup extension](https://github.com/OHDSI/ImageWG/) to understand what metadata, features, and linkages are available for their particular clinical use case.
 
 # Related Office Hours
 The following office hour sessions provide additional context and demonstrations related to the SOP:
