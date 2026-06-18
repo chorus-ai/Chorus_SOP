@@ -4,17 +4,29 @@ id: Imaging Data
 description:  An SOP for processing medical images
 ---
 
-# Awaiting Approval 
-> Before merging an approved SOP, the contributor should change this header from `Awaiting Approval` to `Approved`
+# Approved 
 
 # Imaging SOP
 [Version History](https://github.com/chorus-ai/Chorus_SOP/commits/review-imaging/sop-website/docs/Imaging-Data/review-imaging.mdx)
 
 # Purpose
 
-Guidance for Data Acquisition Sites regarding imaging data processing, harmonization, and upload
+Guidance for Data Acquisition Sites regarding imaging data processing, harmonization, upload, metadata minimum, and populating OMOP tables. The documnet is presented in two sections:
 
-# Procedures
+1. The first section will discuss the technical procedures to prepare image files intended for submission as part of site’s upload dataset. This section includes 
+instructions of data de-identification, removal of patient health identifiers and extraction of a minimal required set of metadata describing the image files and
+clinical study.
+2. The second section continues with procedures to link image files with its Observational Medical Outcome Partnership (OMOP) clinical data. The image file
+linkage is also discussed in the [Multimodal Linkage SOP](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/). In this section we provide an example of populating the interim image_registry table associated with each 
+DICOM file included in the upload process. 
+
+This section will also provide for your information examples of populating the other image workgroup extension tables as presented by Park, Nagy et al [see ref].
+These image workgroup extension tables will be created and populated for you centrally. This information is also intended to provide additional information for
+those who wish to use the imaging data and extension tables once it has been fully integrated into the CHoRUS Bridge2AI central MERGE data repository.
+
+The aim of this SOP is to describe the end-to-end process of transforming image modality data into an OMOP standards compliant dataset for CHoRUS upload.
+
+# Section 1: Procedures
 
 > Data Preparation
 1. Identify data extraction partners and methods (e.g., CTSI) 
@@ -31,7 +43,7 @@ b)	Procedure number = OMOP: procedure_occurrence_id
 
 6. Ensure accession numbers for specific image tests are part of the encounters of interest. The preferred method is using EHR search to filter tests based on encounter (e.g., CDW) and not pulling directly from PACS based on the patient identifiers. This is to simplify image test mapping to the primary encounter of interest for the multimodal data pull.
 
-7. Map header metadata relevant to your local site with header metadata selected by CHORUS (list of metadata fields below). Refer to points 12 and 13 for look up tale specifics for the deidentification tool. Having the RSNA LOINC codes specifying the type of study would be useful to include. Imaging studies should have a corresponding entry in the PROCEDURE_OCCURENCE OMOP table. Thus, imaging studies can be linked to the rest of the data using the procedure_occurence_id field. Refer to multimodal linkage SOP on specifics about linking images to the other data: https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/ . For date shifting, please refer to the  Date Shifting SOP.
+7. Map header metadata relevant to your local site with header metadata selected by CHORUS (list of metadata fields below). Refer to points 12 and 13 for look up tale specifics for the deidentification tool. Having the RSNA LOINC codes specifying the type of study would be useful to include. Imaging studies should have a corresponding entry in the PROCEDURE_OCCURENCE OMOP table. Thus, imaging studies can be linked to the rest of the data using the procedure_occurence_id field. Refer to the [Multimodal Linkage SOP](https://chorus-ai.github.io/Chorus_SOP/docs/Multimodal-Linkage/) for specifics about linking images to the other data. For date shifting, please refer to the [Date Shifting SOP](https://chorus-ai.github.io/Chorus_SOP/docs/Privacy/Date%20Shifting/).
 
 Study Level:
 AccessionNumber
@@ -187,6 +199,76 @@ MRI
 
 - refer to Azure data upload SOP
 
+# Section 2: OMOP Image Registry Procedures
+
+**2.0 Image Data Preparation**
+
+It is recommended that sites first implement the OMOP image registry table as described in the Multimodal Linkage SOP. This can be done by creating a database
+table or a CSV file to be part of the upload process with the same image_registry table field names and order.
+
+**SQL: CREATE Table**
+
+```sql
+CREATE TABLE image_registry (
+image_registry_id integer NOT NULL AUTO_INCREMENT,
+file_id varchar(1024) NOT NULL,
+proc_id integer NOT NULL,
+person_id integer NOT NULL,
+group_id integer NOT NULL,
+visit_ id integer NOT NULL,
+datetime datetime NOT NULL,
+src_file varchar(1024) NOT NULL,
+trg_file varchar(1024) DEFAULT NULL,
+PRIMARY KEY (image_registry_id)
+);
+```
+
+**CSV: Header labels: (please implement columns in the order listed below)**
+
+```sql
+image_registry_id - sequential integer value
+file_id varchar(1024) – name of the file. Ex “wo2d4400fflse.wfdb”
+proc_id integer – from the procedure.procedure_id
+person_id integer – from the person.person_id
+group_id integer – file grouping identifier
+visit_ id integer – from the visit_occurrence.visit_occurrence_id
+datetime datetime – SHIFTED date/time stamp of the file consistent with other OMOP tables and dates. Use format yyyy-MM-dd HH:mm:ss LOCAL time zone.
+src_file varchar(1024) – name and path of the source file
+trg_file varchar(1024) – this will be populated centrally, leave blank or null
+```
+
+***Note:*** If you choose to create a SQL table, once the image_registry table has been populated, it will need to be exported to a CSV file to be included in your
+image file dataset upload.
+
+| file_id | proc_id | person_id | group_id | visit_id | datetime | src_file | trg_file |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| af99220 | 1111 | 1 | 1 | 11 | 8/18/2022 | ecg124.wfdb | null |
+| ff99338 | 2222 | 1 | 2 | 22 | 9/22/2023 | ecg133.wfdb | null |
+| eb33728 | 3333 | 3 | 1 | 33 | 2/11/2020 | ecg220.wfdb | null |
+| 1a10020 | 4444 | 4 | 1 | 44 | 4/12/2019 | ecg544.wfdb | null |
+| 9c99939 | 5555 | 4 | 2 | 55 | 4/18/2019 | ecg304.wfdb | null |
+
+*Table 2.0 Example CSV image registry file*
+
+Once the imaging data, DICOM files and image_registry CSV file has been received at central, the other imaging extension tables (Park, Nagy et al 2024) will be 
+created and populated for your site and integrated into the MERGE database. Data users should review the [Image Workgroup extension](https://github.com/OHDSI/ImageWG/) to understand what metadata, features, and linkages are available for their particular clinical use case.
+
+# Related Office Hours
+The following office hour sessions provide additional context and demonstrations related to the SOP:
+
+- **[05-14-2026] End-to-end imaging process**
+  - [Video Recording](https://drive.google.com/file/d/10-0xV7UwQ_Xihu2YYOri2BXt5CZWuow-/view?t=2.518) | [Meeting Summary](https://docs.google.com/document/d/1j-j_IPnuyVVyt9YTySmSxNymqQvq-d8o/edit)| [Meeting Slides](https://docs.google.com/presentation/d/1AzwhzLf87nP3OQqjFPrpxXGnzRbCBROS/edit?usp=share_link&ouid=104468275537210259794&rtpof=true&sd=true)
+  - Review of end-to-end porcess for preparing and uploading imaging data
+
+- **[01-29-2026] Registry table refresher**
+  - [Video Recording](https://drive.google.com/file/d/15szXsks0N7AItihUV9w7bfAlxMAdQYHg/view?t=2.822) | [Meeting Summary](https://docs.google.com/document/d/1pwLKl-lAwiTq8JVp5vpHsNJABckhLmh2/edit)| [Meeting Slides](https://docs.google.com/presentation/d/1in7iXoc5wk-R3gjaxz-rciMLcjykRcfp/edit?slide=id.p1#slide=id.p1)
+  - Review waveform & imaging data submission requirements for 2nd upload.
+
 # Reference Materials
 RSNA CTP Documentation:
 https://mircwiki.rsna.org/index.php?title=MIRC_CTP
+
+Park WY, Jeon K, Schmidt TS, Kondylakis H, Alkasab T, Dewey BE, You SC, Nagy P. Development of Medical Imaging Data Standardization for Imaging-Based
+Observational Research: OMOP Common Data Model Extension. J Imaging Inform Med. 2024 Apr;37(2):899-908. doi: 10.1007/s10278-024-00982-6. Epub 2024 Feb 5. 
+PMID: 38315345; PMCID: PMC11031512.
+
