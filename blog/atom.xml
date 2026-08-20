@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://chorus-ai.io/Chorus_SOP/blog</id>
+    <title>Chorus-SOP Blog</title>
+    <updated>2024-04-22T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://chorus-ai.io/Chorus_SOP/blog"/>
+    <subtitle>Chorus-SOP Blog</subtitle>
+    <icon>https://chorus-ai.io/Chorus_SOP/img/chorus-ai.png</icon>
+    <entry>
+        <title type="html"><![CDATA[Welcome]]></title>
+        <id>https://chorus-ai.io/Chorus_SOP/blog/welcome</id>
+        <link href="https://chorus-ai.io/Chorus_SOP/blog/welcome"/>
+        <updated>2024-04-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Hey - welcome to the new CHoRUS SOP site!]]></summary>
+        <content type="html"><![CDATA[<p>Hey - welcome to the new CHoRUS SOP site!</p>
+<p>The purpose of this site is to aggregate all <em>validated</em> documentation related to Standards, Data Acquisition, and Tooling into a single location.</p>
+<p>If you have any comments, questions or concerns, please feel free to draft a blog post or create an issue in the <a href="https://github.com/chorus-ai/Chorus_SOP" target="_blank" rel="noopener noreferrer">GitHub repository</a>!</p>]]></content>
+        <author>
+            <name>Jared Houghtaling</name>
+            <uri>https://github.com/jshoughtaling</uri>
+        </author>
+        <category label="hello" term="hello"/>
+        <category label="docusaurus" term="docusaurus"/>
+    </entry>
+</feed>
