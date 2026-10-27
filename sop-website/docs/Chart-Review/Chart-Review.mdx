@@ -1,97 +1,190 @@
-# Data Phenotype & Chart Review SOP #
+# Standard Operating Procedure for Chart Review #
+
+How to review an ICU chart and record concept labels in REDCap, for chart reviewers and point persons at all participating sites.
+
+|VERSION|SUPERSEDES|EFFECTIVE|OWNER|
+|---|---|---|---|
+|2.0|1.44 (Apr 15, 2026|Oct 16, 2026|Data Phenotyping Team|
+
+CONTENTS
+
+   **A**  Purpose  
+   **B**  Scope  
+   **C**  Definitiions  
+   **D**  Roles and responsibilities  
+   **E**  Before you begin  
+   **F**  Chart allocation and volume  
+   **G**  Protecting patient privacy  
+   **H**  Completing the survey  
+   **I**  Concept adjudication rules  
+   **J**  Quality assurance  
+   **K**  Support and escalation  
+   **L**  Reporting and publication  
+   **M**  References and change log  
 
 ## A. Purpose ##
 
-To provide a standardized approach for conducting a chart review to ensure data accuracy, consistency in documentation to achieve identification of surrogative label (silver label) for machine learning-driven research for the Patient-Focused Collaborative Hospital Repository Uniting Standards for Equitable AI (thereafter CHoRUS) members.
+To standardize how CHoRUS chart reviewers examine an ICU record and record whether each clinical concept is present, so that the resulting labels are accurate and consisten enough to serve as surrogate ("silver") labels for machine-learning research.
+
+Consistency between reviewers matters more than any individual reviewer's judgement being maximally sensitive. Where this SOP prescribes a convention (a time window, a weight, a block boundary) try to **follow it exactly**, even if you would do it differently in clinical practice.
 
 ## B. Scope ##
 
-This SOP applies to all clinicians and research assistants who will be involved in the chart review process.
+Applies to every clinician and research assistant performing CHoRUS chart review, at every participating site, for the adult, pediatric and neonatal surveys.
+
+Each survey has its own concept set. **Confirm the patient's age category before starting**, and use the matching survey:
+
+|SURVEY|AGE AT ICU ADMISSION|CONCEPTS|
+|---|---|---|
+|Adult|16 years and over|9|
+|Pediatric|29 days to 18 years|11|
+|Neonatal|28 days and under|9|
+
+CORRECTION IN THIS VERSION  
+SOP 1.44 stated that reviewers assess **8** concepts for adults. The current adult survey contains **9** **(nine)**: sepsis, acute decompensated heart failure, acute kidney injury, delirium, atrial fibrillation, seizure, shock, stroke, and cardiac arrest. Caridac arrest was omitted from the previous count and from the workflow figure.
 
 ## C. Definitiions ##
 
-**Chart Review**: The process of examining a patient's medical record for relevant infomration.
+|TERM|DEFINITIONS|
+|---|---|
+|Chart Review|Examination of a patient's medical record to determine whether defined clinical concepts are documented.|
+|EHR|Electronic health record: the difital chart containing history, diagnoses, orders, notes, imaging and results.|
+|Concept|One clinical condition or even the survey asks you to adjudicate (e.g. sepsis, stroke).| 
+|Silver label|A concept label derived from chart review, used to train or evaluate models in place of a definitive reference standard.|
+|Index ICU stay|The single ICU admission identified by the VISIT_OCCURENCE_ID you were given. All answers refer to this stay only.|
+|Day since admission|Calendar-day difference between the date of ICU admission and the date of the event. Same calendar day = 0. See section H.3.| 
+|Concept gate|The first question of each concept (YES/NO/I am not sure) which determines whether the detailed questions appear.|
+|Agreement question|The question near the end of each concept asking whether you agree with the label the survey has provisionally derived. See section I.1.|
 
-**EHR (Electonic Health Record)**: Digital version of a patient's paper chart, which contaiins medical history, diagnoses, treatment plans, immunization dates, allergies, radiology images, and lab/test result.
+## D. Roles and responsibilities ##
 
-## D. Responsibilities ##
+**D.1** **Chart Reviewer (CR)** 
+Accesses, reviews and records information from patient charts per this SOP. Reviewers **must** have critical-care work experience (direct patient care in an ICU or equivalent) and hold a medical degree (MD or equivalent) or a nursing or physician-associate qualification (RN, NP, PA, or equivalent). 
 
-**Chart Reviewer (CR)**: Responsible for accessing, reviewing, and accurately recording information from patient charts as per this SOP. Reviewers should have critical care work experience (actual patient care in the intensive care unit or equivalent space in hospital) and will be limited to individual with medical (M.D or equivalent) degree or nursing/PA degree (R.N. or eq) for current round. 
+**D.2** **Point Person (PP)** 
+Designated by the site PI to direct the review process. Responsible for pre-review training of all CRs, mapping research identifiers to EHR identifiers, monitoring data quality (section J), resolving discrepancies, and acting as the site's single contact with the Data Phenotyping Team.
 
-**Point Person (PP)**: A member of CHoRUS, designated by the individual site PI to direct the review process. He or she is responsible for the pre-review training of all chart reviewers and supervision of the quality of the results from the chart review. The PP also is responsible for the reporting spreadsheet generation and act as a point person for the institution.
+**D.3** **Data Phenotyping Team** 
+Maintains the REDCap insturments and this SOP, issues research identifiers, computes inter-rater reliability, and holds office hours (section K).
 
-## E. Procedure ##
+**D.4** **Site Principal Investigator**
+Accountable for local regulatory approval, for designating the PP, and for ensuring that identifiable material handled during review is managed per institutional policy (section G).
 
-E.1. Numbers of charts to be reviewed: 
-A total of 10% of all charts submitted to CHoRUS central (at least 200+ charts per center) will be reviewed for 8 different concept labels, to identify and ascertain the existence of concept in EHR. 
+## E. Before your begin ##
 
-The pilot stage will consist of reviewing 20 charts - each covered by two (2) CRs. The very first 5 charts by two CRs will not be counted towards the statistics (which leaves 15 charts to be included in the final analysis) but to be used for other internal review.
+**E.1 Identifier mapping**
+On receiving research identifiers (study_id and visit_occurrence_id) from the Data Phenotyping Team, the site maps them to local EHR identifiers, via an honest broker or a designated researcher according to institutional policy. The PP gives CRs the paired list.
 
-The next 15 charts after the first 5 charts will also be read by two (2) CRs. This will allow the calculation of interrater reliability (IRR) by Data Annotation Team. Interim decision will be made by the Team when and how to proceed. If IRR is within reasonable level, the rest of charts will be read by 1 CR per chart. Otherwise, the DA team will determine whether more charts need to be annotated by 2 CRs per chart.
+If a CR cannot locate a patient, report it to the PP, who notifies the Data Phenotyping Team so that replacement identifiers can be issued from the enriched cohort. **Do not substitute a different patient on your own initiative.**
 
-E.2. The RedCap Survey Preparation 
+E.2 Materials and time 
 
-a. Upon receiving research identifiers (study_id and visit_occurrence) from the CHORUS DA team, each center should map these identifiers to actual EHR identifiers. Depending on center's policy or availability, this process can be done either with honest broker or a designated researcher. 
+ - The chart open in your EHR  
+ - The Patient Study ID and Visit Occurrence ID for the stay under review  
+ - The site’s date-log spreadsheet (section G)  
+ - Pen and paper for interim notes  
 
-b. The list of both research and EHR identifiers should be given to CRs at the center.
+Allow approximately up to **60 minutes for your first chart**. Later charts are typically faster (we have initial responses of 25-30 minutes/chart overall). General recommendation is that you do not want to begin a chart you cannot finish or save properly, but if needed you <ins>_can_</ins> stop/save/resume at the end of each page (new functionality introduced into version 2.0). 
 
-c. The CR identify those patients using the individual center's EHR. If CR cannot identify for any reason, CR needs to report PP, who will then report to CHORUS DA team to issue more research identifiers from the enriched cohorts. 
 
-d. The CR needs to have enough time spared at least to go through the single chart. We recommend having approximately 60 minutes time window for the first chart review. 
+E.3 Training
 
-e. Please prepare a pen and a paper to write down.
+The PP reviews the survey end to end before training, then walks each CR through the gate structure, the timing convention (H.3), and the concept adjudication rules (section I). CRs should complete at least one supervised practice chart before working independently.
 
-E.3. The RedCap Review Protocol
+ ## F. Chart allocation and volume ##
 
- a. The PP accesses the redcap survey page (with the application through the University of Pittsburgh RedCap system: https://redcap-std.hs.pitt.edu/redcap/surveys/?s=injPIG). 
- 
- b. The PP reviews the RedCap questions and familiarize the path.
- 
- c. The PP selects CRs and educate the survey response process. A few important teaching points are as follows: 
+ Each center reviews **10% of all charts submitte to CHoRUS central**, with a minimum of 200 charts per center. 
 
-i) Time to event documentation and calculation: Note that direct record of admission date based on EHR is not permitted in this research survey with privacy concern. Initially, you will be asked to log the time of admission only (please note the admission date on a paper). For example, if your patient was admitted on Feb-15 at 2300, you will not be permitted to write Feb-15. However, you will be asked to write the hours (i.e. 2300). Throughout the survey, when prompted to count the days since admission, you enter 'the day since admission'. This is a calendar day. For example, if the first evidence of sepsis occurred on Feb-16 at 0500 on the patient admitted on Feb-15 at 2300, you will write day 1 of admission (16-15=1). Then you are asked to write the time of 0500 as it was seen in EHR. (For your reference, at the end of the survey, the algorithm will subtract 2300-0500=1800, which will be applied to 2400-1800 to result in 0600 hours of delta value)
+|STAGE|CHARTS|REVIEWERS EACH|COUNTS TOWARD ANALYSIS|
+|---|---|---|---|
+|Calibration|First 5|2|No -- internal review only|
+|Reliability|Next 15|2|Yes, and used to compute IRR|
+|Main|Remainder|1, pending IRR|Yes|
 
-ii) Use of the MedCalc: While the use of online calculator could be cumbersome, we found that some centers do not have automated calculation of some scoring metrics, including SOFA score. Given that, when and if there is no automated calculation available from your institution EHR, we recommend using the MedCalc - for which case, there is a link to MedCalc on each question that requires complex calculation.
+After the reliability stage the Data Phenotyping Team computes IRR and decides whether single-reviewer coverage is acceptable or whether further dual review is required (section J.2).
 
-iii) There might be some questions that you simply do not have an answer, or not applicable to your patient. In that case, please leave the answer blank - which will be a flag for us to review to identify any major systematic flaws. 
+Wherever practical, the **same CR should complete a given chart end to end**, to avoid repeated training and to benefit from the learning curve. A chart may be split between CRs only under PP supervision.
 
- 
- d. Each CR reviews 5 charts and annotate each of the concept. 
- 
- e. PP meets with CRs to review each concept and receives feedback to ascertain standardized workflow.
- 
- f. Two CR review the next 15 charts and decide the concept presence, date and time, and the confidence of such decision (with the scale of 1 to 5, 1 being the least and 5 being the most confident). If 2 CRs have scale distance more than three (3), a third CR or PP could review the specific decision for annotation. 
- 
- g. We encourage the initially assigned CRs to do the entire chart review, if possible (to minimize repetitive training and utilize learning curves), but partial review with change in CR could be possible under PP's supervision for quality assurance.
- 
- h. The PP can gather the conclusions of the survey. The contents include the answers for each element, decision on the concept, the confidence (scaled by CR) for each concept, and time spent for the entire survey (note the time spent will not be visible to the CRs). 
 
- E.3. Available CHoRUS Support 
- 
- a. CHoRUS Data Phenotyping Team will hold an office hour at the start of the weekly Data Acquisition Team meeting (usually every Tuesday 2-3PM EST) for 10-15 minutes.
- 
- b. CHoRUS Data Phenotyping Team can support individual SI through a separate meeting to check each center's progression (detailed schedule TBA).
+## G. Protection patient privacy ##
 
- ## F. Reporting and Publication ##
+MANDATORY
+**Never enter a calendar date anywhere in the survey**: not in a date field, not in a free-text box, not in a note. The survey is designed so that no HIPPA-sensitive date is ever required.
 
- The Data Phenotyping team will report to CHoRUS executive committee on its progress every 3 months. The team will remain inclusive for anyone from CHoRUS to participate with the team's work. Results and evaluation metrics, along with its downstream products will be disseminated at scientific venue or through publications. The team will abide by the authorship guideline of the CHoRUS for those activities. 
+**G.1  Why the survey asks for time without dates**
+Admission and event dates are identifiers under HIPAA. The survey therefore captures only a **clock time** (HH:MM) plus a **whole number of days since admission**. Together these reconstruct how long after admission an event occurred without any date entering the record.
 
-## G. References ##
+**G.2  The date-log spreadsheet**
+To work out day counts you will keep a local spreadsheet pairing your identifiers with real admission and event dates. This spreadsheet contains **PHI** (MRN and dates).
+ - Store it only where your institution permits PHI to be stored
+ - **Never** submit, email or upload it to the CHoRUS research team
+ - Retain and destroy it according to your institution’s policy and your local IRB approval
 
-HIPPA Compliance Manual
+**G.3  Identifiers in the survey**
+Enter only the Patient Study ID and Visit Occurrence ID issued by CHoRUS. **Do not enter MRN, FIN, account numbers, names or dates of birth** in any field, including free text.
 
-Institution's EHR System Guide
 
-## H. Workflow ##
+## H. Completing the survey ##
 
-![Chart Review Workflow Overview](./images/Chart_Review_1.png)
+**H.1 Order of work**
 
-version 1.44
+1.	Open the survey and enter your institution, reviewer ID, Patient Study ID and Visit Occurrence ID.
+2.	Confirm the patient’s age category. If it does not match the survey, stop and switch to the correct one.
+3.	Record the ICU admission time: the time of the first vital sign recorded in the ICU, in 24-hour format (e.g. 23:06). Write the admission date on your date log, not in the survey.
+4.	Read the discharge summary (or the final day of documentation) and tick every concept you noticed.
+5.	Work through each concept in order.
+6.	Complete the discharge evaluation and submit.
 
-Pilot 5 chart review process:
-4/15/2026
-Following bugs were detected and changes were made:
-a) The branching logic errors including questions sep_y_v3, adhf_y_v3, and afib_y_v3 were modified. Some of the logics were deleted for clarification. 
-b) The functional status questions at the end of the survey now include a new option 'patient was expired during the ICU stay' to clarify the option for those deceased and discharge was made. 
+**H.2  The concept gate**
+
+Every concept opens with the same question. Your answer determines what follows:
+
+|ANSWER|WHAT HAPPENS|
+|---|---|
+|YES|The detailed questions for that concept appear.|
+|NO|You skip directly to the next concept.|
+|I am not sure|You are pointe to specific places in the chart, then asked again whether you want to review the concept in detail.|
+
+USE "I AM NOT SURE" FREELY
+It is a legitimate answer, not a failure. It tells us something real about how clearly the concept is documented. Choosing it never ends the concept. It opens a second, guided look.
+
+**H.3  Recording timing**
+
+Wherever the surve asks when something happened, it asks for two values:
+
+ - **Days since admission**: a whole number. Same calendar day as admission = 0.
+ - **Time of day**: clock time only, 24-hour format.
+
+WORKED EXAMPLE
+Patient admitted to ICU on **15 February at 23:00**. First evidence of sepsis on **16 February at 05:00**.
+You enter **days since admission = 1** (16 − 15) and **time = 05:00**.
+The survey computes the interval for you: **1 × 1440 + (05:00 − 23:00) = 1440 − 1080 = 360 minutes**, i.e. **6 hours** after admission. You never calculate this yourself.
+
+CHANGED IN THIS VERSION
+SOP 1.44 described this calculation as "2300 − 0500 = 1800, applied to 2400 − 1800". That described an earlier formula which returned a negative interval whenever an event crossed midnight. The formula has been corrected. **Your data entry does not change** — days plus clock time, exactly as before.
+
+**H.4  When you cannot answer**
+
+Answer in this order of preference:
+7.	If the question offers an explicit **"not documented"**, **"not assessable"** or **"unable to determine"** option, **choose it**. These are informative answers about EHR quality, not failures.
+8.	If no such option exists and the question genuinely does not apply, **leave it blank**. Blanks are flagged for us to review as possible design flaws.
+9.	**Never guess.** A guess is less useful than an explicit "not documented", and it is not recoverable in analysis.
+
+**H.5  Saving and resuming**
+
+You do not have to finish in one sitting. Use **Save & Return Later**; REDCap issues a **return code**.
+
+WRITE THE RETURN CODE DOWN
+It cannot be recovered for you. Without it, a partially completed review is lost and the chart must be re-reviewed from the beginning.
+
+**H.6  One submission per ICU stay**
+Each submission covers exactly one Visit Occurrence ID. When reviewing several charts, submit and then start a fresh survey for each.
+
+**H.7  Timing fields you may ignore**
+Each concept begins with a field asking you to press **"Now"**. Click it and continue. It records how long review takes and is unrelated to the patient. Elapsed times are not visible to CRs.
+
+## I. Concept adjudication rules ## (added onto the version 2.0)
+
+
 
 
