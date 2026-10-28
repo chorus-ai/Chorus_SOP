@@ -4,7 +4,7 @@ How to review an ICU chart and record concept labels in REDCap, for chart review
 
 |VERSION|SUPERSEDES|EFFECTIVE|OWNER|
 |---|---|---|---|
-|2.0|1.44 (Apr 15, 2026|Oct 16, 2026|Data Phenotyping Team|
+|2.0|1.44 (Apr 15, 2026)|Oct 16, 2026|Data Phenotyping Team|
 
 CONTENTS
 
@@ -24,7 +24,7 @@ CONTENTS
 
 ## A. Purpose ##
 
-To standardize how CHoRUS chart reviewers examine an ICU record and record whether each clinical concept is present, so that the resulting labels are accurate and consisten enough to serve as surrogate ("silver") labels for machine-learning research.
+To standardize how CHoRUS chart reviewers examine an ICU record and record whether each clinical concept is present, so that the resulting labels are accurate and consistent enough to serve as surrogate ("silver") labels for machine-learning research.
 
 Consistency between reviewers matters more than any individual reviewer's judgement being maximally sensitive. Where this SOP prescribes a convention (a time window, a weight, a block boundary) try to **follow it exactly**, even if you would do it differently in clinical practice.
 
@@ -48,7 +48,7 @@ SOP 1.44 stated that reviewers assess **8** concepts for adults. The current adu
 |TERM|DEFINITIONS|
 |---|---|
 |Chart Review|Examination of a patient's medical record to determine whether defined clinical concepts are documented.|
-|EHR|Electronic health record: the difital chart containing history, diagnoses, orders, notes, imaging and results.|
+|EHR|Electronic health record: the digital chart containing history, diagnoses, orders, notes, imaging and results.|
 |Concept|One clinical condition or even the survey asks you to adjudicate (e.g. sepsis, stroke).| 
 |Silver label|A concept label derived from chart review, used to train or evaluate models in place of a definitive reference standard.|
 |Index ICU stay|The single ICU admission identified by the VISIT_OCCURENCE_ID you were given. All answers refer to this stay only.|
@@ -59,25 +59,30 @@ SOP 1.44 stated that reviewers assess **8** concepts for adults. The current adu
 ## D. Roles and responsibilities ##
 
 **D.1** **Chart Reviewer (CR)** 
+
 Accesses, reviews and records information from patient charts per this SOP. Reviewers **must** have critical-care work experience (direct patient care in an ICU or equivalent) and hold a medical degree (MD or equivalent) or a nursing or physician-associate qualification (RN, NP, PA, or equivalent). 
 
 **D.2** **Point Person (PP)** 
+
 Designated by the site PI to direct the review process. Responsible for pre-review training of all CRs, mapping research identifiers to EHR identifiers, monitoring data quality (section J), resolving discrepancies, and acting as the site's single contact with the Data Phenotyping Team.
 
-**D.3** **Data Phenotyping Team** 
+**D.3** **Data Phenotyping Team**
+
 Maintains the REDCap insturments and this SOP, issues research identifiers, computes inter-rater reliability, and holds office hours (section K).
 
 **D.4** **Site Principal Investigator**
+
 Accountable for local regulatory approval, for designating the PP, and for ensuring that identifiable material handled during review is managed per institutional policy (section G).
 
 ## E. Before your begin ##
 
 **E.1 Identifier mapping**
+
 On receiving research identifiers (study_id and visit_occurrence_id) from the Data Phenotyping Team, the site maps them to local EHR identifiers, via an honest broker or a designated researcher according to institutional policy. The PP gives CRs the paired list.
 
 If a CR cannot locate a patient, report it to the PP, who notifies the Data Phenotyping Team so that replacement identifiers can be issued from the enriched cohort. **Do not substitute a different patient on your own initiative.**
 
-E.2 Materials and time 
+**E.2 Materials and time** 
 
  - The chart open in your EHR  
  - The Patient Study ID and Visit Occurrence ID for the stay under review  
@@ -86,14 +91,13 @@ E.2 Materials and time
 
 Allow approximately up to **60 minutes for your first chart**. Later charts are typically faster (we have initial responses of 25-30 minutes/chart overall). General recommendation is that you do not want to begin a chart you cannot finish or save properly, but if needed you <ins>_can_</ins> stop/save/resume at the end of each page (new functionality introduced into version 2.0). 
 
-
-E.3 Training
+**E.3 Training**
 
 The PP reviews the survey end to end before training, then walks each CR through the gate structure, the timing convention (H.3), and the concept adjudication rules (section I). CRs should complete at least one supervised practice chart before working independently.
 
  ## F. Chart allocation and volume ##
 
- Each center reviews **10% of all charts submitte to CHoRUS central**, with a minimum of 200 charts per center. 
+ Each center reviews **10% of all charts submitted to CHoRUS central**, with a minimum of 200 charts per center. 
 
 |STAGE|CHARTS|REVIEWERS EACH|COUNTS TOWARD ANALYSIS|
 |---|---|---|---|
@@ -108,19 +112,19 @@ Wherever practical, the **same CR should complete a given chart end to end**, to
 
 ## G. Protection patient privacy ##
 
-MANDATORY
+MANDATORY  
 **Never enter a calendar date anywhere in the survey**: not in a date field, not in a free-text box, not in a note. The survey is designed so that no HIPPA-sensitive date is ever required.
 
-**G.1  Why the survey asks for time without dates**
+**G.1  Why the survey asks for time without dates**  
 Admission and event dates are identifiers under HIPAA. The survey therefore captures only a **clock time** (HH:MM) plus a **whole number of days since admission**. Together these reconstruct how long after admission an event occurred without any date entering the record.
 
-**G.2  The date-log spreadsheet**
+**G.2  The date-log spreadsheet**  
 To work out day counts you will keep a local spreadsheet pairing your identifiers with real admission and event dates. This spreadsheet contains **PHI** (MRN and dates).
  - Store it only where your institution permits PHI to be stored
  - **Never** submit, email or upload it to the CHoRUS research team
  - Retain and destroy it according to your institution’s policy and your local IRB approval
 
-**G.3  Identifiers in the survey**
+**G.3  Identifiers in the survey**  
 Enter only the Patient Study ID and Visit Occurrence ID issued by CHoRUS. **Do not enter MRN, FIN, account numbers, names or dates of birth** in any field, including free text.
 
 
@@ -130,8 +134,8 @@ Enter only the Patient Study ID and Visit Occurrence ID issued by CHoRUS. **Do n
 
 1.	Open the survey and enter your institution, reviewer ID, Patient Study ID and Visit Occurrence ID.
 2.	Confirm the patient’s age category. If it does not match the survey, stop and switch to the correct one.
-3.	Record the ICU admission time: the time of the first vital sign recorded in the ICU, in 24-hour format (e.g. 23:06). Write the admission date on your date log, not in the survey.
-4.	Read the discharge summary (or the final day of documentation) and tick every concept you noticed.
+3.	Record the ICU admission **time**: the time of the first vital sign recorded in the ICU, in 24-hour format (e.g. 23:06). Write the admission date on your date log, not in the survey.
+4.	Read the **discharge summary** (or the final day of documentation) and tick every concept you noticed.
 5.	Work through each concept in order.
 6.	Complete the discharge evaluation and submit.
 
@@ -143,48 +147,147 @@ Every concept opens with the same question. Your answer determines what follows:
 |---|---|
 |YES|The detailed questions for that concept appear.|
 |NO|You skip directly to the next concept.|
-|I am not sure|You are pointe to specific places in the chart, then asked again whether you want to review the concept in detail.|
+|I am not sure|You are pointed to specific places in the chart, then asked again whether you want to review the concept in detail.|
 
-USE "I AM NOT SURE" FREELY
+**USE "I AM NOT SURE" FREELY**  
 It is a legitimate answer, not a failure. It tells us something real about how clearly the concept is documented. Choosing it never ends the concept. It opens a second, guided look.
 
 **H.3  Recording timing**
 
-Wherever the surve asks when something happened, it asks for two values:
+Wherever the survey asks when something happened, it asks for two values:
 
  - **Days since admission**: a whole number. Same calendar day as admission = 0.
  - **Time of day**: clock time only, 24-hour format.
 
-WORKED EXAMPLE
+**WORKED EXAMPLE**  
 Patient admitted to ICU on **15 February at 23:00**. First evidence of sepsis on **16 February at 05:00**.
 You enter **days since admission = 1** (16 − 15) and **time = 05:00**.
 The survey computes the interval for you: **1 × 1440 + (05:00 − 23:00) = 1440 − 1080 = 360 minutes**, i.e. **6 hours** after admission. You never calculate this yourself.
 
-CHANGED IN THIS VERSION
+**CHANGED IN THIS VERSION**  
 SOP 1.44 described this calculation as "2300 − 0500 = 1800, applied to 2400 − 1800". That described an earlier formula which returned a negative interval whenever an event crossed midnight. The formula has been corrected. **Your data entry does not change** — days plus clock time, exactly as before.
 
-**H.4  When you cannot answer**
-
-Answer in this order of preference:
-7.	If the question offers an explicit **"not documented"**, **"not assessable"** or **"unable to determine"** option, **choose it**. These are informative answers about EHR quality, not failures.
-8.	If no such option exists and the question genuinely does not apply, **leave it blank**. Blanks are flagged for us to review as possible design flaws.
+**H.4  When you cannot answer**  
+Answer in this order of preference:  
+7.	If the question offers an explicit **"not documented"**, **"not assessable"** or **"unable to determine"** option, **choose it**. These are informative answers about EHR quality, not failures.  
+8.	If no such option exists and the question genuinely does not apply, **leave it blank**. Blanks are flagged for us to review as possible design flaws.  
 9.	**Never guess.** A guess is less useful than an explicit "not documented", and it is not recoverable in analysis.
 
-**H.5  Saving and resuming**
-
+**H.5  Saving and resuming**  
 You do not have to finish in one sitting. Use **Save & Return Later**; REDCap issues a **return code**.
 
-WRITE THE RETURN CODE DOWN
+WRITE THE RETURN CODE DOWN  
 It cannot be recovered for you. Without it, a partially completed review is lost and the chart must be re-reviewed from the beginning.
 
-**H.6  One submission per ICU stay**
+**H.6  One submission per ICU stay**  
 Each submission covers exactly one Visit Occurrence ID. When reviewing several charts, submit and then start a fresh survey for each.
 
-**H.7  Timing fields you may ignore**
+**H.7  Timing fields you may ignore**  
 Each concept begins with a field asking you to press **"Now"**. Click it and continue. It records how long review takes and is unrelated to the patient. Elapsed times are not visible to CRs.
 
-## I. Concept adjudication rules ## (added onto the version 2.0)
+## I. Concept adjudication rules (added onto the version 2.0) ##
 
+These rules resolve questions raised repeatedly during pilot review. They are binding: apply them even where your own practice would differ, so that all sites label identically.
 
+**I.1  The agreement question: all concepts**  
+Near the end of each concept the survey proposes a provisional label and asks whether you agree. **This is your override.**  
+ - **YES**: the chart genuinely supports the concept.
+ - **NO**: the trigger criteria fired, but reading the whole chart you judge the concept absent.
+
+Disagreements are expected and are among the most valuable data collected: the study measures exactly where rule-based phenotyping diverges from clinician judgment. Answer honestly rather than deferring to the system, score the confidence question low, and explain in free text.
+
+**I.2  Acute kidney injury**
+The three AKI questions are the three KDIGO criteria. AKI is present if any one is met. You do not need all three.
+
+|CRITERION|RULE|
+|---|---|
+|Creatinine, 48 h|Rolling 48-hour window across the **whole** ICU stay; include ED and floor values in the look-back. YES if any pair of values less than 48 h apart rises by **≥ 0.3 mg/dL**.|
+|Creatinine, ratio|**Peak** creatinine of the stay ÷ baseline. YES if ≥ 1.5. This is a ratio — divide, do not subtract. It is not 1.5 mg/dL.|
+|Urine output|Use the flowsheet’s own 6-hour blocks ÷ **admission** weight (actual, unadjusted). YES if any block is **< 3 mL/kg**. If a block is borderline (3.0–3.6), check the adjacent rolling window. If not recorded, choose "not assessable".|
+
+**Baseline creatinine**, in order of preference: lowest outpatient value 7–365 days before admission; failing that, the lowest value recorded at any point during this hospitalization, including ED and ICU. Use the nadir of the whole stay. If the patient arrived in AKI and recovered, the post-recovery value is the truer baseline. **Do not back-calculate from an assumed eGFR.** Record which sources you used in the field provided.
+
+**I.3  Atrial fibrillation**
+
+AF with RVR documented on telemetry, monitor or examination is an **objective finding**. "Irregular pulse" is only one example of that category.
+
+**Hemodynamic stability is not part of this question.** A rate-controlled, stable patient in AF still has AF. Do not let stability push you toward "None of the above". The findings question is a checkbox: mark everything that applies and answer the ECG question separately if an ECG from this admission confirms it.
+
+**I.4  Seizure**
+
+Record the evidence as documented. Mark "in-ICU seizure activity documented" **only if a clinician explicitly used the word seizure**, not if the event was described as myoclonus, jerking, or "seizure-like activity".
+
+BINDING RULE
+Answer **NO** at the agreement question when the only supporting evidence is **medication administration**, with neither an EEG correlate nor an explicit clinician diagnosis.
+
+Benzodiazepines suppress many non-epileptic movements (post-hypoxic and metabolic myoclonus, shivering, tremor) so a response to treatment is not diagnostic. Medication alone is a treatment decision made under uncertainty, not a diagnosis.
+
+**I.5  Overlapping concepts**
+
+Concepts are **not** mutually exclusive. A septic patient in shock should be recorded under both sepsis and shock; a patient with post-traumatic seizures under both seizure and the relevant injury concept. Complete every concept the chart supports.
+
+## J. Quality assurance ##
+
+**J.1  Confidence scoring**
+
+Each concept ends with a confidence score from 1 (not confident at all) to 5 (very confident). Score honestly: a low score on an ambiguous chart is useful signal, not an admission of weakness.
+
+**J.2  Inter-rater reliability**
+
+The Data Phenotyping Team computes IRR on the 15 dual-reviewed charts, reporting agreement on concept presence and on event timing separately. The statistic and the acceptance threshold are set by the Team and recorded accordingly. 
+
+**J.3  Resolving discrepancies**
+
+Where two CRs differ by more than 3 points on the confidence scale for the same concept, a third CR or the PP reviews that concept and records an adjudicated answer. Disagreement on concept presence itself is escalated to the PP regardless of confidence.
+
+**J.4  Point Person checks**
+
+At least weekly during active review, the PP should:
+ - Run REDCap **Data Quality** and clear outstanding rule violations
+ - Check for **hidden fields containing values**, which indicate a reviewer answered a question that later logic hid
+ - Review records with many blanks, which may signal a misunderstanding rather than missing documentation
+ - Confirm no calendar dates have been entered in free-text fields
+
+**J.5  What the PP collects**
+
+Answers for each element, the concept decision, the confidence score per concept, and the time spent on the survey. Elapsed times are not visible to CRs.
+
+## K. Support and escalation ##
+
+**K.1  Office hours**
+
+The Data Phenotyping Team holds office hours for 20-30 minutes at the start of the weekly Data Acquisition Team meeting, usually every **Friday 14:00–15:00 EST**.
+
+**K.2  Site support**
+
+Individual sites may request a separate meeting to review progress. Schedule via the PP.
+
+**K.3  Escalation path**
+
+10.	**CR → PP** for anything about a specific chart: an identifier that cannot be matched, a concept that cannot be classified, a question whose intent is unclear.
+11.	**PP → Data Phenotyping Team** for anything affecting the instrument or the cohort: a suspected logic error, a missing answer option, a need for replacement identifiers.
+
+**Do not resolve recurring ambiguities site by site.** Questions asked more than once are answered centrally and added to the reviewer guidance, so that every site answers them the same way. Contact: Joo Yoon (yoonjh@upmc.edu). 
+
+## L. Reporting and publication ##
+
+The Data Phenotyping Team reports progress to the CHoRUS executive committee every three months. The team remains open to anyone from CHoRUS who wishes to participate. Results, evaluation metrics and downstream products are disseminated at scientific venues and through publications, following the CHoRUS authorship guideline.
+
+## M. Reforences and change log ##
+
+M.1  References
+
+ - HIPAA Compliance Manual
+ - Institution’s EHR system guide
+ - KDIGO Clinical Practice Guideline for Acute Kidney Injury
+ - CHoRUS reviewer guidance (concept-specific questions and answers)
+
+M.2  Change log
+
+|VERSION|DATE|CHANGES|
+|---|---|---|
+|2.0|Oct 16, 2026|Restructured into sections A to M; duplicate section E.3 resolved. Corrected concept count from 8 to 9. Rewrote the timing worked example to match the corrected interval formula. Added section G (privacy), section I (concept adjudication rules for AKI, atrial fibrillation, seizure, and the agreement question), section J.4 (PP quality checks) and K.3 (escalation path). Added guidance on "not assessable" versus blank, and on Save & Return Later. Other small rules and housekeeping items added/modified.|
+|1.44|Apr 15, 2026|Branching logic corrected for sep_y_v3, adhf_y_v3, afib_y_v3. Functional status questions gained an option for patients who died during the ICU stay.|
+|1.43|-|Previous baseline version.|
 
 
