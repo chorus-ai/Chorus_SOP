@@ -196,76 +196,65 @@ Near the end of each concept the survey proposes a provisional label and asks wh
 
 Disagreements are expected and are among the most valuable data collected: the study measures exactly where rule-based phenotyping diverges from clinician judgment. Answer honestly rather than deferring to the system, score the confidence question low, and explain in free text.
 
-**I.2  Acute kidney injury**
-The three AKI questions are the three KDIGO criteria. AKI is present if any one is met. You do not need all three.
+**I.2  Acute kidney injury**  
+The three AKI questions are the three **KDIGO criteria**. AKI is present if **any one** is met. You do not need all three.
 
 |CRITERION|RULE|
 |---|---|
 |Creatinine, 48 h|Rolling 48-hour window across the **whole** ICU stay; include ED and floor values in the look-back. YES if any pair of values less than 48 h apart rises by **≥ 0.3 mg/dL**.|
-|Creatinine, ratio|**Peak** creatinine of the stay ÷ baseline. YES if ≥ 1.5. This is a ratio — divide, do not subtract. It is not 1.5 mg/dL.|
+|Creatinine, ratio|**Peak** creatinine of the stay ÷ baseline. YES if **≥ 1.5.** This is a ratio — divide, do not subtract. It is not 1.5 mg/dL.|
 |Urine output|Use the flowsheet’s own 6-hour blocks ÷ **admission** weight (actual, unadjusted). YES if any block is **< 3 mL/kg**. If a block is borderline (3.0–3.6), check the adjacent rolling window. If not recorded, choose "not assessable".|
 
 **Baseline creatinine**, in order of preference: lowest outpatient value 7–365 days before admission; failing that, the lowest value recorded at any point during this hospitalization, including ED and ICU. Use the nadir of the whole stay. If the patient arrived in AKI and recovered, the post-recovery value is the truer baseline. **Do not back-calculate from an assumed eGFR.** Record which sources you used in the field provided.
 
-**I.3  Atrial fibrillation**
-
+**I.3  Atrial fibrillation**  
 AF with RVR documented on telemetry, monitor or examination is an **objective finding**. "Irregular pulse" is only one example of that category.
 
 **Hemodynamic stability is not part of this question.** A rate-controlled, stable patient in AF still has AF. Do not let stability push you toward "None of the above". The findings question is a checkbox: mark everything that applies and answer the ECG question separately if an ECG from this admission confirms it.
 
-**I.4  Seizure**
-
+**I.4  Seizure**  
 Record the evidence as documented. Mark "in-ICU seizure activity documented" **only if a clinician explicitly used the word seizure**, not if the event was described as myoclonus, jerking, or "seizure-like activity".
 
-BINDING RULE
+BINDING RULE  
 Answer **NO** at the agreement question when the only supporting evidence is **medication administration**, with neither an EEG correlate nor an explicit clinician diagnosis.
 
 Benzodiazepines suppress many non-epileptic movements (post-hypoxic and metabolic myoclonus, shivering, tremor) so a response to treatment is not diagnostic. Medication alone is a treatment decision made under uncertainty, not a diagnosis.
 
-**I.5  Overlapping concepts**
-
+**I.5  Overlapping concepts**  
 Concepts are **not** mutually exclusive. A septic patient in shock should be recorded under both sepsis and shock; a patient with post-traumatic seizures under both seizure and the relevant injury concept. Complete every concept the chart supports.
 
 ## J. Quality assurance ##
 
-**J.1  Confidence scoring**
-
+**J.1  Confidence scoring**   
 Each concept ends with a confidence score from 1 (not confident at all) to 5 (very confident). Score honestly: a low score on an ambiguous chart is useful signal, not an admission of weakness.
 
-**J.2  Inter-rater reliability**
-
+**J.2  Inter-rater reliability**  
 The Data Phenotyping Team computes IRR on the 15 dual-reviewed charts, reporting agreement on concept presence and on event timing separately. The statistic and the acceptance threshold are set by the Team and recorded accordingly. 
 
-**J.3  Resolving discrepancies**
-
+**J.3  Resolving discrepancies**  
 Where two CRs differ by more than 3 points on the confidence scale for the same concept, a third CR or the PP reviews that concept and records an adjudicated answer. Disagreement on concept presence itself is escalated to the PP regardless of confidence.
 
-**J.4  Point Person checks**
-
+**J.4  Point Person checks**  
 At least weekly during active review, the PP should:
  - Run REDCap **Data Quality** and clear outstanding rule violations
  - Check for **hidden fields containing values**, which indicate a reviewer answered a question that later logic hid
  - Review records with many blanks, which may signal a misunderstanding rather than missing documentation
  - Confirm no calendar dates have been entered in free-text fields
 
-**J.5  What the PP collects**
-
+**J.5  What the PP collects**  
 Answers for each element, the concept decision, the confidence score per concept, and the time spent on the survey. Elapsed times are not visible to CRs.
 
 ## K. Support and escalation ##
 
-**K.1  Office hours**
-
+**K.1  Office hours**  
 The Data Phenotyping Team holds office hours for 20-30 minutes at the start of the weekly Data Acquisition Team meeting, usually every **Friday 14:00–15:00 EST**.
 
-**K.2  Site support**
-
+**K.2  Site support**  
 Individual sites may request a separate meeting to review progress. Schedule via the PP.
 
-**K.3  Escalation path**
-
-10.	**CR → PP** for anything about a specific chart: an identifier that cannot be matched, a concept that cannot be classified, a question whose intent is unclear.
-11.	**PP → Data Phenotyping Team** for anything affecting the instrument or the cohort: a suspected logic error, a missing answer option, a need for replacement identifiers.
+**K.3  Escalation path**  
+10.	**CR → PP** for anything about a specific chart: an identifier that cannot be matched, a concept that cannot be classified, a question whose intent is unclear.  
+11.	**PP → Data Phenotyping Team** for anything affecting the instrument or the cohort: a suspected logic error, a missing answer option, a need for replacement identifiers.  
 
 **Do not resolve recurring ambiguities site by site.** Questions asked more than once are answered centrally and added to the reviewer guidance, so that every site answers them the same way. Contact: Joo Yoon (yoonjh@upmc.edu). 
 
@@ -273,10 +262,9 @@ Individual sites may request a separate meeting to review progress. Schedule via
 
 The Data Phenotyping Team reports progress to the CHoRUS executive committee every three months. The team remains open to anyone from CHoRUS who wishes to participate. Results, evaluation metrics and downstream products are disseminated at scientific venues and through publications, following the CHoRUS authorship guideline.
 
-## M. Reforences and change log ##
+## M. References and change log ##
 
-M.1  References
-
+**M.1  References**
  - HIPAA Compliance Manual
  - Institution’s EHR system guide
  - KDIGO Clinical Practice Guideline for Acute Kidney Injury
