@@ -1,0 +1,386 @@
+---
+title: Blood Transfusion Data Harmonization
+id: SOP-BTDH
+description: An SOP for general conventions related to Blood Transfusion Data Harmonization
+---
+# Pending Approval
+# Standard Operating Protocol: Blood Transfusion Data Harmonization
+
+## Contents
+- [1. Background](#1-background)
+- [2. Purpose and scope](#2-purpose-and-scope)
+- [3. Applicable roles and responsibilities](#3-applicable-roles-and-responsibilities)
+- [4. Glossary](#4-glossary)
+- [5. Prerequisites and required inputs](#5-prerequisites-and-required-inputs)
+- [6. Procedure: from source inventory to release](#6-procedure-from-source-inventory-to-release)
+- [7. OMOP field-level implementation](#7-omop-field-level-implementation)
+- [8. Complex cases and worked examples](#8-complex-cases-and-worked-examples)
+- [9. Quality assurance and acceptance gates](#9-quality-assurance-and-acceptance-gates)
+- [10. Privacy, governance, and licensing](#10-privacy-governance-and-licensing)
+- [11. Mapping checklist](#11-mapping-checklist)
+- [12. Documentation and maintenance](#12-documentation-and-maintenance)
+- [13. Related office hours](#13-related-office-hours)
+- [14. References](#14-references)
+- [Appendix A. Minimum source data contract](#appendix-a-minimum-source-data-contract)
+- [Appendix B. Illustrative SQL checks](#appendix-b-illustrative-sql-checks)
+
+# 1. Background
+
+Blood transfusion data are clinically valuable and structurally deceptive. A source row labelled "RBC" may represent an order, a unit released by the blood bank, the moment administration began, a completion record, a partial pediatric aliquot, or a retrospective note. The vocabulary label may be correct while the modeled clinical event is wrong. This is why transfusion harmonization must begin with event semantics - not with a search box.
+
+In OMOP CDM v5.4, transfused blood components are represented as Device-domain exposures. The CDM documentation explicitly uses blood transfusion as the example for quantity and unit fields in DEVICE_EXPOSURE. This can feel counterintuitive because clinicians do not ordinarily call blood a device. Within OMOP, however, the table is functioning as the landing place for a physical therapeutic material, whereas albumin, immunoglobulins, coagulation-factor concentrates, and comparable manufactured blood-derived medicines follow Drug-domain logic.
+
+The practical aim is not maximal detail at any price. It is defensible detail: preserve what the source actually establishes, use the most specific valid standard concept that does not invent meaning, maintain lineage, and make every assumption visible to analysts. ISBT 128 can provide highly granular product descriptions and identifiers, but it is license-restricted in OHDSI distributions and must be aligned across local and central vocabulary environments.
+
+
+> **Why this matters**
+> A transfusion is not merely a product label. It is a timed exposure to a specific blood component, with quantity, provenance, visit context, and - sometimes - an associated reaction.
+
+> If "issued," "started," and "completed" are collapsed into the same fact, utilization counts, exposure timing, dose estimates, and transfusion-reaction analyses can all be wrong - even when every product term maps perfectly.
+
+# 2. Purpose and scope
+
+This SOP establishes a reproducible process for harmonizing patient-level blood transfusion data into OMOP CDM v5.4. It covers source discovery, event reconstruction, product classification, vocabulary mapping, quantity and unit normalization, temporal modeling, linkage to visits and related facts, quality assurance, privacy, licensing, and maintenance.
+
+# 3. Applicable roles and responsibilities
+
+| **Role**                         | **Primary responsibilities**                                                                                               | **Required sign-off**                  |
+|----------------------------------|----------------------------------------------------------------------------------------------------------------------------|----------------------------------------|
+| Site data owner / blood-bank SME | Explain source workflows, code systems, event statuses, reliable timestamps, unit identifiers, and known data limitations. | Source inventory and event semantics   |
+| Transfusion-medicine clinician   | Resolve ambiguous products, modifiers, partial-unit logic, reaction semantics, and clinical plausibility.                  | Clinical mapping sample and exceptions |
+| OMOP terminologist               | Select standard concepts, verify domain and standardness, document vocabulary version and semantic loss, and manage gaps.  | Mapping specification                  |
+| ETL engineer                     | Reconstruct events, implement conversions, preserve lineage, link visits, and produce deterministic output.                | ETL specification and reproducibility  |
+| Data-quality analyst             | Run structural, vocabulary, temporal, distributional, and reconciliation checks; document failures.                        | QA report and release gates            |
+| Privacy / governance lead        | Decide how donation, donor, supplier, and unit identifiers may be stored, transformed, and shared.                         | Identifier handling and release policy |
+| Central harmonization lead       | Maintain shared conventions, coordinate vocabulary availability, adjudicate cross-site exceptions, and approve release.    | Final harmonization decision           |
+
+# 4. Glossary
+
+| **Term**                        | **Operational definition in this SOP**                                                                                                                                                 |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Administration event            | Evidence that a blood component entered the patient; normally anchored by an actual start and, when available, completion/stop time.                                                   |
+| Blood component                 | A transfused human-derived material such as red blood cells, platelets, plasma, cryoprecipitate, granulocytes, or whole blood.                                                         |
+| Blood-derived medicinal product | A manufactured or formulated therapeutic product derived from blood or plasma, such as albumin, immunoglobulin, or coagulation-factor concentrate; generally modeled in DRUG_EXPOSURE. |
+| DIN                             | ISBT 128 Donation Identification Number. It identifies a donation and supports traceability; it is not an OMOP concept ID or a generic field value.                      |
+| ISBT 128 PDC                    | Product Description Code that identifies a standardized medical product of human origin and can encode detailed product characteristics.                                               |
+| Product modifier / attribute    | A characteristic such as irradiated, washed, leukocyte-reduced, CMV-negative, pathogen-reduced, pooled, or divided.                                                                    |
+| Proxy exposure                  | A project-approved inference of administration from a weaker event, such as issue/release, used only when actual administration data are unavailable and clearly flagged.              |
+| Source lineage                  | The reproducible connection between an OMOP record and its originating system, table, row, code, status, timestamps, and transformation rule.                                          |
+| Standard concept                | A valid OHDSI concept with standard_concept = 'S' used in the principal \*\_concept_id field of an OMOP clinical event.                                                                |
+| Uphill mapping                  | A mapping to a broader target because an exact standard concept does not exist. The loss of detail must be recorded.                                                                   |
+
+# 5. Prerequisites and required inputs
+
+- An OMOP CDM v5.4 target schema and the exact OHDSI vocabulary release used for ETL.
+- Authorized access to relevant licensed vocabularies. If ISBT and ISBT Attribute are used locally, verify that the central validation environment contains the same authorized content.
+- A source inventory covering EHR flowsheets, medication administration, blood-bank or laboratory interfaces, orders, procedure records, notes, and site-specific extracts.
+- A data dictionary for status codes and every timestamp; "documented time" is not sufficient unless its event meaning is known.
+- A mapping specification with source code, source label, frequency, target concept, target domain, mapping rationale, review status, and vocabulary version.
+- An ETL assumption log, a privacy decision for product/donation identifiers, and a clinician available for exception review.
+
+> **First deliverable**  
+> Before mapping a single term, produce the source inventory in Appendix A. A vocabulary map built before event semantics are understood can be internally consistent and analytically wrong.
+
+# 6. Procedure: from source inventory to release
+
+### 1. Inventory every source and establish event meaning
+
+Extract distinct codes, labels, statuses, timestamps, counts, units, frequent values, identifiers, and source-table context. Meet with the blood-bank or EHR SME to label each record type as order, allocation/crossmatch, issue/release, administration start, completion, stop, return, waste, reaction, or historical documentation. Record which timestamp is operationally reliable and whether it is corrected retrospectively.
+
+| **Source state**                         | **Patient exposure?** | **Default OMOP action**                                                                                                 |
+|------------------------------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Order placed                             | No                    | Do not create DEVICE_EXPOSURE by default. Preserve intent in staging or another governed representation if required.    |
+| Allocated / crossmatched                 | No                    | Blood-bank logistics only.                                                                                              |
+| Issued / released                        | Not necessarily       | Use for provenance and reconciliation. Do not infer administration unless a project-approved proxy rule is unavoidable. |
+| Administration started                   | Yes                   | Create or anchor one DEVICE_EXPOSURE record.                                                                            |
+| Completed                                | Yes                   | Populate the same exposure's end date/time; do not create a second exposure.                                            |
+| Stopped early                            | Yes                   | Retain the exposure and actual stop time. Model a documented reaction separately.                                       |
+| Returned / wasted without administration | No                    | Exclude from patient exposure; retain for operational reconciliation if in scope.                                       |
+| Historical mention                       | Uncertain             | Use NOTE or OBSERVATION when appropriate; create exposure only when administration is sufficiently established.         |
+
+### 2. Build the canonical administration event
+
+Group status transitions that describe the same administered product. Prefer an explicit source administration identifier. Otherwise use a deterministic event key based on person, encounter, product/unit identifier, administration start, source record family, and product code. One administered component event becomes one DEVICE_EXPOSURE row; its start and completion/stop are attributes of that row.
+
+> **Do not collapse**  
+> Two units given sequentially are two exposures even when the product, date, and visit are identical. A daily total is a derived analytic object, not the atomic harmonized record.
+
+### 3. Classify the therapeutic object before choosing a table
+
+Use the clinical object and the domain of the selected standard concept - not the source table name - to determine the OMOP destination. A component documented in the medication administration record remains a blood component. Conversely, a plasma-derived medicine remains a drug even when ordered through a transfusion workflow.
+
+| **Source fact**                              | **Primary OMOP destination**                 | **Examples / cautions**                                                                                               |
+|----------------------------------------------|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| Administered blood component                 | DEVICE_EXPOSURE                              | Whole blood, red blood cells, platelets, plasma, cryoprecipitate, granulocytes.                                       |
+| Blood-derived medicinal product              | DRUG_EXPOSURE                                | Albumin, IV immunoglobulin, coagulation-factor concentrates, fibrinogen concentrate, prothrombin complex concentrate. |
+| Indication or diagnosis                      | CONDITION_OCCURRENCE / OBSERVATION / NOTE    | Route by clinical meaning and source structure; do not invent an indication from a nearby lab result.                 |
+| Transfusion reaction                         | CONDITION_OCCURRENCE; NOTE if only narrative | Preserve reaction timing and source assertion. Hemovigilance causality/imputability requires separate adjudication.   |
+| Laboratory result                            | MEASUREMENT                                  | Hemoglobin, platelet count, fibrinogen, compatibility testing, as supported by source data.                           |
+| Donation performed on the modeled person     | PROCEDURE_OCCURRENCE, if in scope            | Do not create donor-person records solely to represent product provenance without governance.                         |
+| Product/donor metadata not modeled elsewhere | OBSERVATION or governed linkage layer        | Only when analytically necessary, conceptually valid, linkable, and privacy-approved.                                 |
+
+### 4. Map the product concept
+
+Use existing OHDSI mappings first. For granular blood products, prefer valid standard ISBT concepts when the source code can be resolved and licensing is authorized across the workflow. Otherwise use the most specific valid standard Device concept - often SNOMED - that preserves meaning. For blood-derived medicines, use RxNorm or RxNorm Extension as appropriate. Create local standard concepts only after gap confirmation, governance approval, and documentation.
+- Never place an alphanumeric ISBT code directly into device_concept_id; OMOP concept IDs are integers. Resolve the native code through CONCEPT.concept_code and the correct vocabulary_id.
+- Confirm invalid_reason IS NULL, standard_concept = 'S', and domain_id = 'Device' for DEVICE_EXPOSURE.
+- Do not map to a more specific product than the source proves. "RBC" does not justify "irradiated leukocyte-reduced RBC."
+- If a detailed modifier is lost in an uphill mapping, retain the source label and record the semantic loss in the mapping specification.
+
+### 5. Populate timing and visit context
+
+Use actual administration start for device_exposure_start_datetime and completion or stop for device_exposure_end_datetime. Derive the required date fields from those datetimes. If only one timestamp exists, document exactly whether it represents order, issue, start, or completion. Do not silently copy it into both start and end; that creates false zero-duration precision. Link to visit_occurrence_id and, when the source supports it, visit_detail_id - for example the ICU, NICU, or PICU segment.
+
+### 6. Normalize quantity and unit conservatively
+
+DEVICE_EXPOSURE.quantity is an integer in OMOP CDM v5.4. Use the administered count or volume in a compatible standard unit. Preserve the verbatim unit in unit_source_value. Convert only with explicit, reproducible, clinically defensible rules.
+
+| **Source expression** | **Target representation**                                                                                                                      | **Decision rule**                                                                           |
+|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| 2 units RBC           | quantity = 2; unit = standard 'unit'                                                                                                           | Use when the source row represents two administered product units.                          |
+| 120 mL platelets      | quantity = 120; unit = mL                                                                                                                      | Preferred for an actual administered volume.                                                |
+| 120 cc plasma         | quantity = 120; unit = mL; unit_source_value = 'cc'                                                                                            | 1 cubic centimetre equals 1 millilitre; preserve the source expression.                     |
+| 10 mL/kg              | Calculate total mL only if a reliable contemporaneous weight and unambiguous dose expression are available                                     | Record weight source, time, conversion formula, and exclusions. Otherwise do not calculate. |
+| 0.5 unit              | Prefer actual administered mL. If unavailable, leave quantity unpopulated and retain the fractional expression in lineage/source documentation | Do not force 0.5 into an integer field; do not assume a universal half-unit volume.         |
+| Amount missing        | Use quantity = 1 only when source structure defensibly means one administered component unit; otherwise leave NULL                             | Document the rule and quantify affected records.                                            |
+
+> **Pediatric safeguard**  
+> Do not convert mL/kg to mL using a remote, copied-forward, post-event, or otherwise clinically inappropriate weight. A precise calculation from the wrong weight is still wrong.
+
+### 7. Preserve product attributes and identifiers without overloading OMOP fields
+
+Prefer a precoordinated standard product concept when it exists. Preserve the original product label and code in source-value fields. Use linked OBSERVATION records only when an attribute is analytically required, a suitable standard concept exists, and the linkage is explicit. Maintain all unresolved attributes in the mapping/lineage layer rather than manufacturing semantics.
+- unique_device_id and production_id have UDI-specific definitions in OMOP v5.4. Do not use them as generic containers for any blood-bank identifier without an approved project convention.
+- Treat the DIN, donor attributes, supplier identifiers, and unit numbers as governed traceability data. Apply de-identification and release rules before loading or sharing.
+- For split products or aliquots, retain the parent/child relationship and shared donation identifier in an approved linkage layer when available and permitted. Do not merge the administered aliquots into one exposure.
+- If device_source_value exceeds the target field length, define deterministic truncation or tokenization and preserve the complete value in controlled lineage documentation.
+
+### 8. Model related clinical facts separately - and link only what the source asserts
+
+An indication, laboratory value, note, and reaction are not attributes of device_concept_id. Store each fact in its appropriate OMOP table. Use event-linking fields available in MEASUREMENT, OBSERVATION, and NOTE, or FACT_RELATIONSHIP with a valid relationship concept, when the source explicitly relates the fact to the transfusion. Temporal proximity alone is useful for analysis but does not prove linkage or causality.
+
+### 9. Deduplicate without erasing repeat transfusions
+
+Reconcile EHR, flowsheet, blood-bank, and interface feeds using source identifiers and status sequences. Distinguish true duplicates from repeated units, retransmissions, corrected documentation, and one source row per workflow state. Define source precedence - for example, administered volume from the bedside record and product code from the blood-bank feed - then test it on multi-unit and interrupted transfusions.
+
+### 10. Validate, review, and release
+
+Run the checks in Section 9. Produce record-count reconciliation from source events to canonical administrations to OMOP rows. Review high-frequency products, all custom or broader mappings, pediatric conversions, unresolved fractional units, order-only proxies, and reaction-linked cases with the appropriate SMEs. Release only after vocabulary, privacy, and hard quality gates pass.
+
+# 7. OMOP field-level implementation
+
+| **DEVICE_EXPOSURE field**           | **Population rule**                                                                                                                               | **Status**           |
+|-------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
+| device_exposure_id                  | Generate a stable unique key for each canonical administered product event; preserve the source-event crosswalk.                                  | Required             |
+| person_id                           | Link to the transfusion recipient.                                                                                                                | Required             |
+| device_concept_id                   | Valid standard Device concept representing the administered blood component; use 0 only when no suitable mapping exists and retain source detail. | Required             |
+| device_exposure_start_date          | Date of actual administration start; derive from start datetime when available.                                                                   | Required             |
+| device_exposure_start_datetime      | Actual start timestamp. Strongly preferred because multiple transfusions can occur on one day.                                                    | Strongly recommended |
+| device_exposure_end_date / datetime | Actual completion or stop time when available. Do not infer a duration unless the rule is explicitly approved.                                    | Recommended          |
+| device_type_concept_id              | Standard Type concept reflecting record provenance, not product type.                                                                             | Required             |
+| quantity                            | Integer administered count or volume compatible with unit_concept_id. Apply Section 6.6.                                                          | Recommended          |
+| unit_concept_id                     | Standard Unit concept corresponding to the normalized quantity; NULL if no unit exists, 0 if a source unit exists but is unmapped.                | Recommended          |
+| unit_source_value                   | Verbatim source unit, including cc, mL, unit, or mL/kg.                                                                                           | Recommended          |
+| device_source_value                 | Verbatim source product code or label selected by the documented lineage rule.                                                                    | Recommended          |
+| device_source_concept_id            | Source concept ID when the source code exists in an OMOP-supported vocabulary; may be non-standard.                                               | Optional             |
+| visit_occurrence_id                 | Visit explicitly associated with the administration or defensibly assigned by approved temporal logic.                                            | Recommended          |
+| visit_detail_id                     | Relevant ICU/NICU/PICU or other sub-visit when source linkage exists.                                                                             | Recommended          |
+| provider_id                         | Administering or otherwise relevant provider according to a documented source-priority rule.                                                      | Optional             |
+| unique_device_id / production_id    | Populate only according to their UDI semantics or an explicitly governed project convention; do not expose restricted identifiers.                | Conditional          |
+
+> **Concept-ID discipline**  
+> The product code, the OMOP concept_id, and the physical unit identifier are three different things. They must never be substituted for one another.
+
+# 8. Complex cases and worked examples
+
+## 8.1 Pediatric red-cell aliquot
+
+Source: "PRBC leukoreduced, divided," administration started 09:42 and completed 10:55 in PICU; 85 mL administered; local product code and a governed unit identifier are present. Target: one DEVICE_EXPOSURE row with the most specific valid standard Device concept supported by the code and vocabulary license; quantity 85; standard mL unit; source unit "mL"; actual start/end datetimes; visit and PICU visit detail; full source product label preserved. The unit identifier is handled according to the approved privacy/linkage policy - not automatically copied into a UDI field.
+
+## 8.2 Half unit with no volume
+
+Source: "0.5 unit platelets," with a valid start timestamp but no administered mL. Because quantity is integer in CDM v5.4, do not write 0.5. Do not convert to mL using a generic bag volume. Keep the administration as a DEVICE_EXPOSURE, leave quantity unpopulated, preserve the fractional expression in lineage/source documentation, and count the record in the unresolved-fraction QA metric.
+
+## 8.3 Product issued but returned
+
+Source: a blood-bank unit was issued and later returned; no bedside start or other administration evidence exists. This is not a patient exposure. Exclude it from DEVICE_EXPOSURE and retain it only in the operational reconciliation layer if needed. A rule that equates issue with administration would overcount utilization.
+
+## 8.4 Albumin documented in a transfusion workflow
+
+Source: albumin infusion appears alongside blood products. Route it to DRUG_EXPOSURE using a valid standard RxNorm/RxNorm Extension concept. The source module does not determine the OMOP domain; the therapeutic object does.
+
+## 8.5 Suspected reaction after plasma
+
+Source: plasma administration stopped early; a structured reaction diagnosis and narrative note are recorded. Keep the plasma exposure with its actual stop time. Store the diagnosis in CONDITION_OCCURRENCE and the narrative in NOTE; link the note to the exposure when the source asserts the association. Use FACT_RELATIONSHIP for the condition only when an appropriate valid relationship concept and project convention are available. Do not infer CDC/NHSN imputability from timing alone.
+
+## 8.6 Seven seductive shortcuts to reject
+
+- "It is in the Medication Administration Record (MAR), so it is a drug." Source placement does not define OMOP domain.
+- "It was issued, so it was transfused." Logistics is not exposure.
+- "RBC is close enough." It may be, but only after checking for defensible product detail.
+- "Half a unit means half of 250 mL." Bag and aliquot volumes are not universal.
+- "The ISBT code is the concept ID." Native codes and OMOP integer identifiers are different layers.
+- "Same day, same product means duplicate." Repeat transfusions are common.
+- "A nearby fever was a transfusion reaction." Temporal proximity is not source assertion or causality adjudication.
+
+# 9. Quality assurance and acceptance gates
+
+Quality assurance must test both syntactic conformance and clinical/event fidelity. A database can pass schema checks while counting issued units as transfused; it can also model events correctly while failing because the central vocabulary snapshot lacks licensed ISBT content. Both failure modes matter.
+
+## 9.1 Hard release gates
+
+| **Gate**               | **Pass condition**                                                                                                                                          |
+|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Required fields        | No NULL values in OMOP-required DEVICE_EXPOSURE fields.                                                                                                     |
+| Vocabulary validity    | Every nonzero device_concept_id exists, is valid, is standard, and has domain_id = 'Device'.                                                                |
+| Type and unit validity | All populated type and unit concept IDs are valid in the correct domains; source unit present but unmapped uses 0 rather than an invented unit.             |
+| Temporal integrity     | No end datetime precedes start datetime; required dates agree with their datetimes; timezone handling is documented.                                        |
+| Quantity integrity     | No fractional values in the integer quantity field; no negative or zero administered quantities; each populated quantity is interpretable with its unit.    |
+| Event fidelity         | No known order-only, allocated, returned, or wasted events are represented as administered exposure unless an approved proxy rule is explicitly identified. |
+| Vocabulary alignment   | Every vocabulary used by the ETL, including licensed ISBT content, is authorized and installed in both local and central validation environments.           |
+| Privacy                | No prohibited donor, donation, supplier, or unit-level identifier is released; transformations follow the approved policy.                                  |
+| Reproducibility        | The same inputs, vocabulary release, mapping version, and ETL version reproduce the same canonical event and OMOP counts.                                   |
+
+## 9.2 Reported completeness and plausibility metrics
+
+- Administration start datetime coverage; end datetime coverage; visit and visit-detail linkage rates.
+- Quantity coverage by product and age group; unit distribution; unresolved fractional-unit rate; weight-based conversion rate and exclusion count.
+- Share mapped to ISBT, SNOMED, local extension, broader generic concepts, and concept_id 0; invalidated concept changes since the prior vocabulary release.
+- Counts of orders, issued units, started administrations, completed/stopped administrations, returns/waste, canonical events, and final DEVICE_EXPOSURE rows.
+- Duplicate candidate rate by source event ID, unit/product identifier, person, visit, and time window; proportion resolved as true repeat transfusions.
+- Product-modifier preservation rate; unresolved modifier frequency; source-value truncation rate.
+- Reaction records by product and time interval; proportion with explicit source linkage to a transfusion event.
+- Adult versus pediatric/neonatal distributions for volume, unit, duration, and generic-product mapping.
+
+> **Threshold policy**  
+> Do not invent a universal 95% completeness threshold. Define thresholds from source capability, research use, and site agreement. Hard semantic and privacy errors require zero tolerance; missing optional fields require transparent measurement and use-case review.
+
+## 9.3 Clinical validation sample
+
+At minimum, review all high-risk exceptions plus a stratified sample covering:
+- each major component class and each source system;
+- adult, pediatric, neonatal, ICU, and non-ICU settings when present;
+- single-unit, multi-unit, partial, stopped, corrected, and cross-midnight events;
+- each vocabulary path and every custom, broader, ambiguous, or licensed-vocabulary mapping;
+- each quantity/unit conversion pattern and each event-linking method;
+- every reaction type represented in the source and records where exposure status is uncertain.
+
+# 10. Privacy, governance, and licensing
+
+Blood-product traceability data can contain identifiers that are operationally indispensable and analytically risky. The site must classify donation identifiers, product/unit identifiers, donor attributes, collection agency, supplier, and free-text comments before extraction. Store the minimum necessary data, transform identifiers consistently, maintain access controls, and avoid sharing donor-linked information unless specifically authorized.
+
+ISBT and ISBT Attribute are license-restricted vocabularies within OHDSI. Each site that downloads and uses the content, and each central environment that validates or analyzes those concept IDs, must satisfy the applicable access conditions. A concept can be standard in the local vocabulary and still fail central checks if the central snapshot does not contain that licensed vocabulary. This is an environment-alignment failure - not evidence that the local concept itself is non-standard.
+
+> **Governance decision required**  
+> Before the first shared extract, record whether unit/donation identifiers are excluded, irreversibly tokenized, reversibly pseudonymized under local control, or retained only behind the source firewall.
+
+# 11. Mapping checklist
+
+- [ ] Source systems, tables, fields, codes, statuses, and timestamp semantics are inventoried.
+- [ ] Orders, logistics, administration, returns/waste, and reactions are distinguished.
+- [ ] One canonical record is created per administered product event; repeat transfusions are not collapsed.
+- [ ] Blood components route to DEVICE_EXPOSURE and blood-derived medicinal products route to DRUG_EXPOSURE.
+- [ ] Every principal concept is valid, standard, and in the correct domain; vocabulary version is recorded.
+- [ ] ISBT codes are resolved through the vocabulary and are never copied into concept_id fields.
+- [ ] Actual administration start and completion/stop times are used when available; timestamp assumptions are documented.
+- [ ] Quantity is integer-compatible; unit is standardized; verbatim unit is preserved; pediatric conversions are evidence-based.
+- [ ] Fractional units without reliable mL are not converted by assumption.
+- [ ] Product modifiers are represented by a precoordinated concept when possible or explicitly documented as lost/unresolved.
+- [ ] Visits and visit details are linked where supported; related facts are modeled separately and not causally inferred.
+- [ ] Identifier handling has privacy approval; local and central vocabulary licensing is aligned.
+- [ ] Hard QA gates pass; completeness metrics and source-to-target count reconciliation are reviewed.
+- [ ] Clinician, terminologist, ETL, QA, privacy, and harmonization sign-offs are recorded.
+
+# 12. Documentation and maintenance
+
+- Version the source inventory, mapping sheet, ETL code, QA specification, assumption log, and vocabulary release together.
+- Record mapping predicate/rationale for every non-exact, broader, composite, custom, or unresolved map; SSSOM-compatible metadata may be used where supported.
+- At each vocabulary refresh, detect invalidated concepts, changed standard status, changed mappings, and newly available product detail before rerunning ETL.
+- Monitor new source codes and status values. No novel code may silently default to a generic product or an exposure state.
+- Keep a decision log for proxy exposure rules, duplicate resolution, source precedence, pediatric conversion, identifier handling, and reaction linkage.
+- Communicate known limitations to analysts in the data dictionary and release notes - not only in an internal ETL appendix.
+
+# 13. Related office hours
+
+The following office hour sessions provide additional context and demonstrations related to this SOP:
+
+- **[06-04-26] Refresher: Transfusion Data Harmonization**
+  - [Video Recording](https://drive.google.com/file/d/1560R7hMwinisHEc6zpFGAW0IyXwvQ3jM/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/12X495MbSTtW_cb9tIVE7PnjE22t345sf/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1gPbiqaGysxayLSXhCJUomlGI_aEhsB3vJqoK-PzjQyc/edit?usp=drive_link)
+
+- **[07-31-25] Harmonizing Transfusion Data to OMOP CDM v5.4**
+  - [Video Recording](https://drive.google.com/file/d/1t2r6cFDlSDGaNNWtyH_pLoMA9WkQjcb3/view?usp=drive_link) | [Transcript](https://docs.google.com/document/d/1jm2KWYhK1VcGnmPDv0ykeoRqzX10huqq/edit?usp=drive_link&ouid=114247347792731152437&rtpof=true&sd=true) | [Presentation](https://docs.google.com/presentation/d/1p4nh81s0vXCDUPNJ-7aiDWrfHRj-S41gg89MwsyP9Nk/edit?usp=drive_link)
+
+# Appendix A. Minimum source data contract
+
+| **Data element**                             | **Required?** | **Why it is needed**                                                                                   |
+|----------------------------------------------|---------------|--------------------------------------------------------------------------------------------------------|
+| Source system, table, row ID                 | Yes           | Lineage, deduplication, audit, and reprocessing.                                                       |
+| Patient identifier                           | Yes           | Maps to person_id under site identity-management rules.                                                |
+| Encounter / department identifiers           | Recommended   | Links visit_occurrence_id and visit_detail_id; supports ICU/PICU/NICU context.                         |
+| Order and administration IDs                 | Recommended   | Separates intent from administered exposure and groups workflow states.                                |
+| Event status and status dictionary           | Yes           | Distinguishes order, issue, start, complete, stop, return, and waste.                                  |
+| All timestamps plus semantic labels          | Yes           | Selects true start/end and detects corrections or impossible sequences.                                |
+| Product code, vocabulary, label              | Yes           | Maps component while preserving source meaning.                                                        |
+| ISBT product description / attribute codes   | If present    | Enables granular product mapping, subject to licensing.                                                |
+| Quantity and unit                            | Recommended   | Represents administered amount; supports unit harmonization.                                           |
+| Weight, weight time, weight source           | Conditional   | Required for defensible mL/kg conversion.                                                              |
+| Product modifiers                            | If present    | Preserves irradiated, washed, leukocyte-reduced, pooled, divided, pathogen-reduced, and other details. |
+| Unit/donation/supplier identifiers           | Conditional   | Traceability and deduplication; requires privacy governance.                                           |
+| Provider                                     | Optional      | Supports provenance if source meaning is clear.                                                        |
+| Reaction code, timestamp, narrative, linkage | If present    | Models associated clinical outcomes without conflating them with exposure.                             |
+| Related laboratory codes/results/units       | If present    | Supports measurements and transfusion-context analyses.                                                |
+
+# Appendix B. Illustrative SQL checks
+
+Adapt field names, schemas, and accepted Type concepts to the implementation. These checks are illustrative, not a substitute for the full DQD and project-specific QA suite.
+
+## B.1 Standardness and domain
+
+```sql
+SELECT de.device_concept_id, c.concept_name, c.standard_concept,
+c.domain_id, c.invalid_reason, COUNT(*) AS n
+FROM device_exposure de
+LEFT JOIN concept c ON c.concept_id = de.device_concept_id
+WHERE de.device_concept_id <> 0
+GROUP BY 1,2,3,4,5
+HAVING c.concept_id IS NULL
+OR c.standard_concept <> 'S'
+OR c.domain_id <> 'Device'
+OR c.invalid_reason IS NOT NULL;
+```
+
+## B.2 Temporal integrity
+
+```sql
+SELECT COUNT(*) AS invalid_intervals
+FROM device_exposure
+WHERE device_exposure_end_datetime IS NOT NULL
+AND device_exposure_start_datetime IS NOT NULL
+AND device_exposure_end_datetime < device_exposure_start_datetime;
+```
+
+## B.3 Quantity and unit
+
+```sql
+SELECT device_concept_id, quantity, unit_concept_id,
+unit_source_value, COUNT(*) AS n
+FROM device_exposure
+WHERE quantity IS NULL
+OR quantity <= 0
+OR (quantity IS NOT NULL AND unit_concept_id IS NULL)
+GROUP BY 1,2,3,4
+ORDER BY n DESC;
+```
+
+## B.4 Potential duplicate events
+
+```sql
+SELECT person_id, device_concept_id,
+device_exposure_start_datetime, visit_occurrence_id,
+quantity, unit_concept_id, COUNT(*) AS n
+FROM device_exposure
+GROUP BY 1,2,3,4,5,6
+HAVING COUNT(*) > 1;
+-- Review candidates against source event and unit/product identifiers;
+-- do not delete automatically.
+```
