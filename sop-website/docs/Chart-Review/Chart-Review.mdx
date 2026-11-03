@@ -10,7 +10,7 @@ CONTENTS
 
    **A**  Purpose  
    **B**  Scope  
-   **C**  Definitiions  
+   **C**  Definitions  
    **D**  Roles and responsibilities  
    **E**  Before you begin  
    **F**  Chart allocation and volume  
@@ -41,17 +41,17 @@ Each survey has its own concept set. **Confirm the patient's age category before
 |Neonatal|28 days and under|9|
 
 CORRECTION IN THIS VERSION  
-SOP 1.44 stated that reviewers assess **8** concepts for adults. The current adult survey contains **9** **(nine)**: sepsis, acute decompensated heart failure, acute kidney injury, delirium, atrial fibrillation, seizure, shock, stroke, and cardiac arrest. Caridac arrest was omitted from the previous count and from the workflow figure.
+SOP 1.44 stated that reviewers assess **8** concepts for adults. The current adult survey contains **9** **(nine)**: sepsis, acute decompensated heart failure, acute kidney injury, delirium, atrial fibrillation, seizure, shock, stroke, and cardiac arrest. Cardiac arrest was omitted from the previous count and from the workflow figure.
 
-## C. Definitiions ##
+## C. Definitions ##
 
 |TERM|DEFINITIONS|
 |---|---|
 |Chart Review|Examination of a patient's medical record to determine whether defined clinical concepts are documented.|
 |EHR|Electronic health record: the digital chart containing history, diagnoses, orders, notes, imaging and results.|
-|Concept|One clinical condition or even the survey asks you to adjudicate (e.g. sepsis, stroke).| 
+|Concept|One clinical condition or event the survey asks you to adjudicate (e.g. sepsis, stroke).| 
 |Silver label|A concept label derived from chart review, used to train or evaluate models in place of a definitive reference standard.|
-|Index ICU stay|The single ICU admission identified by the VISIT_OCCURENCE_ID you were given. All answers refer to this stay only.|
+|Index ICU stay|The single ICU admission identified by the VISIT_OCCURRENCE_ID you were given. All answers refer to this stay only.|
 |Day since admission|Calendar-day difference between the date of ICU admission and the date of the event. Same calendar day = 0. See section H.3.| 
 |Concept gate|The first question of each concept (YES/NO/I am not sure) which determines whether the detailed questions appear.|
 |Agreement question|The question near the end of each concept asking whether you agree with the label the survey has provisionally derived. See section I.1.|
@@ -68,13 +68,13 @@ Designated by the site PI to direct the review process. Responsible for pre-revi
 
 **D.3** **Data Phenotyping Team**
 
-Maintains the REDCap insturments and this SOP, issues research identifiers, computes inter-rater reliability, and holds office hours (section K).
+Maintains the REDCap instruments and this SOP, issues research identifiers, computes inter-rater reliability, and holds office hours (section K).
 
 **D.4** **Site Principal Investigator**
 
 Accountable for local regulatory approval, for designating the PP, and for ensuring that identifiable material handled during review is managed per institutional policy (section G).
 
-## E. Before your begin ##
+## E. Before you begin ##
 
 **E.1 Identifier mapping**
 
@@ -110,10 +110,10 @@ After the reliability stage the Data Phenotyping Team computes IRR and decides w
 Wherever practical, the **same CR should complete a given chart end to end**, to avoid repeated training and to benefit from the learning curve. A chart may be split between CRs only under PP supervision.
 
 
-## G. Protection patient privacy ##
+## G. Protecting patient privacy ##
 
 MANDATORY  
-**Never enter a calendar date anywhere in the survey**: not in a date field, not in a free-text box, not in a note. The survey is designed so that no HIPPA-sensitive date is ever required.
+**Never enter a calendar date anywhere in the survey**: not in a date field, not in a free-text box, not in a note. The survey is designed so that no HIPAA-sensitive date is ever required.
 
 **G.1  Why the survey asks for time without dates**  
 Admission and event dates are identifiers under HIPAA. The survey therefore captures only a **clock time** (HH:MM) plus a **whole number of days since admission**. Together these reconstruct how long after admission an event occurred without any date entering the record.
@@ -169,9 +169,9 @@ SOP 1.44 described this calculation as "2300 − 0500 = 1800, applied to 2400 �
 
 **H.4  When you cannot answer**  
 Answer in this order of preference:  
-7.	If the question offers an explicit **"not documented"**, **"not assessable"** or **"unable to determine"** option, **choose it**. These are informative answers about EHR quality, not failures.  
-8.	If no such option exists and the question genuinely does not apply, **leave it blank**. Blanks are flagged for us to review as possible design flaws.  
-9.	**Never guess.** A guess is less useful than an explicit "not documented", and it is not recoverable in analysis.
+7.	If the question offers an explicit **"not documented"**, **"not assessable"** or **"unable to determine"** option, **choose it**. These are informative answers about EHR quality, not failures.    
+8.	If no such option exists and the question genuinely does not apply, **leave it blank**. Blanks are flagged for us to review as possible design flaws.    
+9.	**Never guess.** A guess is less useful than an explicit "not documented", and it is not recoverable in analysis.  
 
 **H.5  Saving and resuming**  
 You do not have to finish in one sitting. Use **Save & Return Later**; REDCap issues a **return code**.
@@ -203,7 +203,7 @@ The three AKI questions are the three **KDIGO criteria**. AKI is present if **an
 |---|---|
 |Creatinine, 48 h|Rolling 48-hour window across the **whole** ICU stay; include ED and floor values in the look-back. YES if any pair of values less than 48 h apart rises by **≥ 0.3 mg/dL**.|
 |Creatinine, ratio|**Peak** creatinine of the stay ÷ baseline. YES if **≥ 1.5.** This is a ratio — divide, do not subtract. It is not 1.5 mg/dL.|
-|Urine output|Use the flowsheet’s own 6-hour blocks ÷ **admission** weight (actual, unadjusted). YES if any block is **< 3 mL/kg**. If a block is borderline (3.0–3.6), check the adjacent rolling window. If not recorded, choose "not assessable".|
+|Urine output|Use the flowsheet’s own 6-hour blocks ÷ **admission** weight (actual, unadjusted). YES if any block is **\< 3 mL/kg**. If a block is borderline (3.0–3.6), check the adjacent rolling window. If not recorded, choose "not assessable".|
 
 **Baseline creatinine**, in order of preference: lowest outpatient value 7–365 days before admission; failing that, the lowest value recorded at any point during this hospitalization, including ED and ICU. Use the nadir of the whole stay. If the patient arrived in AKI and recovered, the post-recovery value is the truer baseline. **Do not back-calculate from an assumed eGFR.** Record which sources you used in the field provided.
 
