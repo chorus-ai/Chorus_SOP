@@ -3,7 +3,7 @@ title: Blood Transfusion Data Harmonization
 id: SOP-BTDH
 description: An SOP for general conventions related to Blood Transfusion Data Harmonization
 ---
-# Pending Approval
+# Approved
 # Standard Operating Protocol: Blood Transfusion Data Harmonization
 
 ## Contents
@@ -20,7 +20,6 @@ description: An SOP for general conventions related to Blood Transfusion Data Ha
 - [11. Mapping checklist](#11-mapping-checklist)
 - [12. Documentation and maintenance](#12-documentation-and-maintenance)
 - [13. Related office hours](#13-related-office-hours)
-- [14. References](#14-references)
 - [Appendix A. Minimum source data contract](#appendix-a-minimum-source-data-contract)
 - [Appendix B. Illustrative SQL checks](#appendix-b-illustrative-sql-checks)
 
@@ -139,7 +138,7 @@ DEVICE_EXPOSURE.quantity is an integer in OMOP CDM v5.4. Use the administered co
 |-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
 | 2 units RBC           | quantity = 2; unit = standard 'unit'                                                                                                           | Use when the source row represents two administered product units.                          |
 | 120 mL platelets      | quantity = 120; unit = mL                                                                                                                      | Preferred for an actual administered volume.                                                |
-| 120 cc plasma         | quantity = 120; unit = mL; unit_source_value = 'cc'                                                                                            | 1 cubic centimetre equals 1 millilitre; preserve the source expression.                     |
+| 120 cc plasma         | quantity = 120; unit = mL; unit_source_value = 'cc'                                                                                            | 1 cubic centimeter equals 1 milliliter; preserve the source expression.                     |
 | 10 mL/kg              | Calculate total mL only if a reliable contemporaneous weight and unambiguous dose expression are available                                     | Record weight source, time, conversion formula, and exclusions. Otherwise do not calculate. |
 | 0.5 unit              | Prefer actual administered mL. If unavailable, leave quantity unpopulated and retain the fractional expression in lineage/source documentation | Do not force 0.5 into an integer field; do not assume a universal half-unit volume.         |
 | Amount missing        | Use quantity = 1 only when source structure defensibly means one administered component unit; otherwise leave NULL                             | Document the rule and quantify affected records.                                            |
@@ -286,7 +285,7 @@ ISBT and ISBT Attribute are license-restricted vocabularies within OHDSI. Each s
 - [ ] Quantity is integer-compatible; unit is standardized; verbatim unit is preserved; pediatric conversions are evidence-based.
 - [ ] Fractional units without reliable mL are not converted by assumption.
 - [ ] Product modifiers are represented by a precoordinated concept when possible or explicitly documented as lost/unresolved.
-- [ ] Visits and visit details are linked where supported; related facts are modeled separately and not causally inferred.
+- [ ] Visits (VISIT_OCCURRENCE table) and visit details (VISIT_DETAIL table) are linked where supported; related facts are modeled separately and not causally inferred.
 - [ ] Identifier handling has privacy approval; local and central vocabulary licensing is aligned.
 - [ ] Hard QA gates pass; completeness metrics and source-to-target count reconciliation are reviewed.
 - [ ] Clinician, terminologist, ETL, QA, privacy, and harmonization sign-offs are recorded.
